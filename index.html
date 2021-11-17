@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8" />
+      <title>DecentraVote</title>
+      <base href="/app/" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <link rel="icon" type="image/x-icon" href="" />
+      <link
+         href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+         rel="stylesheet"
+      />
+   </head>
+   <body class="ev-typography">
+      <app-root></app-root>
+
+      <script src="https://cdn.ethers.io/lib/ethers-5.0.umd.min.js" type="text/javascript"></script>
+
+      <script>
+         const organizationAbi = [
+            {
+               anonymous: false,
+               inputs: [
+                  { indexed: true, internalType: 'address', name: 'owner', type: 'address' },
+                  {
+                     indexed: true,
+                     internalType: 'address',
+                     name: 'storageAddress',
+                     type: 'address',
+                  },
+                  { indexed: false, internalType: 'string', name: 'storageUrl', type: 'string' },
+               ],
+               name: 'StorageAdded',
+               type: 'event',
+            },
+            {
+               constant: true,
+               inputs: [],
+               name: 'getFileHashes',
+               outputs: [{ internalType: 'bytes32[]', name: '', type: 'bytes32[]' }],
+               payable: false,
+               stateMutability: 'view',
+               type: 'function',
+            },
+            {
+               inputs: [],
+               name: 'getStorageServiceList',
+               outputs: [
+                  {
+                     internalType: 'address[]',
+                     name: '',
+                     type: 'address[]',
+                  },
+                  {
+                     internalType: 'string',
+                     name: '',
+                     type: 'string',
+                  },
+                  {
+                     internalType: 'address[]',
+                     name: '',
+                     type: 'address[]',
+                  },
+               ],
+               stateMutability: 'view',
+               type: 'function',
+            },
+         ]
+
+         const organizationAddress =
+            new URLSearchParams(document.location.search).get('address') ||
+            localStorage.getItem('decentravote-organization')
+         let rpcServer
+         let ensAddress
+         const network = new URLSearchParams(document.location.search).get('network') || localStorage.getItem('network')
+
+         rpcServer =
+            new URLSearchParams(document.location.search).get('server') || localStorage.getItem('decentravote-server')
+         ensAddress =
+            new URLSearchParams(document.location.search).get('ens') || localStorage.getItem('decentravote-ens')
+         if (rpcServer !== null) {
+            localStorage.setItem('decentravote-server', rpcServer)
+         }
+         if (ensAddress !== null) {
+            localStorage.setItem('decentravote-ens', ensAddress)
+         }
+         if (organizationAddress !== null) {
+            localStorage.setItem('decentravote-organization', organizationAddress)
+         }
+         if (network !== null) {
+            localStorage.setItem('network', network)
+         }
+
+         let chainId
+
+         if (network !== null) {
+            switch (network) {
+               case 'bloxberg':
+                  rpcServer = 'https://node.decentravoteapp.de'
+                  ensAddress = '0xfC51a02af6d2b5e337C93632D1128DEF61BE31A7'
+                  chainId = 8995
+                  break
+               case 'epn':
+                  rpcServer = 'https://node.epn.iteratec.dev:8545'
+                  ensAddress = '0x07C0Cbb8205B6081fc24b52BBD111122500aC2F2'
+                  chainId = 2021
+                  break
+               default:
+                  console.warn('Could not resolve network to default values')
+            }
+         }
+
+         console.log('Requested Organization: ' + organizationAddress)
+         console.log('Requested rpcServer: ' + rpcServer)
+         console.log('Requested ens: ' + ensAddress)
+
+         const provider = new ethers.providers.JsonRpcProvider(rpcServer, {
+            name: 'custom',
+            chainId: chainId,
+            ensAddress,
+         })
+         const organizationContract = new ethers.Contract(organizationAddress, organizationAbi, provider)
+
+         async function getStorageUrls() {
+            const storageList = await organizationContract.getStorageServiceList()
+            return storageList[1].split(' ')
+         }
+
+         async function getFileHashes() {
+            return await organizationContract.getFileHashes()
+         }
+
+         getStorageUrls().then((urls) => {
+            console.log('Storage URLs: ' + urls)
+            const url = urls[Math.floor(Math.random() * urls.length)]
+
+            getFileHashes().then((hashes) => {
+               console.log('File hashes from contract: ' + hashes)
+               hashes.forEach((hash) => {
+                  getFileFromCache(hash).then((value) => {
+                     if (!value) {
+                        console.log('Preparing request for hash ' + hash + ' to storage ' + url)
+                        const request = prepareRequest(url)
+                        request.onload = function () {
+                           if (request.readyState === request.DONE && request.status === 200) {
+                              if (hash === ethers.utils.id(request.response[0].data)) {
+                                 includeFile(request.response[0].data, hash)
+                                 setFileInCache(hash, request.response[0].data)
+                              } else {
+                                 console.error(
+                                    'Requested hash: ' +
+                                       hash +
+                                       ' received different response: ' +
+                                       ethers.utils.id(request.response[0].data),
+                                 )
+                              }
+                           }
+                        }
+                        request.send(JSON.stringify([hash]))
+                     } else {
+                        includeFile(value, hash)
+                     }
+                  })
+               })
+            })
+         })
+
+         function includeFile(value, hash) {
+            if (value.includes('application/javascript')) {
+               console.log('Including js file: ' + hash)
+               const element = document.createElement('script')
+               element.innerHTML = atob(value.split(',')[1])
+               element.type = 'text/javascript'
+               element.defer = true
+               document.head.appendChild(element)
+            }
+            if (value.includes('text/css')) {
+               console.log('Including css file: ' + hash)
+               const element = document.createElement('style')
+               element.innerHTML = atob(value.split(',')[1])
+               document.head.appendChild(element)
+            }
+            if (value.includes('image/x-icon')) {
+               console.log('Including icon file: ' + hash)
+               const element = document.querySelector("link[rel*='icon']") || document.createElement('link')
+               element.type = 'image/x-icon'
+               element.rel = 'shortcut icon'
+               element.innerHTML = atob(value.split(',')[1])
+               document.head.appendChild(element)
+            }
+         }
+
+         function prepareRequest(url) {
+            const request = new XMLHttpRequest()
+            request.open('POST', url + '/api/storage/get', true)
+            request.setRequestHeader('Content-Type', 'application/json')
+            request.responseType = 'json'
+            return request
+         }
+
+         function getFileFromCache(hash) {
+            console.log('Requesting from cache: ' + hash)
+            return caches.open('evoting-cache').then((cache) => {
+               return cache.match(hash).then((response) => {
+                  if (!response) {
+                     console.log('File not found in cache: ' + hash)
+                     return null
+                  } else {
+                     return response.text().then((value) => {
+                        return value
+                     })
+                  }
+               })
+            })
+         }
+
+         function setFileInCache(hash, value) {
+            console.log('Writing in the cache: ' + hash)
+            caches.open('evoting-cache').then((cache) => {
+               const response = new Response(value)
+               response.headers.append('X-Request', hash)
+               response.headers.append('X-Date-Added', getDate())
+               cache.put(hash, response).then(() => {
+                  console.log('Wrote in the cache: ' + hash)
+               })
+            })
+         }
+
+         Number.prototype.padLeft = function (base, chr) {
+            const len = String(base || 10).length - String(this).length + 1
+            return len > 0 ? new Array(len).join(chr || '0') + this : this
+         }
+
+         function getDate() {
+            const d = new Date()
+            return (
+               [d.getFullYear(), (d.getMonth() + 1).padLeft(), d.getDate().padLeft()].join('-') +
+               '-' +
+               [d.getHours().padLeft(), d.getMinutes().padLeft(), d.getSeconds().padLeft()].join('-')
+            )
+         }
+      </script>
+   </body>
+</html>
