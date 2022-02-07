@@ -1,0 +1,8 @@
+{
+  "wsRpcServer": "",
+  "httpRpcServer": "",
+  "ensRegistryAddress": "",
+  "networkId": 8995,
+  "gasPrice": 1000000,
+  "gasLimit": 9000000
+}

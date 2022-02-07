@@ -1,0 +1,34 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<app-logo-header>
+</app-logo-header>
+
+<div class="row ml-0 mr-0 mb-5 mt-5">
+  <div class="col-12 text-center">
+    <p class="h1">{{'Setup.Get-Started.Title' | translate}}</p>
+  </div>
+</div>
+
+<div class="row ml-0 mr-0 mb-5 mt-5">
+  <div class="col-12 text-center">
+    <p class="page-item lead">
+      {{'Setup.Get-Started.Description-1' | translate}}
+      <br/>
+      {{'Setup.Get-Started.Description-2' | translate}}
+    </p>
+  </div>
+</div>
+
+<div class="ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button"
+              (click)="getStartedAction.emit()"
+              data-e2e="getStartedBtn">
+        {{'Setup.Get-Started.Button' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

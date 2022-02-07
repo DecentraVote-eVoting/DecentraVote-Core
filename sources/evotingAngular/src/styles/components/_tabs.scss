@@ -1,0 +1,29 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-tab-menu {
+  a {
+    color: $color-button-blue;
+  }
+
+  a.active {
+    color: $color-black;
+  }
+}
+
+.ev-title-container {
+  @include media-breakpoint-down(lg) {
+    width: 100%;
+  }
+  display: flex;
+  flex-direction: column;
+}
+
+.ev-settings-container {
+  margin-left: auto;
+  color: $color-dark-grey;
+  display: flex;
+}

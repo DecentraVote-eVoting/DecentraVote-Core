@@ -1,0 +1,197 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &__title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__search-bar {
+    flex: none;
+    margin-bottom: 1rem;
+  }
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
+
+    .dropdown button {
+      padding: 8px;
+      border-radius: 8px 0 0 8px;
+    }
+  }
+
+  &__container {
+    flex: auto;
+    overflow: auto;
+    border-radius: 5px;
+    background: $color-grey;
+    margin-bottom: 1rem;
+    max-height: 50vh;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+
+    &--selectable {
+      cursor: pointer;
+    }
+
+    &--selected {
+      background: #B3D1E6;
+    }
+  }
+
+}
+
+.ev-member-list {
+  margin-bottom: 1rem;
+
+  ::-webkit-scrollbar {
+    width: 0.4rem;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: $color-grey;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: $color-white;
+  }
+
+  &__scrollable {
+    overflow: auto;
+    max-height: 50vh;
+    padding-bottom: 0.5rem;
+  }
+
+  &__voting-count {
+    min-width: 28px;
+    background: $color-badge-blue;
+    color: $color-white;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    margin-right: 1rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__new-voting-count {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &--selected {
+      color: #000000;
+    }
+  }
+
+  .member-item {
+    border: 1px solid $color-grey !important;
+
+    & + .member-item {
+      margin-top: 0.75rem;
+    }
+
+    border-radius: 8px;
+    display: flex;
+  }
+
+  &__member-name {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+    white-space: nowrap;
+  }
+
+  &__member-email {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    width: 100%;
+  }
+}
+
+.ev-list-badge_primary {
+  color: whitesmoke;
+  border: 1px $color-dark-grey, solid;
+  background-color: $color-dark-grey;
+}
+
+.ev-list-badge_secondary {
+  border: 1px $color-badge-grey solid;
+  color: $color-badge-grey;
+}
+
+.ev-list-badge_light {
+  border: 1px $color-badge-grey solid;
+  color: $color-badge-grey;
+}
+
+.ev-result-list {
+  min-height: 60px;
+  max-height: calc(100vh - 34rem);
+  overflow-y: scroll;
+
+  @include media-breakpoint-up(sm) {
+    padding-right: 0.6rem;
+    padding-left: 1rem;
+
+    &::-webkit-scrollbar {
+      width: 0.4rem;
+    }
+
+    &::-webkit-scrollbar-track {
+      margin-top: 12px;
+      margin-bottom: 12px;
+      background-color: $color-grey;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: $color-white;
+      border-radius: 3px;
+    }
+  }
+
+  // small and super small size
+  @include media-breakpoint-down(sm) {
+    max-height: calc(100vh - 25rem);
+  }
+}
+
+#toggleResultSortingButtonsContainer {
+  @include media-breakpoint-up(sm) {
+    padding-right: 1rem;
+  }
+}
+
+#voteResultModalContent {
+  @include media-breakpoint-up(sm) {
+    padding-left: 1.4rem;
+    padding-right: 1.4rem;
+  }
+}
+
+#searchbarResultMembers {
+  @include media-breakpoint-up(sm) {
+    padding-left: calc(1.4rem - 8px);
+    padding-right: calc(1.4rem - 8px);
+  }
+}

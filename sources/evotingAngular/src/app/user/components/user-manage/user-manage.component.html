@@ -1,0 +1,150 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="content p-3">
+
+  <!--
+  ================
+  T O O L    B A R
+  ================
+  -->
+
+  <div class="d-flex ev-flex-justify ev-flex-align-content-between mb-4 ev-flex-align-items-center">
+    <div class="ev-list__bar">
+
+      <!-- F I L T E R    D R O P D O W N -->
+      <div class="btn-group dropdown ev-dropdown ev-height-fit-content">
+        <button type="button"
+                data-e2e="FilterUsersButton"
+                class="btn ev-button--dropdown_main dropdown-toggle searchbar-filter-button"
+                #menuTrigger='matMenuTrigger'
+                [matMenuTriggerFor]="children"
+                app-dropdown
+                [menu]="children"
+                [hoverTrigger]="menuTrigger">
+          <span class="material-icons d-md-none">filter_list</span>
+          <span class="d-none d-md-block">
+              {{'User.Filters-Dropdown' | translate}}
+            </span>
+        </button>
+
+        <mat-menu #children="matMenu" hasBackdrop="false">
+          <button class="ev-button--dropdown"
+                  data-e2e="filterByDirector"
+                  (click)="onFilterDirectors(search_input)">
+            {{'User.Filters.Directors' | translate}}
+          </button>
+          <button class="ev-button--dropdown"
+                  data-e2e="filterByMember"
+                  (click)="onFilterMembers(search_input)">
+            {{'User.Filters.Members' | translate}}
+          </button>
+          <button class="ev-button--dropdown"
+                  data-e2e="filterByGuest"
+                  (click)="onFilterGuests(search_input)">
+            {{'User.Filters.Guests' | translate}}
+          </button>
+          <button class="ev-button--dropdown"
+                  data-e2e="filterByInvited"
+                  (click)="onFilterInvited()">
+            {{'User.Filters.Invitees' | translate}}
+          </button>
+        </mat-menu>
+      </div>
+
+
+      <!-- S E A R C H   I N P U T -->
+      <input placeholder="{{'User.Search-Placeholder' | translate}}"
+             #search_input
+             data-e2e="searchInput"
+             autocomplete="off"
+             (keyup)="filter(search_input.value)"
+             (blur)="filter(search_input.value)"
+             type="text"
+             class="ev-search__input--outline leftside-filter-button">
+    </div>
+
+
+    <!-- E X P O R T    B U T T O N -->
+    <button class="btn ev-button ev-height-fit-content ml-3"
+            data-e2e="exportBtn"
+            *ngIf="showExportButton()"
+            [disabled]="importedUsers.length === 0"
+            (click)="onExportUsers()">
+      <span class="material-icons d-md-none">file_download</span>
+      <span class="d-none d-md-block">
+              {{'User.Export-Button' | translate}}
+      </span>
+    </button>
+
+    <!-- I M P O R T    B U T T O N -->
+    <button class="btn d-none d-lg-flex ev-button ev-height-fit-content ml-1"
+            data-e2e="importBtn"
+            *ngIf="showImportButton()"
+            (click)="onImportUsers()">
+      <span class="material-icons d-md-none">file_upload</span>
+      <span class="d-none d-md-block">
+              {{'User.Import-Button' | translate}}
+      </span>
+    </button>
+
+    <!-- A D D   N E W   U S E R    B U T T O N -->
+    <!-- TODO: DECVO-462 (User einladen - Einzeln)
+    <button class="btn ev-button ev-height-fit-content ml-3"
+            (click)="onNewUser()">
+      <span class="material-icons">person_add</span>
+      <span class="ev-button__label">{{'User.Add-New' | translate}}</span>
+    </button>
+    -->
+  </div>
+
+  <div *ngIf="isFilterActive"
+       class="mb-2">
+    <button
+            class="ev-button-inline"
+            (click)="onClearFilter(search_input)">
+      <span class="material-icons mr-1">highlight_off</span>
+      <span class="ev-button-inline__label" *ngIf="activeRoleNumberFilter == 1">{{"Guest.Guests-Search"| translate}}</span>
+      <span class="ev-button-inline__label" *ngIf="activeRoleNumberFilter == 2">{{"Member.Members-Search" | translate}}</span>
+      <span class="ev-button-inline__label"
+            *ngIf="activeRoleNumberFilter == 4">{{"Director.Directors-Search" | translate}}</span>
+      <span class="ev-button-inline__label"
+            *ngIf="importedFilterActive == true">{{"Import-User.Import-Users-Search" | translate}}</span>
+    </button>
+  </div>
+
+  <!--
+  ====================================
+  A C T U A L    M E M B E R - L I S T
+  ====================================
+  -->
+
+  <ng-container *ngIf="(usersFiltered.length !== 0 || importedUsersFiltered.length !== 0) && !usersLoading">
+    <div *ngIf="showConstrainedUserManagementInfo"
+         class="alert alert-secondary text-center font-weight-bold">
+      {{'Meeting.Constrained-User-Manage-Info' | translate}}
+    </div>
+
+    <div class="ev-typography--text-16 text-center mt-4 mb-2">
+      {{usersFiltered?.length}} {{usersFiltered?.length === 1 ? ('User.Registration' | translate) : ('User.Registrations' | translate)}}
+      -
+      {{importedUsersFiltered?.length}} {{importedUsersFiltered?.length === 1 ? ('User.Invitation' | translate) : ('User.Invitations' | translate)}}
+    </div>
+
+    <app-user-manage-list [enableChangeActions]="enableChangeActions"
+                          [meetingsLoading]="meetingsLoading"
+                          [users]="usersFiltered"
+                          [importedUsers]="importedUsersFiltered"
+                          (deleteImportUserEvent)="onDeleteImportUser($event)"
+                          (deleteUserEvent)="onDeleteUser($event)"
+                          (editUserEvent)="onEditUser($event)"
+                          (editImportUserEvent)="onEditImportUser($event)"
+                          (replaceUserEvent)="onReplaceUser($event)"
+                          (manageAccessCodeEvent)="onManageAccessCode($event)">
+    </app-user-manage-list>
+  </ng-container>
+  <div *ngIf="usersFiltered.length === 0 && importedUsersFiltered.length === 0 && !usersLoading"
+       class="mt-5 ev-text ev-text--center w-100">{{'User.Empty-Search-Result' | translate}}</div>
+
+</div>

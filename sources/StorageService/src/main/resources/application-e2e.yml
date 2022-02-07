@@ -1,0 +1,6 @@
+web3:
+  config: "e2e_addresses.json"
+
+assetFile: "./frontend-deploy/frontend-deploy.js"
+assetArgument1: "local"
+assetArgument2: "assets"

@@ -1,0 +1,45 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title">{{'Voting.Title-Delete' | translate}}</div>
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-modal-body">
+  <div class="row">
+    <div class="col-12">
+      <div class="row pt-3 pt-md-4">
+        <div class="col-12 ev-text-field">
+          <label
+            class="ev-text-field__label">
+            {{'Voting.Delete-Confirm' | translate}}
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button data-e2e="deleteVoteButton"
+              class="btn ev-button mr-1 "
+              (click)="deleteVote()">
+        {{'Voting.Button-Delete-Yes' | translate}}
+      </button>
+      <button class="btn ev-button--secondary ml-1"
+              (click)="dismiss()"
+              data-e2e="dismissDeleteVoteModalButton">
+        {{'Voting.Button-Delete-No' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

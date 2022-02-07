@@ -1,0 +1,5 @@
+compiled/local-development/*
+
+target
+
+src/main/java/com/iteratec/evoting/solidity/contracts

@@ -1,0 +1,44 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-attachment {
+  border: 0;
+  border-radius: 4px;
+  background-color: $color-grey;
+  width: 100%;
+  padding: 10px 16px;
+
+  &__extra-high {
+    height: 7em;
+  }
+
+  &:focus {
+    outline-width: 0;
+  }
+
+  &__input {
+    cursor: pointer;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    width: inherit;
+    height: inherit;
+    outline: none;
+    opacity: 0;
+  }
+
+  &-icon {
+    width: 100%;
+    text-align: center;
+    font-size: 40px;
+  }
+
+  &-text {
+    font-size: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

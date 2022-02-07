@@ -1,0 +1,41 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<app-logo-header>
+</app-logo-header>
+
+<div class="row ml-0 mr-0 mb-5 mt-5">
+  <div class="col-12 text-center">
+    <p class="h1">{{'Recovery.Title' | translate}}</p>
+  </div>
+</div>
+
+<div class="row ml-0 mr-0 mb-5 mt-5">
+  <div class="col-12 text-center">
+    <p class="page-item lead">
+      {{'Recovery.Description-1' | translate}}
+      <br/>
+      {{'Recovery.Description-2' | translate}}
+      <br/>
+      {{'Recovery.Description-3' | translate}}
+    </p>
+  </div>
+</div>
+
+<div class="ml-0 mr-0 mb-5 mt-5">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button"
+              data-e2e="resetPasswordConfirmButton"
+              (click)="onConfirm()">
+        {{'Recovery.Button-Confirm' | translate}}
+      </button>
+      <button class="btn ev-button--secondary ml-2"
+              data-e2e="resetPasswordDenyButton"
+              [routerLink]="'/' + routePaths.LOGIN">
+        {{'Recovery.Button-Cancel' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

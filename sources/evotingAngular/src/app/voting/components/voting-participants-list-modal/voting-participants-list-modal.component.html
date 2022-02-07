@@ -1,0 +1,58 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-voting__header">
+  <h5 class="ev-modal-title ev-mb-3"
+      id="modal-basic-title">{{'Voting.Eligible' | translate}}</h5>
+
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+<div class="modal-body ev-voting__body">
+
+  <div class="ev-typography--text-16 text-center pb-2">{{'Voting.Excluded' | translate}}</div>
+  <app-voting-participants-list-modal-list [changesAllowed]="showChangeAllowed()"
+                                           [members]="getExcludedVoters()"
+                                           [excludedMembersLoading]="excludedMembersLoading"
+                                           data-e2e="addPersonModalList"
+                                           icon="person_add"
+                                           (iconClickedAction)="includeMember($event)">
+  </app-voting-participants-list-modal-list>
+
+  <div class="text-center mb-2 "
+       *ngIf="showChangeAllowed()"
+       [ngClass]="{
+        'ev-typography': formGroup.valid,
+        'ev-typography--red': formGroup.invalid
+        }">
+    {{'Voting.Excluded-Current' | translate}} {{getExcludedVoters().length}} {{'Voting.Out-of' | translate}} {{maxExcludedVoters}} {{'Voting.Excluded-Maximum' | translate}}
+  </div>
+
+  <div class="ev-typography--text-16 text-center pb-2 pt-2">{{'Voting.Other-Members' | translate}}</div>
+  <app-voting-participants-list-modal-list [changesAllowed]="showChangeAllowed()"
+                                           [members]="nonExcludedMembers"
+                                           [excludedMembersLoading]="excludedMembersLoading"
+                                           data-e2e="removePersonModalList"
+                                           icon="person_remove"
+                                           (iconClickedAction)="excludeMember($event)">
+  </app-voting-participants-list-modal-list>
+</div>
+
+<div class="ev-card__footer--voting ev-pos-relative"
+     *ngIf="showChangeAllowed()">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button"
+              (click)="saveExcludedMembers()"
+              [disabled]="!valuesChanged()"
+              data-e2e="saveListButton">
+        {{'Voting.Button-Save' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

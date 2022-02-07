@@ -1,0 +1,42 @@
+[
+  {
+    "filename": ".gitkeep",
+    "hash": "0x61fbb8a2262eb3cee27c374334e9b78239444e74a0009aa13e8edc37ddc3ec58"
+  },
+  {
+    "filename": "circuit.wasm",
+    "hash": "0x6e31373fce80256d5259505767efcc2dca9a6b03944fdf0d183c6b0f34b433a5"
+  },
+  {
+    "filename": "circuit_final.zkey",
+    "hash": "0x72ceb8afc34776641e8971b5697f45ebdc3ebe30b475ae25b109c5eb00ac6345"
+  },
+  {
+    "filename": "de.json",
+    "hash": "0x04673d678c69ac7f10f080d5d3dcd0a4d746894c120e10c605e8d6e19b509229"
+  },
+  {
+    "filename": "en.json",
+    "hash": "0x64d177ada3a3c544bfb4fd4ab28d044c61083ccbe47e13fceff5c2de5556caf8"
+  },
+  {
+    "filename": "logo.png",
+    "hash": "0x597d401825a80c3a18518ca8bcf36b6a0911410294f6cd67a790c5389de8834a"
+  },
+  {
+    "filename": "logo_sm.png",
+    "hash": "0xa6f65816000672b8396b4db1cf8b02cb4e2c7571a1a82000684ebe3613d88dfd"
+  },
+  {
+    "filename": "snarkjs.js",
+    "hash": "0x8e9d20b28132a87dc663b8c368e0e5e5ae1c169b2d52352138ede85bed59daba"
+  },
+  {
+    "filename": "snarkjs.min.js",
+    "hash": "0x66c67175d98857518728ddbc30e18947fe3e6a41bbed173fad274356565ec7a2"
+  },
+  {
+    "filename": "verification_key.json",
+    "hash": "0xa118562ae01137da94569f157ab924d353d33c96ec3b5cee923ab9d86e888cd5"
+  }
+]

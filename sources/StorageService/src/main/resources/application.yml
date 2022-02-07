@@ -1,0 +1,45 @@
+server:
+  port: 3000
+
+logging:
+  level:
+    com:
+      iteratec:
+        evoting:
+          storageservice: ${LOG_LVL:INFO}
+
+spring:
+  jpa:
+    database: POSTGRESQL
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        show_sql: false
+        default_schema: ${DEFAULT_SCHEMA:storage1}
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql:${DB_URL://localhost:6543}/${DB_NAME:postgres}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driverClassName: org.postgresql.Driver
+    hikari:
+      connection-init-sql: CREATE SCHEMA IF NOT EXISTS ${DEFAULT_SCHEMA:storage1};
+
+web3:
+  mnemonic: ${WEB3_MNEMONIC:}
+  derivationPathIndex: ${WEB3_DERIVATION_PATH_INDEX:8}
+  environment: ${WEB3_ENVIRONMENT:local}
+  network: ${WEB3_NETWORK:local} #This loads a default config of known networks at the time this was built. The following settings can override the default network config or replace it altogether
+  ensRegistry: ${WEB3_ENS_REGISTRY:}
+  httpRpcServer: ${WEB3_HTTP_RPC_SERVER:}
+  wsRpcServer: ${WEB3_WS_RPC_SERVER:}
+
+assetFile: ""
+assetArgument1: ""
+assetArgument2: ""
+
+
+

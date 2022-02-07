@@ -1,0 +1,4 @@
+e2e: false
+assetFile: "./frontend-deploy/frontend-deploy.js"
+assetArgument1: "local"
+assetArgument2: "assets"

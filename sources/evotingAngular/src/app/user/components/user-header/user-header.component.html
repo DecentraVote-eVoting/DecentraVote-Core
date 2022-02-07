@@ -1,0 +1,20 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="d-flex ev-flex-align-items-center ev-flex-content-start ev-flex-wrap mt-4 mb-3">
+  <button class=" d-none d-lg-flex btn ev-button--secondary mr-4"
+          data-e2e="backToGeneralMeetingButton"
+          [routerLink]="'/' + routePaths.MEETING_OVERVIEW">
+    <span class="material-icons">arrow_back</span>
+    <span class="ev-button__grey-label">{{'Meeting.Button-Back' | translate}}</span>
+  </button>
+  <div class="ev-title-container mt-lg-2 my-xl-0 mt-0 mb-2">
+    <span class=" ev-typography--black mr-5">{{'User.Manage.Title' | translate}}</span>
+    <span *ngIf="user !== undefined"
+          class="ev-typography--light mb-2">
+        {{'User.Manage.Current-User' | translate}}: {{user.resolvedClaim.field2}}
+      <app-role-badges [userRole]="user.role"></app-role-badges>
+      </span>
+  </div>
+</div>

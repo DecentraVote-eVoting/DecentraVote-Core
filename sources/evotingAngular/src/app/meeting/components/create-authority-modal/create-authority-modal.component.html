@@ -1,0 +1,67 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title ev-mb-1">{{'Meeting.Authority.Title' | translate}}</div>
+  <em ngbAutofocus
+      data-e2e="closeCreateAuthorityModal"
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-modal-body">
+  <div class="row">
+    <div class="col-12 col-md-6">
+      <app-create-authority-list data-e2e="representativeList"
+                                 [members]="representativeList"
+                                 [selectedMember]="representative"
+                                 (selectAction)="representative = $event">
+      </app-create-authority-list>
+    </div>
+    <div class="col-12 col-md-6">
+      <app-create-authority-list data-e2e="representeeList"
+                                 [members]="representeeList"
+                                 [selectedMember]="representee"
+                                 (selectAction)="representee = $event">
+      </app-create-authority-list>
+    </div>
+  </div>
+
+  <mat-chip-list style="pointer-events: none">
+    <ng-container *ngIf="!representee || !representative; else showText">
+      {{'Meeting.Authority.Instruction' | translate}}
+    </ng-container>
+    <ng-template #showText>
+      <ng-container *ngIf="representative.address === representee.address">
+        {{'Meeting.Authority.Same-Person' | translate}}
+      </ng-container>
+      <ng-container *ngIf="representative.address !== representee.address">
+        <mat-chip>
+          {{representative | MemberName}}
+        </mat-chip>
+        {{'Meeting.Authority.Transfer-Info' | translate}}
+        <mat-chip>
+          {{representee | MemberName}}
+        </mat-chip>
+      </ng-container>
+    </ng-template>
+  </mat-chip-list>
+
+</div>
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button"
+              data-e2e="addAuthorityModalButton"
+              (click)="addAuthority()"
+              [disabled]="showButtonDisabled()">
+        {{'Meeting.Authority.Button-Save' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

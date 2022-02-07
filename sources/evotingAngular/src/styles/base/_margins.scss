@@ -1,0 +1,38 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+.ev- {
+  @for $i from 0 through 10 {
+    &p-#{$i} {
+      padding: $i * 8px;
+    }
+    &pt-#{$i} {
+      padding-top: $i * 8px;
+    }
+    &pr-#{$i} {
+      padding-right: $i * 8px;
+    }
+    &pl-#{$i} {
+      padding-left: $i * 8px;
+    }
+    &pb-#{$i} {
+      padding-bottom: $i * 8px;
+    }
+    &m-#{$i} {
+      margin: $i * 8px;
+    }
+    &mt-#{$i} {
+      margin-top: $i * 8px;
+    }
+    &mr-#{$i} {
+      margin-right: $i * 8px;
+    }
+    &ml-#{$i} {
+      margin-left: $i * 8px;
+    }
+    &mb-#{$i} {
+      margin-bottom: $i * 8px;
+    }
+  }
+}

@@ -1,0 +1,67 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title">{{'User.Replace.Title' | translate}}</div>
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      data-e2e="dismissButton"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+
+
+<div class="modal-body ev-modal-body mt-4 mb-3">
+  <div class="col-12">
+    <div class="col-12 ev-text-field">
+      <div *ngIf="!accessCode.value"
+           class="d-flex ev-flex-content-between">
+        {{'User.Replace.Extra-info' | translate}}
+      </div>
+      <div *ngIf="accessCode.value"
+           class="d-flex ev-flex-content-between">
+        {{'User.Replace.New-AccessCode' | translate}}
+      </div>
+      <!-- A C C E S S   C O D E -->
+      <div class="d-flex ev-flex-content-between">
+        <input #accessCodeR
+               type="text"
+               id="accessCode"
+               class="ev-text-field__input ev-nb-tr ev-nb-br"
+               [formControl]="accessCode"
+               data-e2e="ReplaceUserInput"
+               [value]="accessCode">
+        <button *ngIf="showCopyToClipBoard()"
+                class="btn ev-copy-to-clipboard ev-nb-tl ev-nb-bl"
+                [cdkCopyToClipboard]="accessCode.value"
+                (click)=setCopyToClipboardSuccessful()
+                data-e2e="copyMnemonicButton">
+          <span class="material-icons mr-1">{{ copiedToClipboard ? 'assignment_turned_in' : 'assignment' }}</span>
+          {{ copiedToClipboard ? ('Import-User.Edit-Access-Code.Clipboard-Success' | translate) : ('Import-User.Edit-Access-Code.Clipboard' | translate) }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button
+              data-e2e="replaceUserButton"
+              class="btn ev-button"
+              (click)="onReplaceUserClick()">
+        {{'User.Replace.Button' | translate}}
+      </button>
+
+      <button data-e2e="replaceUserDismissButton"
+              class="btn ev-button--secondary ml-2"
+              (click)="dismiss()">
+        {{'User.Replace.Return' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

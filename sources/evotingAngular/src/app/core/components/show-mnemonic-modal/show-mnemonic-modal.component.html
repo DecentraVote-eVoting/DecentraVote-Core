@@ -1,0 +1,53 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title">{{'Account.Title-Show-Mnemonic' | translate}}</div>
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-voting__body">
+
+  <div class="row pt-3 pt-md-4 pb-3 pb-md-3">
+      <textarea #mnemonicInput
+                [formControl]="mnemonicControl"
+                rows="5"
+                id="description"
+                class="ev-text-field__text-area ev-setup-mnemonic mb-2"
+                data-e2e="mnemonicTextArea">
+      </textarea>
+    <button class="btn ev-button__grey w-100"
+            [cdkCopyToClipboard]="mnemonicControl.value"
+            (click)=setCopyToClipboardSuccessful()
+            data-e2e="copyMnemonicButton">
+        <span class="material-icons mr-1">
+          {{ copiedToClipboard ? 'assignment_turned_in' : 'assignment' }}
+        </span>
+      {{ copiedToClipboard ? ('Setup.Create-Mnemonic.Clipboard-Success' | translate) : ('Setup.Create-Mnemonic.Copy-To-Clipboard' | translate) }}
+    </button>
+  </div>
+
+</div>
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button ml-2"
+              (click)="dismiss()"
+              data-e2e="closeMnemonicModalButton">
+        {{'Account.Button-Mnemonic-Close' | translate}}
+      </button>
+      <!--<a class="btn btn-primary ml-2"
+         [href]="downloadUrl"
+         [download]="filename">
+        {{'Account.Button-Export-Mnemonic' | translate}}
+      </a>-->
+    </div>
+  </div>
+</div>

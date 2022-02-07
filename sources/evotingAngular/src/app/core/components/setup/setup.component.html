@@ -1,0 +1,29 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="w-100">
+
+  <ng-container [ngSwitch]="currentStep">
+
+    <app-setup-get-started *ngSwitchCase="setupStep.GET_STARTED"
+                           (getStartedAction)="increaseStep()">
+    </app-setup-get-started>
+
+    <app-setup-new-or-import *ngSwitchCase="setupStep.NEW_OR_IMPORT"
+                             (createNewAction)="setNewOrImport($event)">
+    </app-setup-new-or-import>
+
+    <app-setup-create-password *ngSwitchCase="setupStep.CREATE_PASSWORD"
+                               (createPasswordAction)="setPassword($event)"
+                               (backAction)="resetNewOrImport()">
+    </app-setup-create-password>
+
+    <app-setup-create-mnemonic *ngSwitchCase="setupStep.CREATE_MNEMONIC"
+                               [isCreatingNew]="isCreatingNew"
+                               (createMnemonicAction)="setMnemonic($event)"
+                               (backAction)="resetPassword()">
+    </app-setup-create-mnemonic>
+
+  </ng-container>
+</div>

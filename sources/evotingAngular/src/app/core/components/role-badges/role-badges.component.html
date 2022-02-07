@@ -1,0 +1,15 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<ng-container *ngIf="userRole">
+  <span *ngIf="isUserDirector()"
+        data-e2e="DirectorBadge"
+        class="badge badge-pill ev-list-badge_primary ml-1">{{ 'User.Badges.Director' | translate }}</span>
+  <span *ngIf="isUserMember()"
+        data-e2e="MemberBadge"
+        class="badge badge-pill ev-list-badge_secondary ml-1">{{ 'User.Badges.Member' | translate }}</span>
+  <span *ngIf="isUserGuest()"
+        data-e2e="GuestBadge"
+        class="badge badge-pill ev-list-badge_light ml-1">{{ 'User.Badges.Guest' | translate }}</span>
+</ng-container>

@@ -1,0 +1,25 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-setup-card {
+  background: $color-white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.ev-setup-mnemonic {
+  width: 100%;
+  height: 100%;
+  font-size: 1.5rem;
+}
+
+.ev-setup-password-success {
+  color: $color-password-success;
+}
+
+.ev-setup-password-error {
+  color: $color-password-error;
+}

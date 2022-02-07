@@ -1,0 +1,232 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="d-flex ev-flex-row ev-flex-align-items-start ev-flex-content-between mt-4 mb-5 w-100"
+     *ngIf="meeting">
+  <button class="d-none d-lg-flex btn ev-button--secondary mr-4"
+          [routerLink]="'/' + routePaths.MEETING_OVERVIEW"
+          data-e2e="backToGeneralMeetingButton">
+    <span class="material-icons">arrow_back</span>
+    <span class="ev-button__grey-label">{{'Meeting.Button-Back' | translate}}</span>
+  </button>
+
+  <div class="ev-title-container mt-lg-2 my-xl-0 mt-0 mb-2 mr-4 w-100">
+    <div class="d-flex ev-flex-content-between ev-flex-align-items-center">
+      <div class="ev-typography--black mr-5">{{meeting.title}}</div>
+      <ng-container [ngSwitch]="meeting.stage">
+         <span *ngSwitchCase="meetingStage.CREATED"
+               class="ev-badge ev-badge--gray">
+          {{'Meeting.Stage.Created' | translate}}
+        </span>
+        <span *ngSwitchCase="meetingStage.OPEN"
+              class="ev-badge ev-badge--green">
+          {{'Meeting.Stage.Open' | translate}}
+        </span>
+        <span *ngSwitchCase="meetingStage.CLOSED"
+              class="ev-badge ev-badge--gray">
+          {{'Meeting.Stage.Closed' | translate}}
+        </span>
+      </ng-container>
+    </div>
+
+    <span class=" ev-typography--black mr-5">{{'Meeting.Date' | translate}} {{meeting.startDate | date:'dd.MM.yyyy'}}
+      {{'Meeting.To' | translate}} {{meeting.endDate | date:'dd.MM.yyyy'}}</span>
+    <span
+      class="ev-typography--grey mr-5">{{'Meeting.Chairperson' | translate}} {{chairperson | MemberName}}</span>
+    <div class="ev-typography--grey mr-5">{{meeting.description}}</div>
+  </div>
+
+  <div class="ev-settings-container">
+    <div class="btn-group dropleft ev-dropdown"
+         *ngIf="showMeetingMenu()">
+      <button type="button"
+              class="btn ev-button dropdown-toggle"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+              data-e2e="meetingDropdownButton">
+        <span class="material-icons d-md-none">settings</span>
+        <span class="d-none d-md-block">
+          {{'Meeting.Button-Meeting' | translate}}
+        </span>
+      </button>
+      <div class="dropdown-menu ev-dropdown-menu"
+           aria-labelledby="meetingDropdownMenuButton">
+        <ng-container>
+          <div *ngIf="showMeetingEdit()">
+            <div class="ev-dropdown__btn-container">
+              <button (click)="openUpdateMeetingModal()"
+                      data-e2e="updateMeetingModalButton"
+                      class="dropdown-item">
+                {{'Meeting.Button-Edit' | translate}}
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="showMeetingDelete()">
+            <div class="ev-dropdown__btn-container">
+              <button (click)="openRemoveMeetingModal()"
+                      data-e2e="deleteMeetingModalButton"
+                      class="dropdown-item">
+                {{'Meeting.Button-Delete' | translate}}
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="userIsAllowedToToggleVisibility()">
+            <div class="ev-dropdown__btn-container">
+              <button
+                data-e2e="toggleVisibilityDropdownEntry"
+                [disabled]="isMeetingStateChanged"
+                (click)="toggleMeetingVisibility.emit()"
+                class="dropdown-item">{{(meeting.isVisible ? 'Meeting.Button-Toggle-Visibility.Off' : 'Meeting.Button-Toggle-Visibility.On') | translate}}
+                <span *ngIf="isMeetingStateChanged"
+                      [ngStyle]="{ 'visibility': showToggleVisibilitySpinner ? 'visible': 'hidden' }"
+                      class="spinner-border spinner-border-sm ml-1"></span>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="showMeetingOpen()">
+            <div class="ev-dropdown__btn-container">
+              <button
+                data-e2e="openMeetingDropdownEntry"
+                [disabled]="isMeetingStateChanged"
+                (click)="openMeetingAction.emit()"
+                *ngIf="!showMeetingClose()"
+                class="dropdown-item">{{'Meeting.Button-Open-Meeting' | translate}}
+                <span *ngIf="isMeetingStateChanged"
+                      [ngStyle]="{ 'visibility': showOpenMeetingSpinner ? 'visible': 'hidden' }"
+                      class="spinner-border spinner-border-sm ml-1"></span>
+              </button>
+            </div>
+          </div>
+          <div *ngIf="showMeetingClose()">
+            <div class="ev-dropdown__btn-container">
+              <button
+                data-e2e="closeMeetingDropdownEntry"
+                [disabled]="isMeetingStateChanged || !meetingCanBeClosed"
+                (click)="closeMeetingAction.emit()"
+                *ngIf="!showMeetingOpen()"
+                class="dropdown-item">{{'Meeting.Button-Close-Meeting' | translate}}
+                <span *ngIf="isMeetingStateChanged"
+                      [ngStyle]="{ 'visibility': isMeetingStateChanged ? 'visible': 'hidden' }"
+                      class="spinner-border spinner-border-sm ml-1"></span>
+              </button>
+            </div>
+          </div>
+          <div *ngIf="showMeetingRegistrationOpen()">
+            <div class="ev-dropdown__btn-container">
+              <button
+                data-e2e="openRegistrationDropdownEntry"
+                [disabled]="isMeetingRegistrationStateChanged"
+                (click)="openRegistrationAction.emit()"
+                *ngIf="!showMeetingRegistrationClose()"
+                class="dropdown-item">{{'Meeting.Button-Open-Registration' | translate}}
+                <span *ngIf="isMeetingRegistrationStateChanged"
+                      [ngStyle]="{ 'visibility': isMeetingRegistrationStateChanged ? 'visible': 'hidden' }"
+                      class="spinner-border spinner-border-sm ml-1"></span>
+              </button>
+            </div>
+          </div>
+          <div *ngIf="showMeetingSummarize()">
+            <div class="ev-dropdown__btn-container">
+              <button
+                data-e2e="summarizeMeetingDropDownEntry"
+                class="dropdown-item"
+                (click)="summarizeMeetingAction.emit()">
+                {{'Meeting.Button-Summarize-Meeting' | translate}}
+              </button>
+            </div>
+          </div>
+          <div *ngIf="showMeetingRegistrationClose()">
+            <div class="ev-dropdown__btn-container">
+              <button
+                data-e2e="closeRegistrationDropdownEntry"
+                [disabled]="isMeetingRegistrationStateChanged"
+                (click)="closeRegistrationAction.emit()"
+                *ngIf="!showMeetingRegistrationOpen()"
+                class="dropdown-item">{{'Meeting.Button-Close-Registration' | translate}}
+                <span *ngIf="isMeetingRegistrationStateChanged"
+                      [ngStyle]="{ 'visibility': isMeetingRegistrationStateChanged ? 'visible': 'hidden' }"
+                      class="spinner-border spinner-border-sm ml-1"></span>
+              </button>
+
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <button type="button"
+            class="btn ev-button ml-2 d-flex ev-flex-align-items-center"
+            [disabled]="getParticipantRegistrationState()"
+            (click)="joinMeetingAction.emit()"
+            *ngIf="showMeetingJoin()"
+            data-e2e="registerForMeetingButton">
+      {{'Meeting.Button-Join-Meeting' | translate}}
+      <span *ngIf="isParticipantRegisteringStateChanged"
+            [ngStyle]="{ 'visibility': getParticipantRegistrationState() ? 'visible': 'hidden' }"
+            class="spinner-border spinner-border-sm ml-1"></span>
+    </button>
+  </div>
+</div>
+
+<div *ngIf="showRegisterInfo()"
+     class="alert alert-danger text-center font-weight-bold"
+     data-e2e="registerInfoBanner">
+  {{'Meeting.Register-Info' | translate}}
+</div>
+
+<div *ngIf="showAuthorityInfo()"
+     data-e2e="authorityInfoBanner"
+     class="alert alert-danger text-center font-weight-bold">
+  {{'Meeting.Authority.Info' | translate}}
+</div>
+
+<div *ngIf="showVisibilityInfo()"
+     data-e2e="visibilityInfoBanner"
+     class="alert alert-danger text-center font-weight-bold">
+  {{'Meeting.Visibility-Info' | translate}}
+</div>
+
+<div *ngIf="showVisibilityInfoDirector()"
+     data-e2e="visibilityInfoBanner"
+     class="alert alert-danger text-center font-weight-bold">
+  {{'Meeting.Visibility-Info-Director' | translate}}
+</div>
+
+<div *ngIf="showCloseMeetingInfo()"
+     data-e2e="closeMeetingInfoBanner"
+     class="alert alert-secondary text-center font-weight-bold">
+  {{'Meeting.Close-Meeting-Info' | translate}}
+</div>
+
+<ul class="nav nav-tabs menu ev-tab-menu">
+  <li class="nav-item ev-text--cursor-pointer">
+    <a class="nav-link d-flex ev-flex-align-items-center"
+       [class.active]="activeTab === meetingTab.VOTING"
+       (click)="tabChangeAction.emit(meetingTab.VOTING)">
+      <span class="material-icons-round icon-blue mr-1">poll</span>
+      <span class="d-none d-md-block">{{'Meeting.Tab-Votings' | translate}}</span>
+    </a>
+  </li>
+  <li class="nav-item ev-text--cursor-pointer">
+    <a class="nav-link d-flex ev-flex-align-items-center"
+       [class.active]="activeTab === meetingTab.PARTICIPANTS"
+       (click)="tabChangeAction.emit(meetingTab.PARTICIPANTS)">
+      <span class="material-icons-round icon-blue mr-1">how_to_reg</span>
+      <span class="d-none d-md-block">{{'Meeting.Tab-Participants' | translate}}</span>
+    </a>
+  </li>
+  <li class="nav-item ev-text--cursor-pointer"
+      *ngIf="showMeetingAuthoritiesTab()">
+    <a class="nav-link d-flex ev-flex-align-items-center"
+       data-e2e="AuthorityOverviewButton"
+       [class.active]="activeTab === meetingTab.AUTHORITIES"
+       (click)="tabChangeAction.emit(meetingTab.AUTHORITIES)">
+      <span class="material-icons-round icon-blue mr-1">supervisor_account</span>
+      <span class="d-none d-md-block">{{'Meeting.Tab-Authorities' | translate}}</span>
+    </a>
+  </li>
+</ul>

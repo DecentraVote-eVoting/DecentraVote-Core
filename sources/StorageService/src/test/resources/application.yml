@@ -1,0 +1,65 @@
+server:
+  port: 3000
+  url: http://localhost:3000 #not implemented
+
+logging:
+  level:
+    com:
+      iteratec:
+        evoting:
+          storageservice: ${LOG_LVL:INFO}
+
+spring:
+  jpa:
+    database: POSTGRESQL
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        show_sql: false
+        default_schema: ${DEFAULT_SCHEMA:storage1}
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql:${DB_URL://localhost:6543}/${DB_NAME:postgres}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driverClassName: org.postgresql.Driver
+
+web3:
+  mnemonic: ${WEB3_MNEMONIC:menu pretty waste little skill copper main absorb bacon still deliver finish}
+  derivationPathIndex: ${WEB3_DERIVATION_PATH_INDEX:8}
+
+assetFile: ""
+assetArgument1: ""
+assetArgument2: ""
+
+#server:
+#  port: 3001
+#  url: http://localhost:3001 #not implemented
+#
+#spring:
+#  jpa:
+#    database: POSTGRESQL
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+#        show_sql: false
+#        default_schema: ${DEFAULT_SCHEMA:storage2}
+#    hibernate:
+#      ddl-auto: update
+#
+#  datasource:
+#    platform: postgres
+#    url: jdbc:postgresql:${DB_URL://localhost:6543}/${DB_NAME:postgres}
+#    username: ${DB_USER:postgres}
+#    password: ${DB_PASSWORD:postgres}
+#    driverClassName: org.postgresql.Driver
+#
+#web3:
+#  mnemonic: ${WEB3_MNEMONIC:divide mix inmate comfort slender bonus enlist tray robot just alien rebuild}
+#  derivationPathIndex: ${WEB3_DERIVATION_PATH_INDEX:8}
+
+
+

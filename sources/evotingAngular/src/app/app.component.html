@@ -1,0 +1,13 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<app-big-spinner *ngIf="serverLoading; else appContent">
+</app-big-spinner>
+<ng-template #appContent>
+  <app-toaster></app-toaster>
+  <app-spinner></app-spinner>
+  <router-outlet></router-outlet>
+</ng-template>
+
+

@@ -1,0 +1,32 @@
+# DecentraVote
+# Copyright (C) 2018-2022 iteratec
+
+# Spring Boot Configuration
+server:
+  port: 4000
+
+# API Configuration
+api:
+  requestMapping: "/api/ballotbox"
+
+# Web3j Configuration
+web3:
+  mnemonic: ${WEB3_MNEMONIC:menu pretty waste little skill copper main absorb bacon still deliver finish}
+  derivationPathIndex: ${WEB3_DERIVATION_PATH_INDEX:6}
+  config: "local_addresses.json"
+
+spring:
+  application:
+    name: decentraVote-ballotBox
+  jpa:
+    database: H2
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        show_sql: false
+    hibernate:
+      ddl-auto: create-drop
+
+storageService:
+  enabled: ${STORAGE_ENABLED:true}
+  url: ${SS_URL:http://localhost:3000}

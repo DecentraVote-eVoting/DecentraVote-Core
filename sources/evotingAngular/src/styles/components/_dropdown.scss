@@ -1,0 +1,44 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-dropdown {
+  &__btn-container {
+    display: flex;
+  }
+  .btn,
+  .btn:active,
+  .btn:focus {
+    display: flex;
+    align-items: center;
+    background: $color-button-blue !important;
+    border: none !important;
+    box-shadow: none !important;
+
+    &:before {
+      margin-right: 0.5rem;
+    }
+  }
+
+  &:hover {
+    .dropdown-menu {
+      display: block;
+      margin: 0;
+    }
+  }
+
+  .dropdown-item:hover,
+  .dropdown-item:focus,
+  .dropdown-item:active {
+    outline: none !important;
+    background: $color-grey !important;
+  }
+}
+
+.ev-dropdown-menu {
+  a {
+    cursor: pointer;
+  }
+}

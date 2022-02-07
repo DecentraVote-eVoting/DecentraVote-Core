@@ -1,0 +1,26 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="container">
+
+  <app-user-header   [user]="user"
+                     [activeTab]="activeTab"
+                     [users]="users"
+                     [authOptions]="authOptions"
+                     [userIsDirector]="userIsDirector"
+                     (tabChangeAction)="onTabChange($event)">
+  </app-user-header>
+
+  <ng-container [ngSwitch]="activeTab">
+    <app-user-manage-smart *ngSwitchCase="userTab.MEMBER"
+                             [userList]="users"
+                             [importedUsers]="importedUsers"
+                             [authOptions]="authOptions"
+                             [userIsDirector]="userIsDirector"
+                             [usersLoading]="usersLoading">
+    </app-user-manage-smart>
+  </ng-container>
+
+</div>
+

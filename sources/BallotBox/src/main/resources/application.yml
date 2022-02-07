@@ -1,0 +1,58 @@
+# DecentraVote
+# Copyright (C) 2018-2022 iteratec
+
+# Spring Boot Configuration
+server:
+  port: 4000
+
+# API Configuration
+api:
+  requestMapping: "/api/ballotbox"
+
+# Web3j Configuration
+web3:
+  mnemonic: ${WEB3_MNEMONIC:}
+  derivationPathIndex: ${WEB3_DERIVATION_PATH_INDEX:6}
+  environment: ${WEB3_ENVIRONMENT:local}
+  network: ${WEB3_NETWORK:local} #This loads a default config of known networks at the time this was built. The following settings can override the default network config or replace it altogether
+  ensRegistry: ${WEB3_ENS_REGISTRY:}
+  httpRpcServer: ${WEB3_HTTP_RPC_SERVER:}
+  wsRpcServer: ${WEB3_WS_RPC_SERVER:}
+
+logging:
+  level:
+    com:
+      iteratec:
+        evoting:
+          ballotbox: ${LOG_LVL:INFO}
+
+spring:
+  application:
+    name: decentraVote-ballotBox
+  profiles:
+    active: ${SPRING_PROFILES:receiver,sender}
+  jpa:
+    database: POSTGRESQL
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        show_sql: false
+        default_schema: ${DEFAULT_SCHEMA:ballotbox1}
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql:${DB_URL://localhost:6543}/${DB_NAME:postgres}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driverClassName: org.postgresql.Driver
+    hikari:
+      connection-init-sql: CREATE SCHEMA IF NOT EXISTS ${DEFAULT_SCHEMA:ballotbox1};
+
+storageService:
+  url: ${SS_URL:http://localhost:3000}
+
+aws:
+  lambda:
+    url: ${LAMBDA_URL:}

@@ -1,0 +1,3 @@
+target
+src/main/resources/e2e_config.json
+src/main/resources/local_config.json

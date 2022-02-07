@@ -1,0 +1,39 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons+Round");
+@import "variables";
+
+.material-icons-round {
+  color: $color-dark-grey;
+
+  &:disabled {
+    color: $color-light-grey !important;
+  }
+}
+
+.icon-badge {
+  position: relative;
+  top: 1px;
+  font-size: 15px !important;
+  right: 3px;
+  margin-left: 0;
+}
+
+.non-interactive {
+  color: $color-light-grey;
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.icon-blue {
+  color: $color-blue;
+}
+
+.active {
+  .icon-blue {
+    color: $color-dark-blue !important;
+  }
+}
+

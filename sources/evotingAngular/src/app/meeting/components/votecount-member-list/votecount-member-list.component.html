@@ -1,0 +1,42 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+<div class="ev-list background-color">
+  <div class="list-group ev-member-list">
+    <pagination
+      [listlength]="userListCells.length"
+      [(page)]="page"
+      [pageSize]="pageSize">
+    </pagination>
+
+    <ul class="list-group list-group-flush">
+      <ng-template [ngIf]="userListCells | UserSortPipe"></ng-template>
+      <li class="list-group-item member-item flex"
+          *ngFor="let member of getArray(this.page, (screenWidth > 768))">
+        <div class="d-flex justify-content-between flex-wrap vw-100 overflow-hidden">
+          <div class="mr-2 ev-member-list__member-name">
+            {{member | MemberName}}
+            <app-role-badges [userRole]="member.role"></app-role-badges>
+          </div>
+          <div class="d-none d-md-block ev-member-list__member-email">
+            {{member.resolvedClaim.field0}}
+          </div>
+        </div>
+        <div class="ev-member-list__new-voting-count">
+          {{member.votingCount}}
+          <i class="material-icons-round non-interactive ml-1">how_to_vote</i>
+        </div>
+      </li>
+    </ul>
+    <pagination
+      [listlength]="userListCells.length"
+      [(page)]="page"
+      [pageSize]="pageSize">
+    </pagination>
+  </div>
+</div>

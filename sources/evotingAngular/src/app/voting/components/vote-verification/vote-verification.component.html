@@ -1,0 +1,145 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<ng-container *ngIf="!verifyProofSupported">
+  <div class="p-3">
+    <div class="alert alert-danger text-center font-weight-bold ng-star-inserted mx-auto ev-translate-enable-linebreak">
+      <span>{{'Verify.Unsupported' | translate}}</span>
+    </div>
+
+    <button class="btn ev-button m-auto"
+            (click)="closeWindowAction.emit()">
+      {{'Verify.Close-Button' | translate}}
+    </button>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="verifyProofSupported && ballotCount > 0">
+  <div class="text-center ev-fake-body-white--flex">
+    <div class="pl-3 pr-3">
+      <!-- Titel -->
+      <div class="ev-title-underline mx-auto"
+           *ngIf="percentage === 100">
+        <h2>{{title}}</h2>
+      </div>
+
+      <div class="ev-progressbar-circular mx-auto">
+        <circle-progress
+          [percent]="percentage"
+          [innerStrokeColor]="invalidBallotCount ? '#f8d7da' : '#d4edda'"
+          [outerStrokeColor]="'#007acc'"
+          [radius]="80"
+          [animation]="false"
+          [titleFontSize]="'30px'"
+          [subtitleFontSize]="'13px'"
+          [subtitleColor]="'#212529'"
+          [subtitle]=" (percentage == 100 ? 'Verify.Done': 'Verify.Progress') | translate"
+        ></circle-progress>
+      </div>
+
+      <!-- alerts -->
+      <ng-container *ngIf="percentage === 100">
+        <div *ngIf="invalidBallotCount !== 0"
+             class="alert alert-danger text-center font-weight-bold ng-star-inserted mx-auto">
+          <span> {{'Verify.Failure' | translate}}</span>
+        </div>
+        <div *ngIf="invalidBallotCount === 0"
+             class="alert alert-success text-center font-weight-bold ng-star-inserted mx-auto">
+          <span>{{'Verify.Success' | translate}}</span>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- result -->
+    <div *ngIf="percentage === 100">
+      <ul *ngIf="showInvalidBallots()"
+          class="nav nav-tabs menu ev-tab-menu mx-auto">
+        <li class="nav-item ev-text--cursor-pointer">
+          <a class="nav-link d-flex ev-flex-align-items-center ev-verification-tab"
+             [class.active]="activeTab === voteDetailTab.RESULT_OVERVIEW"
+             (click)="onTabChange(voteDetailTab.RESULT_OVERVIEW)">
+            <span class="material-icons-outlined mr-1">analytics</span>
+            <span class="d-none d-sm-block">{{'Verify.Button-Result' | translate}}</span>
+          </a>
+        </li>
+        <li class="nav-item ev-text--cursor-pointer">
+          <a class="nav-link d-flex ev-flex-align-items-center ev-verification-tab"
+             [class.active]="activeTab === voteDetailTab.RESULT_LIST"
+             (click)="onTabChange(voteDetailTab.RESULT_LIST)">
+            <span class="material-icons-outlined mr-1">view_list</span>
+            <span class="d-none d-sm-block">{{'Verify.Button-Invalid-Votes' | translate}}</span>
+          </a>
+        </li>
+      </ul>
+
+      <ng-container [ngSwitch]="activeTab">
+        <ng-container *ngSwitchCase="voteDetailTab.RESULT_OVERVIEW">
+          <div class="ev-card__footer--voting ev-pos-relative ev-verification-result mx-auto">
+            <p class="ev-verification-votes">
+              {{(invalidBallotCount === 1 ? 'Verify.Result-Opening-Singular' : 'Verify.Result-Opening-Plural') | translate}}
+              {{' ' + validBallotCount + ' '}}
+              {{(validBallotCount === 1 ? 'Verify.Valid-Singular' : 'Verify.Valid-Plural') | translate}}
+              {{' ' + invalidBallotCount + ' '}}
+              {{(invalidBallotCount === 1 ? 'Verify.Invalid-Singular' : 'Verify.Invalid-Plural') | translate}}
+            </p>
+            <ng-container>
+              <div class="ev-voting__voting-container">
+                <ng-container *ngFor="let option of options">
+                  <div class="ev-voting__voting-option text-left" data-e2e="votingOption">
+                <span>
+                  {{option.value}}
+                </span>
+                    <span class="ev-voting__voting-count">
+                  {{getResultByOption(option.value) + ' ' + ('Verify.Valid' | translate) + ' ( ' + getInvalidResultByOption(option.value) + ' ' + ('Verify.Invalid' | translate) + ') ' + ('Verify.Votes' | translate)}}
+                </span>
+                  </div>
+                  <div class="ev-voting__voting-option mb-3 ev-flow-root">
+                    <ngb-progressbar type="primary"
+                                     [max]="ballotCount"
+                                     [value]="getResultByOption(option.value)">
+                    </ngb-progressbar>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="voteDetailTab.RESULT_LIST">
+          <div class="ev-card__footer--voting ev-pos-relative ev-verification-result mx-auto">
+            <mat-accordion class="" multi>
+              <ng-container *ngFor="let optionByUser of invalidOptionsByUser | keyvalue">
+                <mat-expansion-panel class="ev-expansion-panel">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title class="ev-typography ev-typography--heading1">
+                      {{optionByUser.value.userClaim.field1}} {{optionByUser.value.userClaim.field2}}
+                      , {{optionByUser.value.userClaim.field0}}
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <ul class="list-group list-group-flush">
+                    <li *ngFor="let option of invalidOptionsByUser[optionByUser.key].options"
+                        class="list-group-item member-item flex">
+                      <div class="d-flex justify-content-between flex-wrap">
+                        <div class="ev-typography">{{option}}</div>
+                      </div>
+                    </li>
+                  </ul>
+                </mat-expansion-panel>
+              </ng-container>
+            </mat-accordion>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <!-- close button -->
+    <div class="ev-fake-footer pl-3 pr-3 pb-3"
+         *ngIf="percentage === 100">
+      <button class="btn ev-button m-auto"
+              (click)="closeWindowAction.emit()">
+        {{'Verify.Close-Button' | translate}}
+      </button>
+    </div>
+  </div>
+</ng-container>

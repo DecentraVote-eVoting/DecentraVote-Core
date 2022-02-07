@@ -1,0 +1,47 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+$badge-colors: (
+  "yellow": $color-badge-orange,
+  "green": $color-badge-green,
+  "gray": $color-badge-grey,
+  "blue": $color-badge-blue,
+  "light-blue": $color-badge-light-blue,
+  "orange": $color-badge-orange,
+  "lightgray": $color-light-grey
+);
+
+.ev-badge {
+  display: flex;
+  padding: 2px 16px;
+  min-width: 104px;
+  border-radius: 50px;
+  max-width: fit-content;
+  font-size: 12px;
+  line-height: 20px;
+  color: white;
+  text-align: center;
+  text-transform: uppercase;
+
+  @each $name, $color in $badge-colors {
+    &--#{$name} {
+      background-color: $color;
+      border: $color 1px solid;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+    }
+  }
+
+  @each $name, $color in $badge-colors {
+    &--#{$name}-outline {
+      background-color: white;
+      color: $color;
+      border: $color 1px solid;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+    }
+  }
+}

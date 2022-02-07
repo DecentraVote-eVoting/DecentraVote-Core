@@ -1,0 +1,33 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+.ev-progress {
+  display: block;
+  align-content: center;
+  box-sizing: border-box;
+  background-color: #d8d8d8;
+  border-radius: 20px;
+  position: relative;
+  height: 30px;
+  width: 60%;
+  margin: 15px auto;
+}
+
+.ev-progress-done {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: $color-button-blue;
+  border-radius: 20px;
+  color: #fff;
+  height: 100%;
+  width: 0;
+  opacity: 1;
+}
+
+.progress {
+  border-radius: 1rem !important;
+  background-color: #e1e6ea !important;
+}

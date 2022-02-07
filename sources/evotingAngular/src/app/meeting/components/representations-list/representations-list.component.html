@@ -1,0 +1,32 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="ev-list background-color">
+  <div class="list-group ev-member-list"
+       *ngIf="representations?.length > 0">
+
+    <ul class="list-group ev-member-list list-group-flush"
+        data-e2e="authoritiesList">
+      <ng-template [ngIf]="representations | UserSortPipe"></ng-template>
+      <li class="list-group-item member-item"
+          *ngFor="let representation of representations"
+          data-e2e="authoritiesListItem">
+        <div data-e2e="representeeNameDiv">{{representation.representee | MemberName}}</div>
+        <span class="material-icons-outlined mr-2 ml-2">arrow_right_alt</span>
+        <div data-e2e="representativeNameDiv">{{representation.representative | MemberName}}</div>
+        <div class="ev-text--cursor-pointer ml-auto">
+            <span class="material-icons-outlined mr-2 ml-3"
+                  data-e2e="deleteAuthorityButton"
+                  *ngIf="changesAllowed"
+                  ngbTooltip="{{'Meeting.Authority.Tooltip-Delete' | translate}}"
+                  container="body"
+                  (click)="onDeleteClick(representation.representee)">
+              delete
+            </span>
+        </div>
+      </li>
+    </ul>
+
+  </div>
+</div>

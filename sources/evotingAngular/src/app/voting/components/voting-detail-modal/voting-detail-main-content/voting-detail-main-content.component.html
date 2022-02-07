@@ -1,0 +1,66 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="ev-voting__container">
+  <ng-container [ngSwitch]="vote.stage">
+    <span *ngSwitchCase="stages.CREATED"
+          class="ev-badge ev-badge--yellow mr-2 mt-1">
+      {{'Voting.Stage.Created' | translate}}
+    </span>
+    <span *ngSwitchCase="stages.OPENED"
+          class="ev-badge ev-badge--green mr-2 mt-1">
+      {{'Voting.Stage.Opened' | translate}}
+    </span>
+    <span *ngSwitchCase="stages.CLOSED"
+          class="ev-badge ev-badge--gray mr-2 mt-1">
+      {{'Voting.Stage.Closed' | translate}}
+    </span>
+    <span *ngSwitchCase="stages.COUNTED"
+          class="ev-badge ev-badge--blue-outline mr-2 mt-1">
+      {{'Voting.Stage.Counted' | translate}}
+    </span>
+    <span *ngSwitchCase="stages.ARCHIVED"
+          class="ev-badge ev-badge--gray-outline mr-2 mt-1">
+      {{'Voting.Stage.Cancelled' | translate}}
+    </span>
+  </ng-container>
+
+  <span *ngIf="vote.isAnonymous" class="ev-badge ev-badge--gray-outline mr-2 mt-1">
+    <span class="material-icons-round non-interactive icon-badge">visibility_off</span>
+    <span>{{'Voting.Anonymous' | translate}}</span>
+  </span>
+
+  <span *ngIf="!vote.isAnonymous" class="ev-badge ev-badge--gray-outline mr-2 mt-1">
+    <span class="material-icons-round non-interactive icon-badge">visibility</span>
+    {{'Voting.Not-Anonymous' | translate}}
+  </span>
+
+  <span *ngIf="showVotingIcon() && vote?.ownVoteOptions.length > 0 && (vote?.numberOfOwnVoteRights - vote?.numberOfOwnVotesCast === 0)"
+        class="ev-badge ev-badge--gray-outline mr-2 mt-1">
+    <span class="material-icons-round non-interactive icon-badge">check_circle</span>
+    {{'Voting.Voted' | translate}}
+  </span>
+
+</div>
+<div class="ev-voting__text-secondary mb-3"
+     *ngIf="vote.stage === stages.ARCHIVED && vote.archiveReason">
+  {{'Voting.Archive-Reason' | translate}} {{vote.archiveReason}}
+</div>
+
+
+<div class="ev-voting__container mb-3">
+  {{vote?.description}}
+</div>
+
+<div class="ev-voting__container">
+  <button class="ev-voting__file-download"
+          *ngIf="vote?.attachment"
+          (click)="downloadAttachment()"
+          data-e2e="voteDetailFileDownload">
+    <span class="material-icons">insert_drive_file</span>
+    <span class="ev-voting__file-download__name">
+        {{vote?.filename}}
+      </span>
+  </button>
+</div>

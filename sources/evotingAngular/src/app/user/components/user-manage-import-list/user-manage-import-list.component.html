@@ -1,0 +1,33 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="ev-list background-color">
+  <div class="list-group ev-member-list"
+       *ngIf="_importedUser.length > 0">
+
+    <ul class="list-group list-group-flush ev-member-list">
+      <li class="list-group-item member-item flex"
+          *ngFor="let member of _importedUser"
+          [class.justify-content-between]="changesAllowed">
+        <div class="d-flex justify-content-between flex-wrap vw-100 overflow-hidden">
+          <div *ngIf="member" class="mr-2 ev-member-list__member-name">
+            {{member | MemberName}}
+          </div>
+          <div class="d-none d-md-block ev-member-list__member-email">
+            {{member?.field0}}
+          </div>
+        </div>
+
+        <div class="ml-3"
+             *ngIf="changesAllowed">
+          <span class="material-icons-outlined align-middle ev-text--cursor-pointer"
+                (click)="onIconClick(member)">
+            {{"delete"}}
+          </span>
+        </div>
+      </li>
+    </ul>
+
+  </div>
+</div>

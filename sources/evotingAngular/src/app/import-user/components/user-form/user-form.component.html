@@ -1,0 +1,120 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="col-12">
+
+  <div class="w-100 row" *ngIf="userGroupArray.length > 0">
+    <div class="col">
+      <label class="ev-text-field__label">
+        {{'User.Import.Field0' | translate}}
+      </label>
+    </div>
+    <div class="col">
+      <label class="ev-text-field__label">
+        {{'User.Import.Field1' | translate}}
+      </label>
+    </div>
+    <div class="col">
+      <label class="ev-text-field__label">
+        {{'User.Import.Field2' | translate}}
+      </label>
+    </div>
+    <div class="col-2">
+      <label class="ev-text-field__label">
+        {{'User.Import.Role' | translate}}
+      </label>
+    </div>
+  </div>
+
+  <ng-container #userList
+                *ngFor="let userGroup of userGroupArray.controls; let i = index">
+
+    <div class="w-100 form-row">
+
+      <div class="col px-1">
+        <input class="ev-text-field__input mb-3"
+               type="text"
+               placeholder="field0"
+               [id]="'userField0_' + i"
+               [formControl]="userGroup.get('field0') | cast"
+               (input)="updateValidation()">
+      </div>
+
+      <div class="col px-1">
+        <input class="ev-text-field__input mb-3"
+               type="text"
+               placeholder="field1"
+               [formControl]="userGroup.get('field1') | cast">
+      </div>
+
+      <div class="col px-1">
+        <input class="ev-text-field__input mb-3"
+               type="text"
+               placeholder="field2"
+               [formControl]="userGroup.get('field2') | cast">
+      </div>
+
+      <div class="col-2 d-flex ev-flex-align-items-center px-1">
+        <select class="ev-height-fit-content form-select
+          ev-role-selection mb-2 mb-3"
+                [formControl]="userGroup.get('role') | cast"
+                (change)="updateValidation()">
+          <option class="ev-role-option"
+                  [value]="existingRoles.GUEST.value">{{'User.Import.Option-Guest' | translate}}</option>
+          <option class="ev-role-option"
+                  [value]="existingRoles.MEMBER.value">{{'User.Import.Option-Member' | translate}}</option>
+          <option class="ev-role-option"
+                  [value]="existingRoles.DIRECTOR.value + existingRoles.MEMBER.value">{{'User.Import.Option-Director' | translate}}</option>
+        </select>
+        <button class="ev-button-options"
+                data-e2e="removeUserButton"
+                (click)="removeUser(i)">
+          <span class="material-icons-round mr-2 ml-2 mb-2">delete</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="formRowIsInvalid(userGroup)">
+      <div class="col px-1">
+        <div class="mb-3 mt-n3">
+          <mat-error *ngIf="userGroup.get('field0').value === ''"
+                     class="col-3 ev-error-display">
+            {{'Message.Error.Empty-Option' | translate}}
+          </mat-error>
+
+          <mat-error *ngIf="userGroup.get('field0').hasError('duplicate') && userGroup.get('field0').value"
+                     class="col-3 ev-error-display">
+            {{'Message.Error.Duplicate' | translate}}
+          </mat-error>
+        </div>
+      </div>
+
+      <div class="col px-1"  style="text-align: right">
+        <div class="mb-3 mt-n3">
+          <mat-error *ngIf="!userGroup.get('role').value"
+                     class="col-3 ev-error-display">
+            {{'Message.Error.Empty-Role' | translate}}
+          </mat-error>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <div class="row w-100"
+       style="text-align: center; cursor: pointer;">
+    <div class="col ev-user-add-button"
+         (click)="addUser()">
+      <span class="material-icons"
+            style="vertical-align: middle">
+        add
+      </span>
+      <span class="ev-button__label"
+            style="vertical-align: middle; font-weight: 500;">
+        {{'User.Import.Add-User' | translate}}
+      </span>
+    </div>
+  </div>
+
+</div>

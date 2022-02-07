@@ -1,0 +1,52 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<app-logo-header>
+</app-logo-header>
+
+<div class="row ml-0 mr-0 mb-5 mt-5">
+  <div class="col-12 text-center">
+    <p class="h2">{{'Setup.New-Or-Import.Title' | translate }}</p>
+  </div>
+</div>
+
+<div class="row mx-md-0 mx-2 mb-5 mt-5">
+  <div class="col-12 col-sm-10 col-lg-4 offset-lg-2 offset-sm-1">
+    <div class="col-12 ev-setup-card p-4">
+      <p class="page-item lead">
+        {{'Setup.New-Or-Import.Description-New' | translate}}
+      </p>
+    </div>
+    <div class="ev-pos-relative">
+      <div class="row">
+        <div class="col-12 d-flex ev-flex-content-center">
+          <button class="btn ev-button mt-4"
+                  (click)="createNewAction.emit(true)"
+                  data-e2e="createAccountBtn">
+            {{'Setup.New-Or-Import.Button-New' | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-12 col-sm-10 col-lg-4 offset-lg-0 offset-sm-1 mt-3 mt-lg-0">
+    <div class="col-12 ev-setup-card p-4">
+      <p class="page-item lead">
+        {{'Setup.New-Or-Import.Description-Import' | translate}}
+      </p>
+    </div>
+    <div class="ev-pos-relative">
+      <div class="row">
+        <div class="col-12 d-flex ev-flex-content-center">
+          <button class="btn ev-button mt-4"
+                  (click)="createNewAction.emit(false)"
+                  data-e2e="importAccountBtn">
+            {{'Setup.New-Or-Import.Button-Import' | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title">{{'Import-User.Form.Title' | translate}}
+  </div>
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close"
+      data-e2e="closeCreateMeetingModalButton">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-modal-body mt-2">
+  <form class="d-flex ev-flex-column ev-flex-content-center" [formGroup]="importUserForm">
+    <div class="ev-text-field">
+      <label
+        for="field1"
+        class="ev-text-field__label">{{'Import-User.Form.Field1' | translate}}</label>
+
+      <div class="d-flex">
+        <input type="text"
+               id="field1"
+               class="ev-text-field__input col-6 mr-2"
+               formControlName="field1"
+               required>
+        <div class="ev-typography--text-16">{{'Import-User.Form.Field1-explanation' | translate}}</div>
+      </div>
+    </div>
+
+    <div class="ev-text-field">
+      <label
+        for="field2"
+        class="ev-text-field__label">{{'Import-User.Form.Field2' | translate}}</label>
+
+      <div class="d-flex">
+        <input type="text"
+               id="field2"
+               class="ev-text-field__input col-6 mr-2"
+               formControlName="field2"
+               required>
+        <div class="ev-typography--text-16">{{'Import-User.Form.Field2-explanation' | translate}}</div>
+      </div>
+    </div>
+
+    <div class="ev-text-field">
+      <label
+        for="field0"
+        class="ev-text-field__label">{{'Import-User.Form.Field0' | translate}}</label>
+
+      <div class="d-flex">
+        <input type="text"
+               id="field0"
+               data-e2e="textField0"
+               class="ev-text-field__input col-6 mr-2"
+               formControlName="field0">
+        <div class="ev-typography--text-16">{{'Import-User.Form.Field0-explanation' | translate}}</div>
+      </div>
+    </div>
+
+    <div class="ev-text-field">
+      <label
+        for="role"
+        class="ev-text-field__label">{{'Import-User.Form.Role' | translate}}</label>
+
+      <div class="d-flex">
+        <select id="role"
+                class="ev-select col-6 mr-2"
+                formControlName="role"
+                required>
+          <option class="ev-select__option" value="1">{{'Import-User.Form.Option-Guest' | translate}}</option> <!-- TODO: set value dynamically! -->
+          <option class="ev-select__option" selected value="2">{{'Import-User.Form.Option-Member' | translate}}</option>
+          <option class="ev-select__option" selected value="6">{{'Import-User.Form.Option-Director' | translate}}</option>
+        </select>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="d-flex ev-flex-content-center">
+    <button class="btn ev-button ev-height-fit-content"
+            data-e2e="submitEditButton"
+            (click)="onSubmit()"
+            [disabled]="!importUserForm.valid">
+      <span>{{'User.Form.Confirm' | translate}}</span>
+    </button>
+  </div>
+</div>

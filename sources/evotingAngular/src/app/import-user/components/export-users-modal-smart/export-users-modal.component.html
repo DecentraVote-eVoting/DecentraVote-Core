@@ -1,0 +1,49 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title">{{'User.Export.Title' | translate}}</div>
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-modal-body">
+  <div class="row">
+    <div class="col-12">
+      <div class="row pt-3 pt-md-4">
+        <div class="col-12 ev-text-field">
+          <label
+            class="ev-text-field__label">
+            {{'User.Export.Choose-Format' | translate}}
+          </label>
+          <p class="ev-text-field__label ev-translate-enable-linebreak">
+            {{'Setup.New-Or-Import.Field-Description' | translate}}
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button btn-lg mr-1 "
+              [disabled]="disableExportJSON"
+              (click)="onExportJSONClick()">
+        {{'User.Export.Button-JSON' | translate}}
+      </button>
+      <button class="btn ev-button btn-lg ml-1"
+              [disabled]="disableExportCSV"
+              (click)="onExportCSVClick()">
+        {{'User.Export.Button-CSV' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

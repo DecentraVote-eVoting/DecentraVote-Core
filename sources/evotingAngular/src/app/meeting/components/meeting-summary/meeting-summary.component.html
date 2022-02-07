@@ -1,0 +1,83 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<app-big-spinner *ngIf="!templateReady"></app-big-spinner>
+
+<div *ngIf="templateReady" class="ev-summary-button-wrapper">
+  <button class="btn ev-button ev-height-fit-content"
+          onclick="window.print()">
+    <span class="material-icons">print</span>
+    <span class="ev-button__label">{{'Voting.Summary.Print' | translate}}</span>
+  </button>
+</div>
+
+<div [class.ev-summary-page-wrapper]="templateReady">
+
+  <img *ngIf="templateReady"
+       [src]="(assetFiles.LOGO | ResolveAsset) | async"
+       style="width: 25%;"
+       alt="DecentraVote Logo"/>
+
+  <ng-container *ngIf="templateReady">
+    <div class="ev-title-underline mx-auto mb-3">
+      <h1 class="ev-summary-font-size-x-large text-center mb-0">{{meeting.title}}</h1>
+      <div class="ev-card__body ev-flex-row ev-summary-font-size-small text-center mb-2">
+        {{'Meeting.Date' | translate}}
+        {{meeting.startDate | date:'dd.MM.yyyy'}}
+        {{'Meeting.To' | translate}}
+        {{meeting.endDate | date:'dd.MM.yyyy'}}
+      </div>
+      <div class="ev-summary-font-size-small mb-2">{{meeting.description}}</div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="templateReady">
+    <h3 class="ev-summary-font-size-large text-center">{{'Meeting.Tab-Authorities' | translate}}</h3>
+
+    <ng-template #representationsTemplate let-representations="representations">
+      <table class="mx-auto">
+        <ng-template [ngIf]="representations | UserSortPipe"></ng-template>
+        <tbody *ngFor="let representation of representations;">
+        <tr class="ev-summary-font-size-small">
+          <td class="text-right">{{representation.representee | MemberName}}</td>
+          <td><span class="material-icons-outlined ev-icon-size-adjusted mx-2 align-bottom">arrow_right_alt</span></td>
+          <td>{{representation.representative | MemberName}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </ng-template>
+
+    <div *ngIf="representationsSplit.length > 0; else noRepresentations" class="row mb-3">
+      <ng-template [ngIf]="representationsSplit | UserSortPipe"></ng-template>
+      <div *ngFor="let _ of [].constructor(nColumns), let i = index" class="col">
+        <ng-template *ngTemplateOutlet="representationsTemplate;
+        context: {representations: this.representationsSplit[i % nColumns]}"></ng-template>
+      </div>
+    </div>
+
+    <ng-template #noRepresentations>
+      <p class="ev-summary-font-size-small text-center">{{'Voting.Summary.No-Representations' | translate}}</p>
+    </ng-template>
+  </ng-container>
+
+
+  <ng-container *ngIf="countedVoteAddresses">
+      <h4 *ngIf="templateReady" class="ev-summary-font-size-large text-center">{{'Voting.Summary.Votes' | translate}}</h4>
+
+      <ng-container *ngIf="countedVoteAddresses.length !== 0; else noCountedVotes">
+        <div *ngFor="let voteAddressAndAnonymity of countedVoteAddresses">
+          <app-voting-summary-smart [voteAddress]="voteAddressAndAnonymity.voteAddress"
+                                    [isAnonymous]="voteAddressAndAnonymity.isAnonymous"
+                                    [templateReady]="templateReady"
+                                    (voteDataReady)="voteDataReady.emit()">
+          </app-voting-summary-smart>
+        </div>
+      </ng-container>
+
+      <ng-template #noCountedVotes>
+        <p class="ev-summary-font-size-small text-center">{{'Voting.Summary.No-Counted-Votes' | translate}}</p>
+      </ng-template>
+  </ng-container>
+
+</div>

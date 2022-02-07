@@ -1,0 +1,183 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div *ngIf="!prefillData && !memberListOpen"
+       class="ev-modal-title">{{'Meeting.Title-Create' | translate}}
+  </div>
+  <div *ngIf="prefillData && !memberListOpen"
+       class="ev-modal-title">{{'Meeting.Title-Edit' | translate}}
+  </div>
+  <button *ngIf="memberListOpen"
+          class="ev-button__grey_transparent pl-0"
+          (click)="toggleMemberList()">
+    <span class="material-icons">arrow_back</span>
+    <span class="ev-button__grey-label">{{'Meeting.Button-Back' | translate}}</span>
+  </button>
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close"
+      data-e2e="closeCreateMeetingModalButton">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-modal-body">
+  <div class="row"
+       *ngIf="!memberListOpen">
+    <div class="col-12">
+      <form [formGroup]="form">
+        <div class="row ev-pt-3">
+          <div class="col-12 ev-text-field pb-4">
+            <label
+              for="title"
+              class="ev-text-field__label">{{'Meeting.Field-Title' | translate}}*</label>
+            <input type="text"
+                   id="title"
+                   class="ev-text-field__input"
+                   formControlName="title"
+                   data-e2e="meetingTitleInput">
+            <mat-error class="ev-error-display"
+                 *ngIf="!form.get('title').valid && form.get('title').touched">
+              {{'Message.Error.Title-Length-Meeting' | translate}}
+            </mat-error>
+            <div class="ev-text-field__label ev-length-display"
+              *ngIf="!form.get('title').valid && form.get('title').value.length > 0">
+              {{'Verify.Title-Length' | translate}} {{form.get('title').value.length}}
+            </div>
+          </div>
+        </div>
+        <div class="row pt-3 pt-md-4">
+          <div class="col-12 ev-text-field">
+            <label
+              for="description"
+              class="ev-text-field__label">{{'Meeting.Field-Description' | translate}}</label>
+            <textarea id="description"
+                      class="ev-text-field__text-area"
+                      formControlName="description"
+                      data-e2e="voteDescriptionTextArea">
+            </textarea>
+          </div>
+        </div>
+        <div class="row pt-3 pt-md-4">
+          <div class="col-12 col-md-6 ev-text-field">
+            <div class="input-group">
+              <label for="start"
+                     class="ev-text-field__label">
+                {{'Meeting.Field-From' | translate}}*
+              </label>
+              <input matInput
+                     id="start"
+                     class="ev-text-field__input"
+                     formControlName="startDate"
+                     [required]="true"
+                     value="startDate"
+                     ngbDatepicker
+                     #dStart="ngbDatepicker"
+                     placement="bottom-right"
+                     data-e2e="startDateInput">
+              <em ngbAutofocus
+                  (click)="dStart.toggle()"
+                  class="material-icons-round material-icons-round--dark ev-pos-right-bottom ev-text--cursor-pointer">
+                calendar_today
+              </em>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 ev-text-field pt-4 pt-md-0">
+            <div class="input-group">
+              <label for="end"
+                     class="ev-text-field__label">
+                {{'Meeting.Field-To' | translate}}*
+              </label>
+              <input matInput
+                     id="end"
+                     class="ev-text-field__input"
+                     formControlName="endDate"
+                     [required]="true"
+                     value="endDate"
+                     ngbDatepicker
+                     #dEnd="ngbDatepicker"
+                     placement="bottom-right"
+                     data-e2e="endDateInput">
+              <em ngbAutofocus
+                  (click)="dEnd.toggle()"
+                  class="material-icons-round material-icons-round--dark ev-pos-right-bottom ev-text--cursor-pointer">
+                calendar_today
+              </em>
+            </div>
+          </div>
+        </div>
+
+        <div style="width: 100%; display: flex; justify-content: center">
+          <p *ngIf="form.errors?.isDateRight" class="pt-2">{{'Message.Error.Toggle-Date-Error' | translate}}</p>
+        </div>
+
+        <div class="row pt-3 pt-md-4">
+          <div class="col-12 ev-text-field pb-4">
+            <label
+              class="ev-text-field__label">{{'Meeting.Field-Chairperson' | translate}}*</label>
+            <div (click)="toggleMemberList()">
+              <input type="text"
+                     id="chairperson"
+                     class="ev-text-field__input ev-text--cursor-pointer"
+                     placeholder="{{'Meeting.Pick-Chairperson' | translate}}"
+                     [value]="getChairpersonName()"
+                     data-e2e="chairpersonExpandListButton">
+            </div>
+          </div>
+        </div>
+        <div style="width: 100%; display: flex">
+          <p class="pt-2">*{{'Meeting.Mandatory' | translate}}</p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="memberListOpen">
+    <h5 class="ev-typography--heading1 mt-2 mb-3">{{'Meeting.Chairperson-Title' | translate}}</h5>
+    <p class="mb-1">{{'Meeting.Chairperson-Search' | translate}}</p>
+    <app-create-meeting-modal-list (selectAction)="setChairperson($event)"
+                                   [selectedMember]="selectedChairperson">
+    </app-create-meeting-modal-list>
+  </div>
+</div>
+
+
+<div class="ev-card__footer--voting ev-pos-relative"
+     *ngIf="memberListOpen">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button"
+              (click)="toggleMemberList()"
+              [disabled]="!selectedChairperson"
+              data-e2e="selectChairpersonButton">
+        {{'Meeting.Button-Pick-Chairperson' | translate}}
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<div class="ev-card__footer--voting ev-pos-relative"
+     *ngIf="!memberListOpen">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button *ngIf="!prefillData"
+              class="btn ev-button"
+              (click)="createMeeting()"
+              [disabled]="!selectedChairperson || !form.valid "
+              data-e2e="createMeetingButton">
+        {{'Meeting.Button-Create-Save' | translate}}
+      </button>
+      <button *ngIf="prefillData"
+              class="btn ev-button"
+              (click)="updateMeeting()"
+              [disabled]="!selectedChairperson || !form.valid"
+              data-e2e="createMeetingButtonWithPrefill">
+        {{'Meeting.Button-Edit-Save' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

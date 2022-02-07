@@ -1,0 +1,32 @@
+[
+  {
+    "field0": "fank.hgugo@provider.com",
+    "field1": "Frank",
+    "field2": "Hugo",
+    "role":  1
+  },
+  {
+    "field0": "hecino.peter@provider.com",
+    "field1": "Heino",
+    "field2": "Peter",
+    "role": 2
+  },
+  {
+    "field0": "karl.fritz@provider.com",
+    "field1": "Karl",
+    "field2": "Fritz",
+    "role": 2
+  },
+  {
+    "field0": "new.member@provider.com",
+    "field1": "new",
+    "field2": "member",
+    "role": 2
+  },
+  {
+    "field0": "peter.lustig@provider.com",
+    "field1": "Peter",
+    "field2": "Lustig",
+    "role": 6
+  }
+]

@@ -1,0 +1,54 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="content p-3">
+  <div class="d-flex ev-flex-align-items-center ev-flex-content-end w-100 mb-2">
+
+    <div *ngIf="disableCreateAuthorityButton()" id="banner-correction"
+         class="alert alert-secondary font-weight-bold">
+      {{'Meeting.Authority.Create-Info-Banner' | translate}}
+    </div>
+
+    <div [id]="disableCreateAuthorityButton() ? 'btn-banner-correction': ''">
+      <button class="btn ev-button"
+              data-e2e="AuthoritiesListCreateAuthorityButton"
+              *ngIf="userIsDirector"
+              (click)="openCreateRepresentationsModal()"
+              [disabled]="disableCreateAuthorityButton() || this.representations == undefined">
+        <span class="material-icons">add</span>
+        <span class="ev-button__label">{{'Meeting.Authority.Button-New' | translate}}</span>
+      </button>
+    </div>
+
+  </div>
+
+  <div class="ev-list__search-bar mb-4">
+    <input placeholder="{{'Meeting.Search-Placeholder' | translate}}"
+           #search_input
+           autocomplete="off"
+           (keyup)="searchRepresentation(search_input.value)"
+           (blur)="searchRepresentation(search_input.value)"
+           type="text"
+           class="ev-search__input--outline">
+  </div>
+
+  <ng-container *ngIf="representationsFiltered?.length !== 0 && this.representations != undefined">
+
+    <app-representations-list [changesAllowed]="showRemoveAuthority()"
+                              [representations]="representationsFiltered"
+                              (iconClickedAction)="removeAuthorityAction.emit($event)">
+    </app-representations-list>
+
+  </ng-container>
+
+  <ng-container *ngIf="representationsFiltered?.length === 0 && this.representations != undefined">
+    <div class="row mt-5">
+      <div class="col-12 text-center lead"
+           data-e2e="noAuthoritiesText">
+        {{'Meeting.Authority.No-Items' | translate}}
+      </div>
+    </div>
+  </ng-container>
+</div>
+

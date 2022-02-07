@@ -1,0 +1,65 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title">{{'Import-User.Edit-Access-Code.Title' | translate}}</div>
+  <em ngbAutofocus
+      *ngIf="close"
+      data-e2e="dismissButton"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-modal-body mt-4 mb-3">
+  <div class="col-12">
+    <div class="col-12 ev-text-field">
+
+      <!-- A C C E S S   C O D E -->
+      <label
+        for="access-code"
+        class="ev-text-field__label">{{importUser.field1}} {{importUser.field2}}&nbsp;</label>
+      <label
+        for="access-code"
+        data-e2e="userId"
+        class="ev-text-field__label">({{importUser.field0}})</label>
+      <div class="d-flex ev-flex-content-between">
+        <input #accessCode
+               type="text"
+               id="access-code"
+               class="ev-text-field__input ev-nb-tr ev-nb-br"
+               [formControl]="accessCodeControl"
+               data-e2e="accessCode"
+               [value]="importUser.accessCode">
+        <button class="btn ev-copy-to-clipboard ev-nb-tl ev-nb-bl"
+                [cdkCopyToClipboard]="importUser.accessCode"
+                (click)=setCopyToClipboardSuccessful()
+                data-e2e="copyMnemonicButton">
+          <span class="material-icons mr-1">{{ copiedToClipboard ? 'assignment_turned_in' : 'assignment' }}</span>
+          {{ copiedToClipboard ? ('Import-User.Edit-Access-Code.Clipboard-Success' | translate) : ('Import-User.Edit-Access-Code.Clipboard' | translate) }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button"
+              data-e2e="ExtendAccessCodeButton"
+              (click)="onExtendAccessCodeValidity()">
+        {{'Import-User.Edit-Access-Code.Extend-Validity' | translate}}
+      </button>
+
+      <button class="btn ev-button ml-2"
+              data-e2e="ReplaceAccessCodeButton"
+              (click)="onReplaceAccessCode()">
+        {{'Import-User.Edit-Access-Code.Replace' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

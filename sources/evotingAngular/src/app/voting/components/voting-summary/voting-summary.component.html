@@ -1,0 +1,107 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<ng-container *ngIf="templateReady">
+
+  <div class="d-flex align-items-center">
+    <h3 class="ev-summary-font-size-large">{{voteDetail.title}}</h3>
+    <i class="material-icons-round non-interactive ev-icon-size-adjusted ml-2">{{isAnonymous ? 'visibility_off' : 'visibility'}}</i>
+  </div>
+
+  <div *ngIf="voteDetail.description.length > 0"
+       class="ev-card__body ev-card__body--4-lines ev-summary-font-size-small">
+    {{voteDetail.description}}
+  </div>
+
+  <ng-template #membersTemplate let-members="members" let-showAddress="showAddress"
+               let-boldText="boldText" let-showDividers="showDividers">
+    <div *ngFor="let member of members, last as isLast" class="ev-print-avoid-break-inside py-1"
+         [class.ev-summary-member-divider]="showDividers && !isLast">
+      <div class="ev-summary-font-size-small"
+           [class.font-weight-bolder]="boldText">
+        {{member | MemberName}}
+        <app-role-badges [userRole]="member.role"></app-role-badges>
+      </div>
+      <div class="d-md-block ev-summary-font-size-small">
+        {{member.resolvedClaim.field0}}
+      </div>
+      <div *ngIf="showAddress" class="d-md-block ev-summary-font-size-x-small">
+        {{member.address}}
+      </div>
+    </div>
+  </ng-template>
+
+  <div class="mb-3">
+    <h4 class="ev-summary-font-size">{{'Voting.Summary.Result' | translate}}:</h4>
+    <ng-container *ngIf="results && !isAnonymous else anonymous">
+      <ng-container *ngFor="let currentOption of voteDetail.voteOptions">
+
+        <div class="ev-title-underline mb-2" style="width: fit-content; width: -moz-fit-content;">
+          <label class="ev-summary-font-size m-0">{{currentOption.value}}</label>
+          <span *ngIf="optionHasUserResults(currentOption.value)" class="ev-summary-font-size-small">
+          {{'Voting.Summary.Dash' | translate}} {{getOpenResultsByOption(currentOption.value)}}
+            {{(getOpenResultsByOption(currentOption.value) > 1 ?
+            'Voting.Summary.Cast-Votes-Plural' : 'Voting.Summary.Cast-Votes-Singular') | translate}}
+        </span>
+        </div>
+
+        <div class="row" *ngIf="optionHasUserResults(currentOption.value) else noResultsDisplay">
+          <div *ngFor="let _ of [].constructor(nColumnsResults), let i = index" class="col">
+            <ng-template *ngTemplateOutlet="membersTemplate;
+                context: {members: this.usersByOptionSplit[currentOption.value][i % nColumnsResults],
+                showAddress: false, boldText: true, showDividers: false}">
+            </ng-template>
+          </div>
+        </div>
+        <ng-template #noResultsDisplay>
+          <div class="ev-summary-font-size-small">{{'Voting.Detail.Result-Option-Has-No-Vote' | translate}}</div>
+        </ng-template>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #anonymous>
+      <div *ngFor="let currentOption of results" class="ev-print-avoid-break-inside">
+        <label class="ev-title-underline ev-summary-font-size">{{currentOption.name}}</label>
+        <div *ngIf="currentOption.value > 0" class="ev-summary-font-size-small">{{currentOption.value}}
+          {{(currentOption.value > 1 ? 'Voting.Summary.Cast-Votes-Plural' :
+            'Voting.Summary.Cast-Votes-Singular') | translate}}
+        </div>
+        <div *ngIf="currentOption.value === 0" class="ev-summary-font-size-small">
+          {{'Voting.Detail.Result-Option-Has-No-Vote' | translate}}
+        </div>
+      </div>
+    </ng-template>
+  </div>
+
+  <div *ngIf="nonExcludedUsersSplit.length > 0" class="mb-3">
+    <h4 class="ev-summary-font-size">{{'Voting.Summary.Eligible-Voters' | translate}}:</h4>
+    <div class="row">
+      <div *ngFor="let _ of [].constructor(nColumnsMembers), let i = index" class="col">
+        <ng-template *ngTemplateOutlet="membersTemplate;
+          context: {members: this.nonExcludedUsersSplit[i % nColumnsMembers], showAddress: true,
+          boldText: false, showDividers: true}">
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <h4 class="ev-summary-font-size">{{'Voting.Summary.Excluded-Members' | translate}}:</h4>
+  <div *ngIf="excludedUsersSplit.length > 0; else noExcludedMembers" class="mb-3">
+    <div class="row">
+      <div *ngFor="let _ of [].constructor(nColumnsMembers), let i = index" class="col">
+        <ng-template *ngTemplateOutlet="membersTemplate;
+          context: {members: this.excludedUsersSplit[i % nColumnsMembers], showAddress: true,
+          boldText: false, showDividers: true}">
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noExcludedMembers>
+    <p class="ev-summary-font-size-small">{{'Voting.Summary.Vote-No-Excluded-Members' | translate}}</p>
+  </ng-template>
+
+</ng-container>
+
+

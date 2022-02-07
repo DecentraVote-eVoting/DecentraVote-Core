@@ -1,0 +1,148 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+.ev-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.ev-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.ev-flex-no-wrap {
+  flex-wrap: nowrap;
+}
+
+.ev-flex-reverse-wrap {
+  flex-wrap: wrap-reverse;
+}
+
+.ev-flex-wrap {
+  flex-wrap: wrap;
+}
+
+.ev-flex-content-center {
+  justify-content: center;
+}
+
+.ev-flex-content-start {
+  justify-content: flex-start;
+}
+
+.ev-flex-content-end {
+  justify-content: flex-end;
+}
+
+.ev-flex-content-between {
+  justify-content: space-between;
+}
+
+.ev-flex-content-around {
+  justify-content: space-around;
+}
+
+.ev-flex-align-items-center {
+  align-items: center;
+}
+
+.ev-flex-align-items-start {
+  align-items: flex-start;
+}
+
+.ev-flex-align-items-end {
+  align-items: flex-end;
+}
+
+.ev-flex-align-items-baseline {
+  align-items: baseline;
+}
+
+.ev-flex-align-items-stretch {
+  align-items: stretch;
+}
+
+.ev-flex-align-content-start {
+  align-content: flex-start;
+}
+
+.ev-flex-align-content-end {
+  align-content: flex-end;
+}
+
+.ev-flex-align-content-center {
+  align-content: center;
+}
+
+.ev-flex-align-content-between {
+  align-content: space-between;
+}
+
+.ev-flex-align-content-around {
+  align-content: space-around;
+}
+
+.ev-flex-align-content-stretch {
+  align-content: stretch;
+}
+
+.ev-flex-grow {
+  flex-grow: 1;
+}
+
+.ev-flex-align-self-auto {
+  align-self: auto;
+}
+
+.ev-flex-align-self-start {
+  align-self: flex-start;
+}
+
+.ev-flex-align-self-end {
+  align-self: flex-end;
+}
+
+.ev-flex-align-self-center {
+  align-self: center;
+}
+
+.ev-flex-align-self-baseline {
+  align-self: baseline;
+}
+
+.ev-flex-align-self-stretch {
+  align-self: stretch;
+}
+
+.ev-flex-none {
+  flex: none // same as 0 0 auto
+}
+
+.ev-flex-auto {
+  flex: auto // same as 1 1 auto
+}
+
+.ev-flex-fill {
+  // Need to use 0px instead of just 0 for IE
+  flex: 1 1 0 !important;
+  min-height: 0;
+  min-width: 0;
+}
+
+.ev-padding-right {
+  padding-right: 2%;
+}
+
+.ev-flex-padding-right {
+  padding-right: 2%;
+
+  @include media-breakpoint-down(md) {
+    padding-right: 1%;
+  }
+
+  @include media-breakpoint-down(sm) {
+    padding-right: 0.5%;
+  }
+}

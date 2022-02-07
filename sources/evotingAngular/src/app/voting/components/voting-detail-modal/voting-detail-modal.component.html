@@ -1,0 +1,161 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<ng-container *ngIf="vote">
+  <div class="modal-header ev-voting__header">
+    <h5 class="modal-title"
+        id="modal-basic-title">{{vote.title}}</h5>
+    <em ngbAutofocus
+        *ngIf="close"
+        (click)="dismiss()"
+        class="material-icons-round close ev-modal-close"
+        data-e2e="closeVotingDetailModal">
+      close
+    </em>
+  </div>
+  <div class="modal-body ev-voting__body">
+    <app-voting-detail-main-content [vote]="vote"
+                                    [meeting]="meeting">
+    </app-voting-detail-main-content>
+  </div>
+
+  <ul *ngIf="(vote.stage === voteStage.COUNTED) && !vote.isAnonymous && vote.numberOfTotalVotesCast > 0"
+      class="nav nav-tabs menu ev-tab-menu">
+    <li class="nav-item ev-text--cursor-pointer">
+      <a class="nav-link d-flex ev-flex-align-items-center"
+         [class.active]="activeTab === voteDetailTab.RESULT_OVERVIEW"
+         (click)="onTabChange(voteDetailTab.RESULT_OVERVIEW)"
+         data-e2e="voteVerificationOverview">
+        <span class="material-icons-outlined mr-1">analytics</span>
+        <span class="d-none d-md-block">{{'Voting.Detail.Button-Result-Overview' | translate}}</span>
+      </a>
+    </li>
+    <li class="nav-item ev-text--cursor-pointer">
+      <a class="nav-link d-flex ev-flex-align-items-center"
+         [class.active]="activeTab === voteDetailTab.RESULT_LIST"
+         (click)="onTabChange(voteDetailTab.RESULT_LIST)"
+         data-e2e="voteVerificationDetail">
+        <span class="material-icons-outlined mr-1">view_list</span>
+        <span class="d-none d-md-block">{{'Voting.Detail.Button-Result-List' | translate}}</span>
+      </a>
+    </li>
+  </ul>
+
+  <ng-container [ngSwitch]="activeTab">
+
+    <app-voting-detail-result-list-smart *ngSwitchCase="voteDetailTab.RESULT_LIST"
+                                         [vote]="vote">
+    </app-voting-detail-result-list-smart>
+
+    <ng-container *ngSwitchCase="voteDetailTab.RESULT_OVERVIEW">
+      <div class="ev-card__footer--voting ev-pos-relative">
+        <div class="w-100"
+             *ngIf="formArray && formArray.length > 1">
+          <div class="d-flex ev-flex-align-items-center ev-width-fit-content ev-voting__arrow-container">
+            <button (click)="decreaseIndex()"
+                    [disabled]="selectedFormIndex == 0"
+                    class="material-icons-round ev-voting__arrow-button"
+                    data-e2e="voteArrowLeftButton">
+              keyboard_arrow_left
+            </button>
+
+            <div class="pl-2 pr-2">
+              {{'Voting.Vote' | translate}} {{selectedFormIndex + 1}} {{'Voting.Of' | translate}} {{formArray.length}}
+            </div>
+
+            <button (click)="increaseIndex()"
+                    [disabled]="!nextButtonEnabled()"
+                    class="material-icons-round ev-voting__arrow-button"
+                    data-e2e="voteArrowRightButton">
+              keyboard_arrow_right
+            </button>
+          </div>
+        </div>
+        <ng-container *ngIf="getFormGroupByIndex() as formGroup">
+          <div class="ev-voting__voting-container">
+            <ng-container *ngFor="let option of vote.voteOptions">
+              <div class="ev-voting__voting-option" data-e2e="votingOption">
+                <input type="radio"
+                       id="option_{{option.value}}"
+                       [value]="option.value"
+                       [formControl]="getOptionControl(formGroup)"
+                       data-e2e="voteOptionRadioButton">
+                <label class="ev-voting__voting-option-label ev-ml-1 ev-mr-1"
+                       data-e2e="votingOptionLabel"
+                       for="option_{{option.value}}">{{option.value}}
+                </label>
+                <span class="ev-voting__voting-count"
+                      *ngIf="vote.stage === voteStage.COUNTED && vote.result && vote.result.length > 0">
+                {{getResultByOption(option.value)?.value === 1 ? getResultByOption(option.value)?.value + ' ' + ('Voting.Vote' | translate)
+                  : getResultByOption(option.value)?.value + ' ' + ('Voting.Votes' | translate)}}
+              </span>
+
+              </div>
+              <div class="ev-voting__voting-option mb-3"
+                   *ngIf="vote.stage === voteStage.COUNTED && vote.result && vote.result.length > 0">
+                <ngb-progressbar type="primary"
+                                 [max]="vote.numberOfTotalVotesCast"
+                                 [value]="getResultByOption(option.value)?.value">
+                </ngb-progressbar>
+              </div>
+            </ng-container>
+            <div class="ev-voting__voting-option mt-2 d-flex ev-flex-content-end">
+            <span class="ev-voting__voting-count-total"
+                  *ngIf="vote.stage === voteStage.COUNTED">
+              <strong>
+                {{vote.numberOfTotalVotesCast === 1 ? ('Voting.Overall-Singular' | translate) : ('Voting.Overall-Plural' |  translate)}} {{vote.numberOfTotalVotesCast}}
+                {{'Voting.Of' | translate}} {{vote.numberOfTotalVoteRights}}
+                {{vote.numberOfTotalVoteRights === 1 ? ('Voting.Vote' | translate) : ('Voting.Votes' | translate)}} {{'Voting.Counted' | translate}}
+              </strong>
+
+            </span>
+            </div>
+
+            <div class="d-flex ev-flex-content-end">
+            <button class="btn ev-button mt-2"
+                    (click)="verifyVotesAction.emit()"
+                    *ngIf="showVerifyVotes()"
+                    data-e2e="verifyVotesButton">
+              <span class="material-icons">how_to_reg</span>
+              <span class="ev-button__label">{{'Voting.Button-Verify-Votes' | translate}}</span>
+            </button>
+            </div>
+
+          </div>
+        </ng-container>
+
+        <div class="ev-button-bar"
+             *ngIf="vote.stage === voteStage.OPENED">
+          <ng-container *ngIf="!castVoteLoading else loadingContainer">
+            <button (click)="castVote()" *ngIf="hasVoteRights() && !meeting?.hasGivenAuthority"
+                    [disabled]="!hasVoteRightsLeft() || isFormArrayInvalid()"
+                    class="btn ev-button"
+                    [ngClass]="{
+                    'btn ev-button': hasVoteRightsLeft(),
+                    'alert alert-secondary font-weight-bold maxWidth': !hasVoteRightsLeft()
+                    }"
+                    data-e2e="castVoteButton">
+              {{hasVoteRightsLeft() ?('Voting.Button-Vote' | translate) : ('Voting.Button-Already-Voted' | translate)}}
+            </button>
+
+            <p *ngIf="!hasVoteRights()" data-e2e="No-Vote" class="alert alert-secondary font-weight-bold maxWidth text-center">
+              {{'Voting.No-Vote' | translate}}
+            </p>
+
+            <p *ngIf="hasVoteRights() && vote.isAnonymous && !isAnonymousVoteReady()" class="pt-4">
+              {{'Voting.Vote-Preparing' | translate}}
+            </p>
+          </ng-container>
+          <ng-template #loadingContainer>
+            <p>
+              {{'Voting.Transaction' | translate}}
+            </p>
+          </ng-template>
+        </div>
+      </div>
+    </ng-container>
+
+  </ng-container>
+
+</ng-container>

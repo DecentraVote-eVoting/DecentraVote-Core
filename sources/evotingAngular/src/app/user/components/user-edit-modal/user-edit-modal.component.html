@@ -1,0 +1,107 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<ng-container *ngIf="meetings !== undefined">
+  <div class="modal-header ev-modal-header">
+    <div class="ev-modal-title">{{'User.Form.Title' | translate}}
+    </div>
+    <em ngbAutofocus
+        *ngIf="close"
+        (click)="dismiss()"
+        class="material-icons-round close ev-modal-close"
+        data-e2e="closeCreateMeetingModalButton">
+      close
+    </em>
+  </div>
+
+  <div class="modal-body ev-modal-body mt-2">
+
+    <div *ngIf="userConstraint"
+         class="alert alert-secondary text-center font-weight-bold">
+      {{'Meeting.Constrained-User-Manage-Info' | translate}}
+    </div>
+
+    <form class="d-flex ev-flex-column ev-flex-content-center" [formGroup]="userForm">
+      <div class="ev-text-field">
+        <label
+          for="field1"
+          class="ev-text-field__label">{{'User.Form.Field1' | translate}}</label>
+
+        <div class="d-flex">
+          <input type="text"
+                 id="field1"
+                 class="ev-text-field__input col-6 mr-2"
+                 formControlName="field1"
+                 required>
+          <div class="ev-typography--text-16">{{'User.Form.Field1-explanation' | translate}}</div>
+        </div>
+      </div>
+
+      <div class="ev-text-field">
+        <label
+          for="field2"
+          class="ev-text-field__label">{{'User.Form.Field2' | translate}}</label>
+
+        <div class="d-flex">
+          <input type="text"
+                 id="field2"
+                 class="ev-text-field__input col-6 mr-2"
+                 formControlName="field2"
+                 required>
+          <div class="ev-typography--text-16">{{'User.Form.Field2-explanation' | translate}}</div>
+        </div>
+      </div>
+
+      <div class="ev-text-field">
+        <label
+          for="field0"
+          class="ev-text-field__label">{{'User.Form.Field0' | translate}}</label>
+
+        <div class="d-flex">
+          <input type="text"
+                 id="field0"
+                 class="ev-text-field__input col-6 mr-2"
+                 formControlName="field0">
+          <div class="ev-typography--text-16">{{'User.Form.Field0-explanation' | translate}}</div>
+        </div>
+      </div>
+
+      <div class="ev-text-field">
+        <label
+          for="role"
+          class="ev-text-field__label">{{'User.Form.Role' | translate}}</label>
+
+        <div class="d-flex">
+          <select *ngIf="allowEditRole()" id="role"
+                  class="ev-select col-6 mr-2"
+                  formControlName="role"
+                  required>
+            <ng-container *ngFor="let roleId of roleIds">
+              <option *ngIf="roleId !== 0"
+                      class="ev-select__option"
+                      [value]="roleId">
+                {{getRoleStringI18n(roleId)}}
+              </option>
+            </ng-container>
+          </select>
+          <input *ngIf="!allowEditRole()"
+                 type="text"
+                 value="{{getRoleStringI18n(userForm.value.role)}}"
+                 class="ev-text-field__input col-6 mr-2"
+                 disabled>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="ev-card__footer--voting ev-pos-relative">
+    <div class="d-flex ev-flex-content-center">
+      <button class="btn ev-button ev-height-fit-content"
+              (click)="onSubmit()"
+              [disabled]="!userForm.valid">
+        <span>{{'User.Form.Confirm' | translate}}</span>
+      </button>
+    </div>
+  </div>
+</ng-container>

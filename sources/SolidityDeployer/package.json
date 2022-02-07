@@ -1,0 +1,19 @@
+{
+  "name": "soliditydeployer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "node deploy.js",
+    "deploy-dev": "cross-env DEV_MODE=true node deploy.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@ensdomains/ensjs": "^2.0.1",
+    "@ethersproject/experimental": "^5.4.0",
+    "cross-env": "^7.0.3",
+    "ethers": "^5.5.1"
+  }
+}

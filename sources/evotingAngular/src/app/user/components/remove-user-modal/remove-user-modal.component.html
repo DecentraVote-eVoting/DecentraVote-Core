@@ -1,0 +1,42 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title">{{'User.Remove.Title' | translate}}</div>
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-voting__body">
+  <div class="row pt-3 pt-md-4 pb-3 pb-md-3">
+    <div class="col-12">
+      <div>
+        {{'User.Remove.Description-Sure' | translate}}
+        <strong>{{user | MemberName}}</strong>
+        {{'User.Remove.Description-Delete-2' | translate}}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button mr-2"
+              data-e2e="RemoveUserButton"
+              (click)="onRemoveUser()">
+        {{'User.Remove.Button-Delete' | translate}}
+      </button>
+      <button class="btn ev-button--secondary ml-2"
+              data-e2e="DismissRemoveButton"
+              (click)="dismiss()">
+        {{'User.Remove.Button-Cancel' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

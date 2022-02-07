@@ -1,0 +1,18 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<ng-container *ngIf="spinner && spinner.length > 0">
+  <div class="ev-spinner-container"
+       *ngFor="let spinnerInfo of spinner">
+    <div class="ev-spinner-container__inner-container">
+      <div class="spinner-border text-primary"
+           role="status">
+      </div>
+      <span class="ml-3"
+            *ngIf="spinnerInfo.description">
+        {{spinnerInfo.description | translate}}
+      </span>
+    </div>
+  </div>
+</ng-container>

@@ -1,0 +1,55 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="content p-3 pb-5">
+  <!-- CREATE VOTE BUTTON -->
+  <div class="d-flex ev-flex-align-items-center ev-flex-content-end ev-flex-padding-right w-100">
+    <button class="btn ev-button"
+            (click)="openCreateVoteModal()"
+            *ngIf="showCreateVoting()"
+            [disabled]='isSortingModeActive()'
+            data-e2e="createVoteButton">
+      <span class="material-icons">add</span>
+      <span class="ev-button__label">{{'Voting.Button-Create' | translate}}</span>
+    </button>
+    <button class="btn ev-button ml-1"
+            (click)="toggleSortingMode()"
+            *ngIf="showSortVoting()"
+            [disabled]="voteAddresses.length < 2">
+      <span class="material-icons">
+      {{(isSortingModeActive() ? 'flip_to_front' : 'flip_to_back')}}
+      </span>
+      <span class="ev-button__label">
+        {{(isSortingModeActive() ? ('Voting.Sorting-Mode.Turn-Off' | translate) : ('Voting.Sorting-Mode.Turn-On' | translate))}}
+      </span>
+    </button>
+  </div>
+
+  <!-- CARD GRID -->
+  <ng-container *ngIf="voteAddresses.length !== 0">
+    <div class="ev-card-grid" #cardGridElement>
+      <div class="ev-card-drag-container"
+           [class.ev-card-drag-container--wiggling] = 'isWiggleAnimationActive'
+           [class.ev-card-drag-container--sorting]='isSortingModeActive()'
+           *ngFor="let voteAddress of voteAddresses"
+           id='{{voteAddress}}'>
+            <app-voting-card-smart [voteAddress]="voteAddress"
+                                   [meeting]="meeting"
+                                   [chairperson]="chairperson"
+                                   [userIsChairperson]="userIsChairperson"
+                                   [userIsDirector]="userIsDirector"
+                                   [isSortingModeActive]="isSortingModeActive()">
+            </app-voting-card-smart>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="voteAddresses.length === 0 && !voteLoading">
+    <div class="row mt-5">
+      <div class="col-12 text-center lead">
+        {{'Voting.Info-No-Items' | translate}}
+      </div>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,54 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+@media (max-width: 768px) {
+  .mobile {
+    display: none !important;
+  }
+}
+
+.padding1px {
+  padding-top: 1%;
+}
+
+// pagination color scheme as per toggle button in _toggle-button.scss
+ngb-pagination {
+  .material-icons {
+    vertical-align: middle;
+    margin-top: -0.1rem;                                              // align with page numbers
+  }
+
+  .page-item {
+    border-radius: 2rem !important;
+
+    &.active .page-link {
+      z-index: 99;                                                    // border should be visible at all times
+      background-color: rgba($color-button-blue, .05);
+      border: 1px solid $color-button-blue !important;
+      color: $color-button-blue;
+    }
+
+    &.disabled .page-link { color: rgba($color-dark-grey, .2); }
+  }
+
+  .page-link {
+    color: rgba($color-dark-grey, .6);
+    font-weight: 500;
+    border-color: rgba($color-dark-grey, .5) !important;
+    height: 2.5rem;
+    width: 2.5rem;
+    padding-left: 0;                                                  // pl & pr to 0 for horizontal alignment
+    padding-right: 0;
+    padding-top: 0.55rem;                                             // slight adjustment to center elements in links
+    text-align: center;
+
+    &:hover {
+      color: rgba($color-dark-grey, .6);
+      background-color: #f5f5f5;
+    }
+    &:focus { box-shadow: none; }
+  }
+}

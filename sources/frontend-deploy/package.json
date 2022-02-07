@@ -1,0 +1,21 @@
+{
+  "name": "frontend-deploy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "frontend-deploy.js",
+  "dependencies": {
+    "@ethersproject/experimental": "^5.0.4",
+    "ethers": "^5.0.14",
+    "mime-types": "^2.1.27",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "local": "node frontend-deploy.js local assets",
+    "e2e": "node frontend-deploy.js e2e assets",
+    "deploy": "node frontend-deploy.js deploy"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,209 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-button {
+  display: flex;
+  justify-content: center;
+  background-color: $color-button-blue;
+  color: $color-white;
+  border: 0;
+
+  &:hover {
+    color: $color-white;
+    &:not([disabled]) {
+      background-color: $color-button-dark-blue;
+    }
+  }
+
+  &__grey {
+    @extend .ev-button;
+    background-color: #E2E6E9 !important;
+    color: $color-dark-grey !important;
+    padding: 12px;
+
+    &-label {
+      margin-left: 12px;
+      font-weight: 500;
+    }
+
+    &-small {
+      padding: 6px;
+      font-size: 10px;
+    }
+  }
+
+  &__light {
+    @extend .ev-button;
+    background-color: #E2E6E9 !important;
+    color: $color-dark-grey !important;
+  }
+
+  &__grey_transparent {
+    @extend .ev-button;
+    color: $color-dark-grey !important;
+    background-color: transparent !important;
+    padding: 12px;
+
+    &-label {
+      font-weight: 500;
+    }
+
+    &:active {
+      background-color: #E2E6E9 !important;
+    }
+
+    &:hover {
+      background-color: #E2E6E9 !important
+    }
+
+  }
+
+  &--secondary {
+    display: flex;
+    justify-content: center;
+    background-color: $color-grey;
+    color: $color-blue;
+    border: 1px solid $color-dark-grey;
+    padding-left: 12px;
+    padding-right: 12px;
+
+    &:hover {
+      color: $color-blue;
+      border-color: $color-blue !important;
+      background-color: $color-grey;
+    }
+    &:focus {
+      box-shadow: none !important;
+    }
+  }
+
+  &--dropdown_main {
+    display: flex;
+    justify-content: center;
+    color: $color-white;
+    border: 0;
+    &:hover {
+      color: $color-white;
+      background-color: $color-button-dark-blue !important;
+    }
+  }
+
+  &--dropdown {
+    display: flex;
+    width: 100%;
+    justify-content: left;
+    background-color: #ffffff;
+    color: $color-black;
+    border: 0;
+
+    &:hover {
+      background-color: $color-grey;
+    }
+
+    &:focus {
+      outline: none
+    }
+  }
+
+  &__label {
+    margin-left: 0.5rem;
+    @include media-breakpoint-down(md) {
+      display: none;
+    }
+
+    &--bold-grey {
+      font-weight: bold;
+      color: $color-dark-grey;
+    }
+  }
+
+  &:focus {
+    box-shadow: none;
+    outline: none;
+  }
+}
+
+.ev-button-inline {
+  border: 0;
+  display: flex;
+  align-items: center;
+  color: $color-dark-grey;
+
+  &:hover {
+    color: $color-button-blue;
+  }
+
+  &__label {
+    margin-top: -3px;
+  }
+}
+
+.ev-button-options {
+  display: flex;
+  justify-content: center;
+  border: 0;
+  margin-bottom: 7px;
+  background-color: transparent;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.ev-button-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    flex: 1 1 auto;
+  }
+}
+
+.ev-copy-to-clipboard {
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #E2E6E9;
+  color: $color-dark-grey;
+  width: 100%;
+  flex-shrink: 3;
+  height: 40px;
+
+  &__label {
+    margin-top: -3px;
+  }
+}
+
+.ev-modal-button {
+  display: flex;
+  width: 92%;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  background: #eceff1;
+}
+
+.ev-nb-tl {
+  border-top-left-radius: 0;
+}
+
+.ev-nb-tr {
+  border-top-right-radius: 0;
+}
+
+.ev-nb-bl {
+  border-bottom-left-radius: 0;
+}
+
+.ev-nb-br {
+  border-bottom-right-radius: 0;
+}
+.maxWidth {
+  width: 100%
+}

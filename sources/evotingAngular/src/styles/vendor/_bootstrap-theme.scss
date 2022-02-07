@@ -1,0 +1,25 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+// Margin between elements in footer, must be lower than or equal to 2 * $modal-inner-padding
+$modal-footer-margin-between: 1rem;
+$modal-inner-padding: 2rem;
+$modal-header-padding: 2rem 2rem 0 2rem;
+$modal-dialog-margin: 1.25rem;
+$modal-header-border-width: 0;
+$modal-content-border-width: 0;
+$modal-content-border-radius: .5rem;
+
+$body-bg: $color-grey;
+
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 1120px,
+  xl: 1440px
+);
+
+$grid-gutter-width: 32px;

@@ -1,0 +1,21 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-chart {
+  &__bar {
+    height: 20px;
+    background-color: #B2D1E5;
+    border-radius: 20px;
+  }
+
+  &__max-text {
+    font-weight: bold;
+  }
+
+  &__max-bar {
+    background-color: $color-button-blue !important;
+  }
+}

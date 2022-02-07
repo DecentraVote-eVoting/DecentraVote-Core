@@ -1,0 +1,57 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+.header-image{
+  width: 86vw;
+  @include media-breakpoint-up(sm) {
+    width:350px;
+  }
+
+  &__overview{
+    width:50vw;
+
+    @include media-breakpoint-up(sm) {
+      width:300px;
+    }
+  }
+}
+
+.header-image_sm{
+  width: 100%;
+  max-width: 2em;
+  max-height: 2em;
+
+
+  @include media-breakpoint-up(sm) {
+    width:350px;
+  }
+
+  &__overview{
+    width:50vw;
+
+    @include media-breakpoint-up(sm) {
+      width:300px;
+    }
+  }
+}
+
+#content-desktop {
+  display: none;
+}
+#content-mobile {
+  display: block;
+}
+
+@media screen and (min-width: 768px){
+  #content-desktop {
+    display: block;
+  }
+  #content-mobile {
+    display: none;
+  }
+}
+.ev-header-container {
+  display: flex;
+  justify-content: space-between;
+}

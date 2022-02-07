@@ -1,0 +1,167 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title">{{isEdit ? ('Voting.Title-Edit' | translate) : ('Voting.Title-Create' | translate)}}</div>
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-modal-body">
+  <div class="row">
+    <div class="col-12">
+      <form [formGroup]="formGroup">
+        <div class="row ev-pt-3">
+          <div class="col-12 ev-text-field">
+            <label
+              for="title"
+              class="ev-text-field__label">{{'Voting.Field-Title' | translate}}*</label>
+            <input type="text"
+                   id="title"
+                   class="ev-text-field__input"
+                   formControlName="title"
+                   data-e2e="votingTitleInput"
+                   (keydown.enter)="$event.preventDefault()">
+            <mat-error *ngIf="!formGroup.get('title').valid && formGroup.get('title').touched"
+                       class="ev-error-display">
+              {{'Message.Error.Title-Length-Vote' | translate}}
+            </mat-error>
+            <div *ngIf="!formGroup.get('title').valid && formGroup.get('title').value.length > 0"
+                 class="ev-text-field__label ev-length-display">
+              {{'Verify.Title-Length' | translate}} {{formGroup.get('title').value.length}}
+            </div>
+          </div>
+        </div>
+        <div class="row ev-pt-3">
+          <div class="col-12">
+            <div class="custom-control custom-switch">
+              <input type="checkbox"
+                     class="custom-control-input"
+                     id="anonymous"
+                     formControlName="anonymous">
+              <label class="custom-control-label ev-control"
+                     for="anonymous">{{'Voting.Anonymous' | translate}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="row pt-3 pt-md-4">
+          <div class="col-12 ev-text-field">
+            <label
+              for="description"
+              class="ev-text-field__label">{{'Voting.Field-Description' | translate}}</label>
+            <textarea id="description"
+                      class="ev-text-field__text-area"
+                      formControlName="description"
+                      data-e2e="voteDescriptionTextArea">
+            </textarea>
+          </div>
+        </div>
+        <div class="row pt-3 pt-md-4">
+          <div class="col-12 ev-text-field">
+            <label class="ev-text-field__label">{{'Voting.Field-Options' | translate}}*</label>
+            <ng-container #optionsList
+                          *ngFor="let optionControl of votingOptionsArray.controls; let i = index">
+              <div class="w-100 d-flex ev-flex-align-items-center">
+                <input [id]="'optionInput_' + i"
+                       type="text"
+                       [class.ev-text-field__input]="!optionControl.hasError('duplicate') || optionControl.value"
+                       [class.ev-text-field__input_error]="optionControl.hasError('duplicate') || !optionControl.value"
+                       [formControl]="optionControl | cast"
+                       (input)="updateValidation()"
+                       (keydown.enter)="$event.preventDefault()"
+                       data-e2e="optionInputField">
+                <button class="ev-button-options"
+                        [disabled]="votingOptionsArray.length == 1"
+                        (click)="removeOption(i)"
+                        data-e2e="removeOptionButton">
+                  <span class="material-icons-round mr-2 ml-2">delete</span>
+                </button>
+              </div>
+              <div>
+                <mat-error *ngIf="optionControl.hasError('duplicate') && optionControl.value"
+                           class="ev-error-display">
+                  {{'Message.Error.Duplicate' | translate}}
+                </mat-error>
+                <mat-error *ngIf="!optionControl.value"
+                           class="ev-error-display">
+                  {{'Message.Error.Empty-Option' | translate}}
+                </mat-error>
+              </div>
+            </ng-container>
+
+            <button class="btn ev-modal-button"
+                    (click)="addOption()"
+                    data-e2e="addOptionButton">
+              <span class="material-icons">add</span>
+              <span class="ev-button__label">{{'Voting.Button-New-Option' | translate}}</span>
+            </button>
+          </div>
+          <div class="col-12 pt-3">
+              <label for="attachment"
+                     class="ev-text-field__label">{{'Voting.Field-Attachment' | translate}}</label>
+              <div class="ev-attachment ev-attachment__extra-high">
+                <input #fileInput
+                       id="attachment"
+                       type="file"
+                       title=""
+                       (change)="onUpload($event.target)"
+                       class="ev-attachment__input"
+                       data-e2e="fileInput">
+                <i class="material-icons-round ev-attachment-icon"
+                   *ngIf="!fileToUpload">cloud_upload</i>
+                <p class="ev-attachment-text text-center mb-0"
+                   *ngIf="fileToUpload">
+                  <strong>{{fileToUpload?.name}}</strong>
+                </p>
+
+                <p class="ev-attachment-text text-center mb-0">
+                  {{'Voting.Upload' | translate}}
+                </p>
+                <p class="ev-attachment-text text-center mb-0"
+                   *ngIf="fileHasInvalidExtension">
+                  {{'Voting.Attachment-Valid-Extensions' | translate}}
+                  <span *ngFor="let ext of validExtensions; let last = last">
+                  .{{ext}}<span *ngIf="!last">, </span>
+                </span>
+                </p>
+                <p class="ev-attachment-text text-center mb-0"
+                   *ngIf="fileIsTooLarge">
+                  {{'Voting.Attachment-Max-Size' | translate}}
+                  {{maxFileSize.toString()[0] + '0 MB'}}
+                </p>
+              </div>
+            </div>
+          </div>
+        <div class="col-12 mt-2">
+            <button *ngIf="fileToUpload"
+                    (click)="removeUpload()"
+                    class="btn ev-button mx-auto">
+              {{'Voting.Button-Remove-Upload' | translate}}
+            </button>
+          </div>
+        <div style="width: 100%; display: flex">
+          <p class="pt-2">*{{'Voting.Mandatory' | translate}}</p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button"
+              type="button"
+              (click)="createVote()"
+              [disabled]="!formGroup.valid"
+              data-e2e="createVoteModalButton">
+        {{isEdit ? ('Voting.Button-Edit-Save' | translate) : ('Voting.Button-Create-Save' | translate)}}
+      </button>
+    </div>
+  </div>
+</div>

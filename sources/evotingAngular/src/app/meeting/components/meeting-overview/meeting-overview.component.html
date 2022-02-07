@@ -1,0 +1,98 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="container">
+  <div class="ev-header-container my-4">
+    <div class="ev-typography&#45;&#45;title ">
+      <img [src]="(assetFiles.LOGO | ResolveAsset) | async"
+           class="header-image"
+           alt="DecentraVote Logo"
+           id="content-desktop"/>
+      <img [src]="(assetFiles.LOGO_SM | ResolveAsset) | async"
+           class="header-image_sm"
+           alt="DecentraVote Logo"
+           id="content-mobile"/>
+    </div>
+    <div class="d-flex ev-flex-column">
+      <span *ngIf="user !== undefined"
+            class="ev-typography--light text-right mb-2">
+        <span *ngIf="getOrganizationAddress()">Organisation: {{getOrganizationAddress()}} | </span>
+        {{'Meeting.Identifier' | translate}}: {{user.resolvedClaim.field2}}
+        <app-role-badges [userRole]="user.role"></app-role-badges>
+      </span>
+      <div class="d-flex justify-content-end ev-flex-align-items-center mt-3 mt-md-0">
+        <div class="btn-group dropdown ev-dropdown ev-height-fit-content">
+
+                    <button type="button"
+                            class="btn ev-button--dropdown_main dropdown-toggle"
+                            #menuTrigger = 'matMenuTrigger'
+                            [matMenuTriggerFor]="children"
+                            app-dropdown
+                            [menu]="children"
+                            [hoverTrigger]="menuTrigger"
+                            data-e2e="accountDropdownButton">
+                      <span class="material-icons d-md-none">person</span>
+                      <span class="d-none d-md-block">
+                        {{'Account.Button-Account' | translate}}
+                      </span>
+                    </button>
+                    <mat-menu #children="matMenu" hasBackdrop="false" xPosition="before">
+                      <button class="ev-button--dropdown"
+                              data-e2e="showMnemonicDropdownEntry"
+                              (click)="showMnemonic()">
+                        {{'Account.Button-Show-Mnemonic' | translate}}
+                      </button>
+                      <button class="ev-button--dropdown"
+                              data-e2e="logoutDropdownEntry"
+                              (click)="logout()">
+                        {{'Account.Button-Logout' | translate}}
+                      </button>
+                    </mat-menu>
+        </div>
+        <button class="btn ev-button ev-height-fit-content ml-3"
+                *ngIf="showUsersButton()"
+                [routerLink]="'/' + routePaths.MEMBER_OVERVIEW"
+                data-e2e="manageMembersBtn">
+          <span class="material-icons">people</span>
+          <span class="ev-button__label">{{showMemberManage() ? ('User.Button-Manage' | translate) : ('User.Button-Users' | translate)}}</span>
+        </button>
+        <button class="btn ev-button ev-height-fit-content ml-3"
+                (click)="openCreateMeetingModal()"
+                *ngIf="showMeetingCreate()" data-e2e="createMeetingBtn">
+          <span class="material-icons">add</span>
+          <span class="ev-button__label">{{'Meeting.Button-Create' | translate}}</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <ng-container *ngIf="!isMeetingsEmpty()">
+    <ng-container *ngFor="let year of getYears()">
+      <div class="row">
+        <div class="col-12">
+          <div class="ev-typography&#45;&#45;text-16 text-center">{{year}}</div>
+        </div>
+      </div>
+      <ng-container>
+        <div class="row pb-5">
+          <div class="col-sm-12 col-lg-6 col-xl-4 my-3"
+               *ngFor="let meeting of getSortedMeetingsByYear(year)">
+            <app-meeting-card-smart [meeting]="meeting">
+            </app-meeting-card-smart>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </ng-container>
+
+  <ng-container *ngIf="isMeetingsEmpty() && !isMeetingsLoading">
+    <div class="row mt-5">
+      <div class="col-12 mt-5 text-center lead"
+            data-e2e="noMeetingsText">
+        {{'Meeting.Info-No-Items' | translate}}
+      </div>
+    </div>
+  </ng-container>
+</div>

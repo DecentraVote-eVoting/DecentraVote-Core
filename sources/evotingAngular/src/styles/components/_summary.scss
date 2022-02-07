@@ -1,0 +1,84 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+@page {
+  // force chrome default print margins on all browsers (that support @page)
+  margin: 6.5mm 10mm 6.5mm 6.5mm;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .ev-summary-button-wrapper {
+    margin: 0 !important;
+    height: 0 !important;
+  }
+
+  .ev-print-avoid-break-inside {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    -webkit-column-break-inside: avoid !important;
+  }
+
+  .ev-summary-page-wrapper {
+    width: 100% !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .ev-summary-page-wrapper, .ev-summary-page-wrapper * {
+    visibility: visible;
+  }
+}
+
+.ev-summary-button-wrapper {
+  display: flex;
+  justify-content: right;
+  width: var(--pageWidth);
+  margin: 1.5rem auto 0 auto;
+}
+
+.ev-summary-page-wrapper {
+  $width: var(--pageWidth);
+  width: $width;
+  min-height: calc(#{$width} * 1.4142);
+  margin: 1rem auto 1.5rem auto;
+  padding: 6.5mm 10mm 6.5mm 6.5mm;
+  background: $color-white;
+  box-shadow: 3px 3px 5px 3px #e7e7e7;
+}
+
+.ev-icon-size-adjusted {
+  // icon size is 1.5 times font-size of 12pt (thus also depends on --adjustFontSize)
+  font-size: calc(12pt * var(--adjustFontSize) * 1.5);
+}
+
+.ev-summary-font-size-x-small {
+  font-size: calc(9pt * var(--adjustFontSize));
+}
+
+.ev-summary-font-size-small {
+  font-size: calc(12pt * var(--adjustFontSize));
+}
+
+.ev-summary-font-size {
+  font-size: calc(18pt * var(--adjustFontSize));
+}
+
+.ev-summary-font-size-large {
+  font-size: calc(24pt * var(--adjustFontSize));
+}
+
+.ev-summary-font-size-x-large {
+  font-size: calc(30pt * var(--adjustFontSize));
+}
+
+.ev-summary-member-divider {
+  border-bottom: 1px dashed;
+}

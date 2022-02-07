@@ -1,0 +1,47 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title">{{'Voting.Archive-Title' | translate}}</div>
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-modal-body">
+  <div class="row">
+    <div class="col-12">
+      <div class="row pt-3 pt-md-4">
+        <div class="col-12 ev-text-field">
+          <label
+            for="reason"
+            class="ev-text-field__label">
+            {{'Voting.Archive-Field-Reason' | translate}}
+          </label>
+          <textarea id="reason"
+                    class="ev-text-field__text-area"
+                    [formControl]="reasonControl"
+                    data-e2e="archiveReasonTextArea">
+          </textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button"
+              (click)="archiveVote()"
+              [disabled]="reasonControl.invalid || !voteModel.address"
+              data-e2e="archiveVoteButton">
+        {{'Voting.Button-Archive' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

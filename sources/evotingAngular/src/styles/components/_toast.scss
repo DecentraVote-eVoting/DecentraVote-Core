@@ -1,0 +1,35 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-toast-container {
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  min-width: 12rem;
+  z-index: 9999;
+}
+
+.ev-toast {
+  opacity: 1;
+  z-index: 9999;
+  background: $color-white;
+
+  &__error {
+    color: $color-toast-error;
+  }
+
+  &__warning {
+    color: $color-toast-warning;
+  }
+
+  &__success {
+    color: $color-toast-success;
+  }
+
+  &__info {
+    color: $color-toast-info;
+  }
+}

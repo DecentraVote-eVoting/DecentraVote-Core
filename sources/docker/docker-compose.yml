@@ -1,0 +1,31 @@
+version: '3.1'
+services:
+  postgres:
+    image: "postgres:12.5-alpine"
+    volumes:
+      - ./setup/init.sql:/docker-entrypoint-initdb.d/1_init.sql
+    ports:
+      - 6543:5432
+    environment:
+      POSTGRES_DB: ${DB_NAME:-postgres}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PW:-postgres}
+      TZ: Europe/Vienna
+
+#  keycloak:
+#    image: "jboss/keycloak:10.0.2"
+#    volumes:
+#      - ./setup/:/tmp/setup/
+#    environment:
+#      KEYCLOAK_LOGLEVEL: INFO
+#      DB_VENDOR: POSTGRES
+#      DB_ADDR: postgres
+#      DB_DATABASE: ${DB_NAME:-postgres}
+#      DB_USER: ${DB_USER:-postgres}
+#      DB_SCHEMA: keycloak
+#      DB_PASSWORD: ${DB_PW:-postgres}
+#      TZ: Europe/Vienna
+#    ports:
+#      - 8180:8080
+#    depends_on:
+#      - postgres

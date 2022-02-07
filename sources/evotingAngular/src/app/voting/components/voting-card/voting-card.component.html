@@ -1,0 +1,141 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="ev-card-clickable">
+  <div class="ev-card2 ev-card--pointer "
+       *ngIf="vote"
+       [style]="{'pointer-events': isSortingModeActive ? 'none' : 'auto'}"
+       [class.ev-card__sorting]='isSortingModeActive'
+       data-e2e="voteCard">
+    <div class="ev-card__container">
+      <div class="ev-card__container--left"
+           (click)="openVotingModal.emit()">
+
+        <div class="ev-card__title_Box">
+          <h5 class="ev-card2--test" data-e2e="voteCardTitleText">{{vote.title}}</h5>
+        </div>
+
+        <div class="ev-flex-row mb-3 ev-pdleft">
+          <ng-container [ngSwitch]="vote.stage">
+            <div *ngSwitchCase="voteStage.CREATED"
+                 class="ev-badge ev-badge--yellow">
+              {{'Voting.Stage.Created' | translate}}
+            </div>
+            <div *ngSwitchCase="voteStage.OPENED"
+                 class="ev-badge ev-badge--green">
+              {{'Voting.Stage.Opened' | translate}}
+            </div>
+            <div *ngSwitchCase="voteStage.CLOSED"
+                 class="ev-badge ev-badge--gray">
+              {{'Voting.Stage.Closed' | translate}}
+            </div>
+            <div *ngSwitchCase="voteStage.COUNTED"
+                 class="ev-badge ev-badge--blue-outline">
+              {{'Voting.Stage.Counted' | translate}}
+            </div>
+            <div *ngSwitchCase="voteStage.ARCHIVED"
+                 class="ev-badge ev-badge--gray-outline">
+              {{'Voting.Stage.Cancelled' | translate}}
+            </div>
+          </ng-container>
+
+          <i *ngIf="vote.isAnonymous" class="material-icons-round non-interactive ml-2">visibility_off</i>
+          <i *ngIf="!vote.isAnonymous" class="material-icons-round non-interactive ml-2">visibility</i>
+
+          <ng-container *ngIf="showVotingIcon()">
+            <em class="material-icons-round non-interactive ml-2">check_circle</em>
+          </ng-container>
+        </div>
+        <div class="ev-card__body ev-card__body--4-lines ev-pdleft"
+             data-e2e="voteCardDescription"
+             *ngIf='showVotingDescription()'>
+          {{vote.description}}
+        </div>
+        <div class="ev-card2 ev-pdleft ev-mgbottom" *ngIf="showVotingCount()">
+          {{(castedVotesWhileOpen === 1 || vote.numberOfTotalVotesCast === 1) ? ('Voting.Overall-Singular' | translate) : ('Voting.Overall-Plural' |  translate)}}
+          {{castedVotesWhileOpen ? castedVotesWhileOpen : vote.numberOfTotalVotesCast}} {{'Voting.Of' | translate}} {{vote.numberOfTotalVoteRights}}
+          {{vote.numberOfTotalVoteRights === 1 ? ('Voting.Vote' | translate) : ('Voting.Votes' | translate)}} {{'Voting.Counted' | translate}}
+        </div>
+      </div>
+      <div class="ev-card__container--right"
+           style="padding-right: 2%; padding-top: 2%"
+           *ngIf='showVotingInteractions()'>
+        <button mat-icon-button
+                class="ev-icon material-icons-round ev-card--pointer ev-pdright ev-pdtop"
+                (click)="openEditVotingModal()"
+                ngbTooltip="{{'Voting.Tooltip-Edit' | translate}}"
+                *ngIf="showVotingEdit()"
+                data-e2e="editVoteButton">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button mat-icon-button
+                class="ev-icon material-icons-round ev-card--pointer ev-pdright"
+                (click)="openParticipantsModal.emit()"
+                ngbTooltip="{{'Voting.Tooltip-Entitled' | translate}}"
+                data-e2e="openParticipantsModalButton">
+          <mat-icon>people</mat-icon>
+        </button>
+        <button mat-icon-button
+                class="ev-icon material-icons-round ev-card--pointer ev-pdright"
+                (click)="openChangeRequestVoteModal()"
+                ngbTooltip="{{'Voting.Tooltip-Change-Request' | translate}}"
+                *ngIf="showCreateVoting()"
+                data-e2e="openChangeRequestModalButton">
+          <mat-icon>file_copy</mat-icon>
+        </button>
+        <button mat-icon-button
+                class="ev-icon material-icons-round ev-card--pointer ev-pdright"
+                (click)="openDeleteModal.emit()"
+                [disabled]="isVoteLoading"
+                ngbTooltip="{{'Voting.Tooltip-Delete' | translate}}"
+                *ngIf="showVotingDelete()"
+                data-e2e="openDeleteVoteModalButton">
+          <mat-icon class="ev-button-disabled">delete</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="ev-card__options ev-card__body--justify-content-between d-flex"
+       *ngIf="showVotingOptions() && !isSortingModeActive"
+       [style]="{'pointer-events': isSortingModeActive ? 'none' : 'auto'}">
+    <button class="btn ev-card__options--button w-100"
+            [disabled]="isVoteLoading"
+            (click)="openVoteAction.emit()"
+            *ngIf="showVotingOpen()"
+            data-e2e="openVoteButton">
+      <span>{{'Voting.Button-Open-Voting' | translate}}</span>
+      <span *ngIf="isVoteLoading" class="spinner-border spinner-border-sm ml-1"></span>
+    </button>
+    <button class="btn ev-card__options--button w-100"
+            [disabled]="isVoteArchived"
+            (click)="openArchiveVoteModal.emit()"
+            *ngIf="showVotingArchive()"
+            data-e2e="openArchiveVoteModal">
+      <span>{{'Voting.Button-Archive-Voting' | translate}}</span>
+      <span *ngIf="isVoteArchived" class="spinner-border spinner-border-sm ml-1"></span>
+    </button>
+    <button class="btn ev-card__options--button w-100"
+            [disabled]="isProcessingVotes"
+            (click)="closeVoteAction.emit()"
+            *ngIf="showVotingClose()"
+            data-e2e="closeVoteButton">
+      <span>{{'Voting.Button-Close-Voting' | translate}}</span>
+      <span *ngIf="isProcessingVotes" class="spinner-border spinner-border-sm ml-1"></span>
+    </button>
+    <div class="progress-container"
+         *ngIf="showIsProcessingVotesBuffer()">
+      <span>{{'Voting.Closing-Votes-Notification' | translate}}</span>
+      <mat-progress-bar class="progress-container--bar" mode="buffer"></mat-progress-bar>
+    </div>
+    <button class="btn ev-card__options--button w-100"
+            [disabled]="isVoteLoading"
+            (click)="finishVoteAction.emit()"
+            *ngIf="showVotingFinish()"
+            data-e2e="finishVoteButton">
+      <span>{{'Voting.Button-Finish-Voting' | translate}}</span>
+      <span *ngIf="isVoteLoading" class="spinner-border spinner-border-sm ml-1"></span>
+    </button>
+  </div>
+</div>

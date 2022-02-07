@@ -1,0 +1,80 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<ng-container *ngIf="meeting">
+  <div class="ev-card-clickable"
+       data-e2e="meetingCard"
+       [class.ev-card__not-visible]="!meeting.isVisible">
+    <div class="ev-card2 ev-card--pointer">
+      <div class="ev-card__container">
+        <div class="ev-card__container--left"
+             (click)="openMeetingAction.emit()">
+
+          <div class="ev-card__title_Box">
+            <h5 class="ev-card2--test">
+              {{meeting.title}}
+              <span class="ev-card__title-secondary">
+                ({{numberOfVotes}} {{numberOfVotes === 1 ? ('Voting.Voting' | translate) : ('Voting.Votings' | translate)}})
+              </span>
+            </h5>
+          </div>
+
+          <div class="ev-card__body ev-pdleft">
+            <ng-container [ngSwitch]="meeting.stage">
+              <div *ngSwitchCase="meetingStage.CREATED"
+                   class="ev-badge ev-badge--gray">
+                {{'Meeting.Stage.Created' | translate}}
+              </div>
+              <div *ngSwitchCase="meetingStage.OPEN"
+                   class="ev-badge ev-badge--green">
+                {{'Meeting.Stage.Open' | translate}}
+              </div>
+              <div *ngSwitchCase="meetingStage.CLOSED"
+                   class="ev-badge ev-badge--gray">
+                {{'Meeting.Stage.Closed' | translate}}
+              </div>
+            </ng-container>
+          </div>
+          <div class="ev-card__body ev-flex-column  ev-pdleft">
+            <div>{{'Meeting.Date' | translate}} {{meeting.startDate | date:'dd.MM.yyyy'}} {{'Meeting.To' | translate}} {{meeting.endDate | date:'dd.MM.yyyy'}}</div>
+            <div class="full-width">{{'Meeting.Chairperson' | translate}} {{chairperson | MemberName}}</div>
+            <div class="ev-card__body--4-lines">{{meeting.description}}</div>
+          </div>
+        </div>
+        <div class="ev-card__container--right"
+             style="padding-right: 2%; padding-top: 2%">
+          <button mat-icon-button
+                  class="ev-icon material-icons-round ev-card--pointer ev-pdright"
+                  (click)="openEditModal.emit()"
+                  ngbTooltip="{{'Voting.Tooltip-Edit' | translate}}"
+                  *ngIf="showMeetingEdit()"
+                  data-e2e="openEditMeetingModalButton">
+            <mat-icon class="ev-button-disabled">edit</mat-icon>
+          </button>
+          <button mat-icon-button
+                  class="ev-icon material-icons-round ev-card--pointer ev-pdright"
+                  (click)="openDeleteModal.emit()"
+                  ngbTooltip="{{'Voting.Tooltip-Delete' | translate}}"
+                  *ngIf="showMeetingDelete()"
+                  data-e2e="openDeleteMeetingModalButton">
+            <mat-icon class="ev-button-disabled">delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="ev-card__options ev-card__body--justify-content-between"
+         *ngIf="showMeetingJoin()">
+      <button class="btn ev-card__options--button w-100"
+              [disabled]="isParticipantStateChanged"
+              (click)="joinMeetingAction.emit()"
+              *ngIf="getParticipantCanJoin()"
+              data-e2e="registerForMeetingButton">
+        <span>{{'Meeting.Button-Join-Meeting' | translate}}</span>
+        <span *ngIf="isParticipantStateChanged" class="spinner-border spinner-border-sm ml-1"></span>
+      </button>
+      <span *ngIf="userPromisedToVote()">{{'Meeting.Joined' | translate}}</span>
+      <span *ngIf="meeting.hasGivenAuthority === true">{{'Meeting.Authority-Given' | translate}}</span>
+    </div>
+  </div>
+</ng-container>

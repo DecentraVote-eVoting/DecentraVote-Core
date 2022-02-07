@@ -1,0 +1,156 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-text-field {
+  width: 100%;
+
+  &__label {
+    &--hidden {
+      display: none;
+    }
+  }
+
+  &__input {
+    border: 0 !important;
+    margin-bottom: 0.5rem;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: $color-grey;
+    width: 100%;
+
+    &:focus {
+      outline-width: 0;
+    }
+
+    &:disabled {
+      background: none;
+      padding-top: 0;
+      margin-bottom: 0;
+    }
+
+  }
+
+  &__input_error {
+    border: 0 !important;
+    margin-bottom: 0;
+    padding: 8px 16px;
+    width: 100%;
+    background-color: $color-grey;
+    text-decoration: underline red;
+
+    &:focus {
+      outline-width: 0;
+    }
+  }
+
+
+  &__text-area {
+    border: 0;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: $color-grey;
+    width: 100%;
+    height: 5em;
+    resize: none;
+
+    &:focus {
+      outline-width: 0;
+    }
+  }
+}
+
+.ev-number {
+
+  &__group {
+    border-radius: 50px;
+    border: 1px solid $color-button-blue;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    &__button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      border: none;
+      background-color: white;
+
+      &:focus {
+        outline-width: 0;
+        box-shadow: none;
+      }
+
+      &:hover {
+        cursor: pointer;
+        background-color: $color-button-blue;
+        color: white;
+      }
+
+      &__icon {
+        color: $color-button-blue;
+      }
+    }
+
+    &__input {
+      border: 0;
+      padding: 8px 16px;
+      border-radius: 4px;
+      text-align: center;
+      background: white;
+      width: 50px;
+
+      &[disabled] {
+        background: white;
+      }
+
+      &:focus {
+        outline-width: 0;
+      }
+    }
+  }
+}
+
+.ev-select {
+  border: 0 !important;
+  margin-bottom: 0.5rem;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: $color-grey;
+  width: 100%;
+
+  &:focus {
+    outline-width: 0;
+  }
+
+  &__option {
+    font-family: "Lato", serif !important;
+    font-weight: 300 !important;
+    border: 0 !important;
+    border-radius: 4px !important;
+    margin-top: 2px !important;
+  }
+}
+
+.custom-switch {
+  padding-left: 3rem;
+}
+
+.custom-control-label::before {
+  width: 2.25rem !important;
+  height: 1.5rem !important;
+  border-radius: 1rem !important;
+  left: -3rem !important;
+  top: 0;
+}
+
+.custom-switch .custom-control-label::after {
+  width: calc(1.5rem - 4px) !important;
+  height: calc(1.5rem - 4px) !important;
+  border-radius: 2rem !important;
+  left: calc(-3rem + 2px) !important;
+  top: 2px;
+}

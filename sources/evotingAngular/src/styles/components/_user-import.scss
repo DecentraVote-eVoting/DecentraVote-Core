@@ -1,0 +1,33 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-role-selection {
+  border: none;
+  background-color: $color-grey;
+  border-radius: 4px;
+  // this height matches the other input fields exactly
+  height: 40px;
+  padding: 8px 30px 8px 8px;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.ev-role-option {
+  background-color: white !important;
+}
+
+.ev-user-add-button {
+  background-color: $color-grey-accented;
+  border-radius: 4px;
+  height: 40px;
+  padding-top: 0.3rem;
+  margin-right: 16px;
+  margin-left: 16px;
+
+  border: 1px solid $color-grey;
+}

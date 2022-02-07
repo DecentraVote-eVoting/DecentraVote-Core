@@ -1,0 +1,39 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="content p-3">
+  <div class="ev-list__search-bar mb-4">
+    <input placeholder="{{'Voting.Search-Placeholder' | translate}}"
+           #search_input
+           autocomplete="off"
+           (keyup)="search(search_input.value)"
+           (blur)="search(search_input.value)"
+           type="text"
+           class="ev-search__input--outline">
+  </div>
+
+  <ng-container
+    *ngIf="membersFiltered?.length !== 0 && !participantsLoading">
+
+    <div class="ev-typography--text-16 text-center mb-2">
+      {{'Voting.Entitled' | translate}} ({{getMembersVoting()?.length}}
+      {{getMembersVoting()?.length === 1 ? ('Voting.Member' | translate) : ('Voting.Members' | translate)}}
+      {{'Voting.With' | translate}} {{getTotalVoteCount()}}
+      {{getTotalVoteCount() === 1 ? ('Voting.Voting-Right' | translate) : ('Voting.Voting-Rights' | translate)}})
+    </div>
+
+    <app-votecount-member-list [membersWithVotingCount]="membersFiltered"
+                               [representeesCount]="representeesFiltered">
+    </app-votecount-member-list>
+
+  </ng-container>
+
+  <ng-container *ngIf="membersFiltered?.length === 0 && !participantsLoading">
+    <div class="row mt-5">
+      <div class="col-12 text-center lead">
+        {{'Voting.No-Participants' | translate}}
+      </div>
+    </div>
+  </ng-container>
+</div>

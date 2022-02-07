@@ -1,0 +1,35 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="container"
+     *ngIf="meeting">
+
+  <app-meeting-header-smart [meeting]="meeting"
+                            [chairperson]="chairperson$ | async"
+                            [activeTab]="activeTab"
+                            [userRole]="userRole$ | async"
+                            (tabChangeAction)="onTabChange($event)">
+  </app-meeting-header-smart>
+
+  <ng-container [ngSwitch]="activeTab">
+    <app-voting-overview-smart *ngSwitchCase="meetingTab.VOTING"
+                               [meeting]="meeting"
+                               [chairperson]="chairperson$ | async"
+                               [userIsDirector]="userIsDirector"
+                               [userIsChairperson]="userIsChairperson">
+    </app-voting-overview-smart>
+
+    <app-participants-smart-list *ngSwitchCase="meetingTab.PARTICIPANTS"
+                                 [meeting]="meeting"
+    >
+    </app-participants-smart-list>
+
+    <app-authorities-smart-list *ngSwitchCase="meetingTab.AUTHORITIES"
+                                [meeting]="meeting"
+    >
+    </app-authorities-smart-list>
+  </ng-container>
+
+</div>
+

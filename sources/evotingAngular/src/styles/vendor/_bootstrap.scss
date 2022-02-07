@@ -1,0 +1,49 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "bootstrap-theme";
+@import "~bootstrap/scss/bootstrap";
+@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+.modal {
+  &-dialog {
+    max-width: 736px;
+  }
+
+  &-header {
+    position: relative;
+
+    > .close {
+      background-color: white;
+      padding: 8px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      font-size: 1rem;
+      border-radius: 50rem;
+      opacity: 1;
+      color: black;
+
+      &:not(.disabled):hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &-body {
+    &:not(:only-child) {
+      padding: 1rem 2rem;
+    }
+  }
+
+  &-footer {
+    padding: 0 2rem 2rem 2rem;
+  }
+}
+
+.bg-primary {
+  background-color: $color-blue !important;
+  border-radius: 1rem !important;
+}

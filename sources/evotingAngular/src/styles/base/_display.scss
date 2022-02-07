@@ -1,0 +1,103 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+/* breakpoints */
+$breakpoint-xs: 0em;
+$breakpoint-sm: 48em;
+$breakpoint-md: 64em;
+$breakpoint-lg: 75em;
+
+$breakpoints: (
+  xs: $breakpoint-xs,
+  sm: $breakpoint-sm,
+  md: $breakpoint-md,
+  lg: $breakpoint-lg,
+);
+
+$displays: block flex none;
+
+// This loop will create utility classes for all displays defined in $displays
+@each $display in $displays {
+
+  // First, we just add the on-infixed version of the display values
+  // eg .d-none { display: none !important; }
+  .ev-d-#{$display} {
+    display: $display !important;
+  }
+}
+
+// Now we create the size-dependant versions of each display class
+// eg. @media (min-width: $breakpoint-md) {
+//     .d-md-none { display: none !important; }
+// }
+@each $breakpoint-name, $breakpoint-value in $breakpoints {
+  @each $display in $displays {
+    @media only screen and (min-width: $breakpoint-value) {
+      .ev-d-#{$breakpoint-name}-#{$display} {
+        display: $display;
+      }
+    }
+  }
+}
+
+$positions: static relative fixed absolute sticky;
+
+@each $pos in $positions {
+  .ev-pos-#{$pos} {
+    position: $pos;
+  }
+}
+
+// To use these styles the container element must have position: relative
+.ev-pos-top {
+  position: absolute;
+  top: 10px;
+}
+
+.ev-pos-bottom {
+  position: absolute;
+  bottom: 10px;
+}
+
+.ev-pos-left {
+  position: absolute;
+  left: 10px;
+}
+
+.ev-pos-right {
+  position: absolute;
+  right: 10px;
+}
+
+.ev-pos-right-bottom {
+  position: absolute;
+  right: 10px;
+  bottom: 16px;
+}
+
+.ev-pos-left-bottom {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+}
+
+.ev-pos-right-top {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.ev-pos-left-top {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+}
+
+.ev-width-fit-content {
+  width: fit-content;
+}
+
+.ev-height-fit-content {
+  height: fit-content;
+}

@@ -1,0 +1,116 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="ev-list background-color">
+  <div class="list-group ev-member-list">
+    <pagination
+    [listlength]="userListCells.length"
+    [(page)]="page"
+    [pageSize]="pageSize">
+    </pagination>
+
+    <ul class="list-group list-group-flush ev-member-list"
+        data-e2e="userAndImportedUserList">
+
+      <!--
+      ===========================
+      C E L L
+      ===========================
+      -->
+      <ng-template [ngIf]="userListCells | UserSortPipe"></ng-template>
+      <li class="list-group-item member-item flex ev-flex-align-items-center ev-flex-align-content-between"
+          *ngFor="let userListCell of getArray(this.page, (screenWidth > 768))"
+          [class.justify-content-between]="enableChangeActions"
+          data-e2e="userAndImportedUserListElement">
+        <div class="d-flex justify-content-between flex-wrap overflow-hidden ev-flex-grow">
+          <div class="mr-2 ev-member-list__member-name">
+            <span class="mr-2">{{userListCell.title}}</span>
+            <app-role-badges [userRole]="userListCell.role"></app-role-badges>
+          </div>
+          <div *ngIf="userListCell.subtitle"
+               class="d-none d-md-block ev-member-list__member-email">
+            {{userListCell.subtitle}}
+          </div>
+          <div *ngIf="userListCell.detail"
+               data-e2e="address"
+               class="ev-typography--text-16 text-center d-none d-md-block mt-2">
+            {{userListCell.detail | translate}}
+          </div>
+        </div>
+
+        <button *ngIf="meetingsLoading"
+                [disabled]="true"
+                mat-icon-button>
+          <span class="spinner-border spinner-border-sm ml-1"></span>
+        </button>
+
+        <!-- U S E R -->
+        <ng-container *ngIf="userListCell.userRef && showUserTools() && !meetingsLoading">
+          <button [disabled]="!enableChangeActions"
+                  mat-icon-button
+                  [attr.data-e2e]="'replaceUserButton-' + userListCell.userRef.resolvedClaim.field0"
+                  class="ev-icon material-icons-round ev-card--pointer"
+                  (click)="this.replaceUserEvent.emit(userListCell.userRef)">
+            <mat-icon>wifi_protected_setup</mat-icon>
+          </button>
+
+          <button mat-icon-button
+                  class="ev-icon material-icons-round ev-card--pointer"
+                  (click)="this.editUserEvent.emit(userListCell.userRef)">
+            <mat-icon>create</mat-icon>
+          </button>
+
+          <button [disabled]="!enableChangeActions"
+                  mat-icon-button
+                  data-e2e="DeleteUserButton"
+                  class="ev-icon material-icons-round ev-card--pointer"
+                  (click)="this.deleteUserEvent.emit(userListCell.userRef)">
+            <mat-icon class="ev-button-disabled">delete</mat-icon>
+          </button>
+        </ng-container>
+
+        <!-- I M P O R T   U S E R -->
+        <ng-container *ngIf="userListCell.importUserRef && showUserTools() && !meetingsLoading">
+          <span *ngIf="isAccessCodeValid(userListCell)"
+                data-e2e="accessCodeValidText"
+                class="ev-typography--secondary-text">
+            {{ getAccessCodeInformation(userListCell) | translate }}
+          </span>
+          <span *ngIf="!isAccessCodeValid(userListCell)"
+                data-e2e="accessCodeInvalidText"
+                class="ev-typography--secondary-text-warning">
+            {{ 'User.Access-Code.Expired' | translate }}
+          </span>
+
+          <button mat-icon-button
+                  [attr.data-e2e]="'manageAccessCodeButton-' + userListCell.importUserRef.field0"
+                  class="ev-icon material-icons-round ev-card--pointer"
+                  (click)="this.manageAccessCodeEvent.emit(userListCell.importUserRef)">
+            <mat-icon>lock_clock</mat-icon>
+          </button>
+
+          <button mat-icon-button
+                  [attr.data-e2e]="'editUserButton-' + userListCell.importUserRef.field0"
+                  class="ev-icon material-icons-round ev-card--pointer"
+                  (click)="this.editImportUserEvent.emit(userListCell.importUserRef)">
+            <mat-icon>create</mat-icon>
+          </button>
+
+          <button [disabled]="!enableChangeActions"
+                  mat-icon-button
+                  [attr.data-e2e]="'deleteUserButton-' + userListCell.importUserRef.field0"
+                  class="ev-icon material-icons-round ev-card--pointer"
+                  (click)="this.deleteImportUserEvent.emit(userListCell.importUserRef)">
+            <mat-icon class="ev-button-disabled">delete</mat-icon>
+          </button>
+        </ng-container>
+      </li>
+    </ul>
+    <pagination
+      [listlength]="userListCells.length"
+      [(page)]="page"
+      [pageSize]="pageSize">
+    </pagination>
+  </div>
+</div>

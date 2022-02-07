@@ -1,0 +1,39 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="ev-list background-color">
+  <div class="ev-list__search-bar">
+    <input placeholder="{{'Voting.Search-Placeholder' | translate}}"
+           #search_input
+           autocomplete="off"
+           (keyup)="search(search_input.value)"
+           (blur)="search(search_input.value)"
+           type="text"
+           class="ev-search__input--grey">
+  </div>
+  <div class="list-group ev-member-list"
+       *ngIf="filteredUsers.length > 0">
+    <ul class="list-group list-group-flush ev-member-list__scrollable">
+      <ng-template [ngIf]="filteredUsers | UserSortPipe"></ng-template>
+      <li class="list-group-item member-item flex ev-list__item--selectable"
+          *ngFor="let user of filteredUsers"
+          (click)="onSelect(user)"
+          data-e2e="memberListEntry"
+          [class.ev-list__item--selected]="selectedMember?.address === user.address">
+        <div class="d-flex justify-content-between flex-wrap vw-100 overflow-hidden">
+          <div class="mr-2 ev-member-list__member-name">
+            {{user | MemberName}}
+            <app-role-badges [userRole]="user.role"></app-role-badges>
+          </div>
+          <div *ngIf="showEmail"
+               class="d-none d-md-block ev-member-list__member-email">
+            {{user.resolvedClaim.field0}}
+          </div>
+        </div>
+
+      </li>
+    </ul>
+
+  </div>
+</div>

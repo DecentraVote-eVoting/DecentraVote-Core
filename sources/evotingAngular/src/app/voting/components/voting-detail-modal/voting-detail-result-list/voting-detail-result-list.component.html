@@ -1,0 +1,135 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="ev-card__footer--voting ev-pos-relative"
+     id="voteResultModalContent">
+  <div class="d-flex ev-flex-content-end w-100 mb-2"
+       id="toggleResultSortingButtonsContainer">
+
+    <mat-button-toggle-group #group="matButtonToggleGroup"
+                             [value]="selectedView"
+                             (change)="onSelectedViewChange(group.value)">
+      <mat-button-toggle class="ev-toggle-button ev-toggle-left-button" [value]="voteResultSorting.BY_OPTIONS"
+                         disableRipple="true">
+        <span class="material-icons">done_all</span>
+        <span class="ev-toggle-button__label ml-1">{{'Voting.Detail.Button-Result-By-Options' | translate}}</span>
+      </mat-button-toggle>
+
+      <mat-button-toggle class="ev-toggle-button ev-toggle-right-button" [value]="voteResultSorting.BY_USERS"
+                         disableRipple="true">
+        <span class="material-icons">supervisor_account</span>
+        <span class="ev-toggle-button__label ml-1">{{'Voting.Detail.Button-Result-By-Members' | translate}}</span>
+      </mat-button-toggle>
+
+    </mat-button-toggle-group>
+
+    <button class="ev-button-collapsible ml-1"
+            ngbTooltip="{{(expandCollapseButtonState ? ('Voting.Detail.Collapse' | translate) : ('Voting.Detail.Expand' | translate))}}"
+            [disabled]="(resultsByUserFiltered | json) == '{}'"
+            (click)="toggleAll()"
+            data-e2e="expandVoteDetailButton">
+        <span class="material-icons">
+        {{(expandCollapseButtonState ? 'compress' : 'expand')}}
+        </span>
+    </button>
+  </div>
+
+  <div *ngIf="selectedView === voteResultSorting.BY_USERS"
+       class="ev-list__search-bar mb-2"
+       id="searchbarResultMembers">
+    <input placeholder="{{'Voting.Search-Placeholder' | translate}}"
+           #search_input
+           autocomplete="off"
+           type="text"
+           class="ev-search__input--outline"
+           (keyup)="search(search_input.value)"
+           (blur)="search(search_input.value)">
+  </div>
+
+  <ng-container [ngSwitch]="selectedView">
+    <!-- Option section -->
+    <ng-container *ngIf="resultsByOption">
+      <ng-container *ngSwitchCase="voteResultSorting.BY_OPTIONS">
+        <div class="ev-result-list">
+          <mat-accordion class="" multi>
+            <ng-container *ngFor="let currentOption of vote.voteOptions">
+              <mat-expansion-panel class="ev-expansion-panel" data-e2e="voteDetailExpansionPanel">
+                <mat-expansion-panel-header (click)="toggleOne(currentOption.value)">
+                  <mat-panel-title class=" ev-typography ev-typography--heading1">
+                    {{currentOption.value}}
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <ul *ngIf="resultsByOption[currentOption.value] && resultsByOption[currentOption.value].results.length !== 0;
+                    else elseBlock"
+                    class="list-group list-group-flush">
+                  <li *ngFor="let user of resultsByOption[currentOption.value].results"
+                      class="list-group-item member-item flex">
+                    <ng-container *ngFor="let userOption of user.options">
+                      <ng-container *ngIf="userOption === currentOption.value">
+                        <div class="d-flex justify-content-between flex-wrap">
+                          <div class="ev-typography">{{user.field1}} {{user.field2}}, {{user.field0}}</div>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                  </li>
+                </ul>
+                <ng-template #elseBlock>
+                  <p class="d-flex justify-content-center flex-wrap ev-typography ev-typography">
+                    {{'Voting.Detail.Result-Option-Has-No-Vote' | translate}}
+                  </p>
+                </ng-template>
+              </mat-expansion-panel>
+            </ng-container>
+          </mat-accordion>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- Member section -->
+    <ng-container *ngIf="resultsByUserFiltered">
+      <ng-container *ngSwitchCase="voteResultSorting.BY_USERS">
+        <div class="ev-result-list">
+          <pagination
+            [listlength]="dictLength"
+            [(page)]="page"
+            [pageSize]="pageSize">
+          </pagination>
+          <mat-accordion class="" multi>
+            <ng-template [ngIf]="resultsByUserFiltered | UserSortPipe"></ng-template>
+            <ng-container *ngFor="let user of getDictionary(this.page, (screenWidth > 768))">
+              <mat-expansion-panel class="ev-expansion-panel">
+                <mat-expansion-panel-header (click)="toggleOne(user.result.ethAddress)">
+                  <mat-panel-title class="ev-typography ev-typography--heading1">
+                    {{user.result.field1}} {{user.result.field2}}, {{user.result.field0}}
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <ul class="list-group list-group-flush">
+                  <li *ngFor="let userOption of user.result.options"
+                      class="list-group-item member-item flex">
+                    <div class="d-flex justify-content-between flex-wrap">
+                      <div class="ev-typography">{{userOption}}</div>
+                    </div>
+                  </li>
+                </ul>
+              </mat-expansion-panel>
+            </ng-container>
+          </mat-accordion>
+        </div>
+      </ng-container>
+    </ng-container>
+
+  </ng-container>
+
+  <div class="ev-voting__voting-option d-flex ev-flex-content-center mt-2">
+    <button
+      [disabled]="disableButton"
+      *ngIf="showButton"
+      class="btn ev-button"
+      (click)="this.exportButtonClick.emit()"
+      data-e2e="downloadVotingResultButton">
+      <span class="material-icons mr-1">download</span>
+      {{'Voting.Detail.Button-Download' | translate}}
+    </button>
+  </div>
+</div>

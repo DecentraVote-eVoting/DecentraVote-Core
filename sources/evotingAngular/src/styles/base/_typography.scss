@@ -1,0 +1,116 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
+@import "variables";
+
+.ev-typography {
+  font-family: "Lato", serif;
+  font-weight: 300;
+
+  &--heading1 {
+    font-weight: 700;
+  }
+
+  &--color-dark-grey {
+    color: $color-dark-grey;
+  }
+
+  &--text-16 {
+    color: $color-light-grey;
+    font-weight: 400;
+    text-transform: uppercase;
+    line-height: 16px;
+    font-size: 12px;
+  }
+
+  &--grey-upppercase {
+    color: $color-light-grey;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+  }
+
+  &--secondary-text {
+    color: $color-light-grey;
+    font-weight: 400;
+    line-height: 16px;
+    font-size: 12px;
+  }
+
+  &--secondary-text-warning {
+    color: $color-toast-error;
+    font-weight: 400;
+    line-height: 16px;
+    font-size: 12px;
+  }
+
+  &--title {
+    color: $color-dark-grey;
+    font-weight: 500;
+    font-size: 32px;
+  }
+
+  &--grey {
+    border: 0;
+    border-radius: 8px;
+    background-color: $color-grey;
+    color: $color-dark-blue;
+    width: 100%;
+
+    &:focus {
+      outline-width: 0;
+    }
+  }
+
+  &--light {
+    border: 0;
+    border-radius: 8px;
+    background-color: $color-grey;
+    color: $color-dark-grey;
+    width: 100%;
+
+    &:focus {
+      outline-width: 0;
+    }
+  }
+
+  &--black {
+    color: $color-black;
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  &--red {
+    color: $color-toast-error
+  }
+}
+
+.ev-text {
+  &--left {
+    text-align: left;
+  }
+
+  &--center {
+    text-align: center;
+  }
+
+  &--right {
+    text-align: right;
+  }
+
+  &--cursor-pointer {
+    cursor: pointer;
+  }
+}
+
+.cut-text {
+  @include media-breakpoint-down(md) {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 1.2em;
+    white-space: nowrap;
+    width: 160px;
+  }
+}

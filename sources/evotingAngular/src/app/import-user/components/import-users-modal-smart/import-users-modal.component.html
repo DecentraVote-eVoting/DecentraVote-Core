@@ -1,0 +1,103 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<div class="modal-header ev-modal-header">
+  <div class="ev-modal-title mb-2">{{'User.Import.Title' | translate}}</div>
+  <em ngbAutofocus
+      *ngIf="close"
+      (click)="dismiss()"
+      class="material-icons-round close ev-modal-close">
+    close
+  </em>
+</div>
+
+<div class="modal-body ev-modal-body">
+  <div class="col-12 pt-3" *ngIf="!importUsersRaw">
+    <div class="ev-attachment ev-attachment__extra-high">
+      <input #fileInput
+             id="attachment"
+             type="file"
+             title="import user upload"
+             (change)="uploadEvent.emit($event.target)"
+             class="ev-attachment__input"
+             accept="application/json, .csv"
+             data-e2e="fileInput">
+      <i class="material-icons-round ev-attachment-icon"
+         *ngIf="!fileToUpload">cloud_upload</i>
+      <p class="ev-attachment-text text-center mb-0 pt-4"
+         *ngIf="fileToUpload">
+        <strong>{{fileToUpload?.name}}</strong>
+      </p>
+
+      <p class="ev-attachment-text ev-attachment-text__md text-center mb-0">
+        {{'User.Import.Upload-Label' | translate}}
+      </p>
+      <p class="ev-attachment-text ev-attachment-text__md text-center mb-0">
+        {{'User.Import.Attachment-File-Type' | translate}}
+      </p>
+    </div>
+  </div>
+
+  <ng-container class="col-12" *ngIf="uploadIsValid">
+    <app-user-form [importUsersRaw]="importUsersRaw"
+                   (importClickEvent)="onImportClick($event)"
+                   (formIsValidEvent)="onFormIsValid($event)"
+                   [importButtonClickedEvent$]="eventsSubject.asObservable()">
+    </app-user-form>
+  </ng-container>
+
+  <ng-container class="col-12" *ngIf="errorStack.length > 0">
+    <mat-error class="ev-error-display"
+               *ngFor="let error of errorStack">
+      <span>{{error | translate}}</span>
+    </mat-error>
+  </ng-container>
+
+  <mat-accordion class="col-12" *ngIf="!uploadIsValid">
+    <mat-expansion-panel class="ev-expansion-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="ev-typography">
+          {{'User.Import.Info' | translate}}
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="ev-typography">
+      <textarea id="jsonTextArea"
+                class="ev-text-field__text-area mx-3 h-auto"
+                rows="12"
+                style="width: 45%;"
+                [formControl]="jsonTextAreaControl">
+      </textarea>
+        <textarea id="csvTextArea"
+                  class="ev-text-field__text-area mx-3 h-auto"
+                  rows="12"
+                  style="width: 45%;"
+                  [formControl]="csvTextAreaControl">
+      </textarea>
+      </div>
+      <div class="ev-typography mt-2 ev-translate-enable-linebreak">
+        {{'Setup.New-Or-Import.Field-Description' | translate}}
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+</div>
+
+
+<div class="ev-card__footer--voting ev-pos-relative">
+  <div class="row">
+    <div class="col-12 d-flex ev-flex-content-center">
+      <button class="btn ev-button btn-lg mr-1"
+              data-e2e="importButton"
+              [disabled]="!formIsValid"
+              (click)="onImportButtonClicked()">
+        {{'User.Button-Import' | translate}}
+      </button>
+      <button class="btn ev-button--secondary btn-lg ml-1"
+              data-e2e="dismissButton"
+              (click)="dismiss()">
+        {{'User.Button-Cancel' | translate}}
+      </button>
+    </div>
+  </div>
+</div>

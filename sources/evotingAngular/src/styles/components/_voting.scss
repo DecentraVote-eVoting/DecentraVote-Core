@@ -1,0 +1,178 @@
+/**
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+*/
+@import "variables";
+
+.ev-voting {
+  &__file-download {
+    color: $color-black;
+    background-color: $color-grey;
+    border-width: 0;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    opacity: 0.65;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    a,
+    a:hover,
+    a:active,
+    a:focus {
+      color: $color-black !important;
+      background-color: $color-grey !important;
+      text-decoration: none !important;
+    }
+
+    .material-icons {
+      font-size: 18px;
+      vertical-align: middle;
+    }
+
+    &__name {
+      vertical-align: middle;
+      margin-left: 8px;
+      font-size: 80%;
+    }
+  }
+
+  &__voting-container {
+    width: 100%;
+  }
+
+  &__voting-option {
+    width: 100%;
+  }
+
+  &__voting-option-label {
+    width: 95%;
+    word-break: break-word;
+  }
+
+  &__voting-count {
+    float: right;
+  }
+
+  &__voting-count-total {
+    color: $color-blue;
+  }
+
+  &__arrow-container {
+    margin-left: -1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__arrow-button {
+    display: flex;
+    justify-content: center;
+    border: None;
+    padding: 0;
+    font-size: 40px;
+
+    &:focus {
+      outline: None;
+    }
+  }
+
+  &__radio_toolbar {
+    display: flex;
+    justify-content: center;
+
+    input[type="radio"] {
+      opacity: 0;
+      position: fixed;
+      width: 0;
+    }
+
+    label {
+      padding: 10px 20px;
+      border-radius: 5px;
+    }
+
+    input[type="radio"]:checked + label {
+      background-color: #9DA3A5;
+    }
+
+    label:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__icon_small {
+    font-size: 16px;
+  }
+
+  &__icon_anonymity {
+    font-size: 20px;
+    margin-left: 3px;
+
+    @include media-breakpoint-down(sm) {
+      margin-left: 0;
+      margin-right: 3px;
+    }
+  }
+
+  &__header {
+    padding: 2rem 2rem 0 2rem;
+    word-break: break-word;
+
+    @include media-breakpoint-down(md) {
+      padding: 16px 16px 0 16px;
+    }
+
+    @include media-breakpoint-down(sm) {
+      flex-direction: column;
+    }
+
+    &-anonymity {
+      display:flex;
+      max-width: 50%;
+      align-items:center;
+      text-align: right;
+
+      @include media-breakpoint-down(md) {
+        margin-right: 10px;
+      }
+
+      @include media-breakpoint-down(sm) {
+        text-align: left;
+        margin: 0;
+        flex-direction: row-reverse;
+        max-width: 100%;
+      }
+    }
+  }
+
+  &__body {
+    padding: 0 2rem 8px 2rem !important;
+
+    @include media-breakpoint-down(md) {
+      padding: 0 24px 16px 24px !important;
+    }
+  }
+
+  &__container {
+    margin: 0.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    word-break: break-word;
+
+    &-last {
+      margin-top: 24px;
+    }
+  }
+
+  &__text-secondary {
+    font-size: 0.9rem;
+    color: $color-dark-blue;
+  }
+}
