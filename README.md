@@ -14,3 +14,6 @@ In order to legitimate one-time accounts members provide zk-SNARK proofs generat
 
 ## Decentralized App
 The DApp as well as any texts and files it uses are hosted by a decentralized storage. The decentralized storage commits the hash of everything it persists on the blockchain. The DApp running in the browser computes the hash of any content loaded from the decentralized storage and compares it with the hash stored on the blockchain.
+
+## License
+Code of DecentraVote is licensed under [GPL 3](https://github.com/DecentraVote-eVoting/DecentraVote-Core#:~:text=License-,GPL%2D3.0%20License,-Stars)
