@@ -10,10 +10,12 @@
       "Info": "Info"
     },
     "Error": {
+      "Renew-Password": "Fehler beim ändern des Passworts",
       "Extend-Access-Code-Validity": "Fehler beim Verlängern der Gültigkeit",
       "Replace-Access-Code": "Fehler beim Generieren des neuen Zugangscodes",
       "Oracle": "Der Oracle Server ist offline",
       "Login": "Fehler beim Login mit diesem Passwort",
+      "Login-Register": "Fehler beim Login, kein Mitglied",
       "Login-Token": "Fehler bei der Registrierung mit diesem Zugangscode",
       "Register-Eth": "Fehler beim Verbinden der Ethereum Adresse",
       "Load-Members": "Fehler beim Laden der Mitglieder",
@@ -55,7 +57,8 @@
       "Replace-User": "Fehler beim Ersetzen des Nutzers",
       "Timeout": "Internetverbindung war zu lange unterbrochen. Bitte laden Sie die Seite neu.",
       "Title-Length-Vote": "Titel muss gesetzt sein und darf 200 Zeichen nicht überschreiten.",
-      "Title-Length-Meeting": "Titel muss gesetzt sein und darf 100 Zeichen nicht überschreiten."
+      "Title-Length-Meeting": "Titel muss gesetzt sein und darf 100 Zeichen nicht überschreiten.",
+      "Hash-Not-Equal": "Ressource vom Storage nicht valide. (Hash nicht ident)"
     },
     "Success": {
       "Import-Members": "Mitglieder wurden erfolgreich importiert",
@@ -109,16 +112,17 @@
       "Button": "Los geht's!"
     },
     "New-Or-Import": {
-      "Title": "Erstellen oder importieren",
+      "Title": "Kontoverwaltung",
       "Description-New": "Möchten Sie einen neuen Account anlegen? Klicken Sie auf Erstellen und lassen Sie sich eine neue Mnemonic erstellen.",
-      "Description-Import": "Möchten Sie einen bestehenden Account nutzen? Klicken Sie auf Importieren und geben Sie die entsprechende Mnemonic ein.",
-      "Button-New": "Erstellen",
-      "Button-Import": "Importieren",
-      "Field-Description": "field0: ID\n field1: Freitext (z. B. Vorname)\n field2: Freitext (z. B. Nachname)\n role: [ Vorstand - 6 ; Mitglied - 2 ; Gast - 1 ]"
+      "Description-Import": "Sie haben ihr Passwort vergessen? Sie können mit ihrer Mnemonic ihr Passwort zurücksetzen.",
+      "Button-New": "Neues Konto erstellen",
+      "Button-Password-Reset": "Passwort zurücksetzen",
+      "Field-Description": "uid: ID\n name1: Freitext (z. B. Vorname)\n name2: Freitext (z. B. Nachname)\n role: [ Vorstand - 6 ; Mitglied - 2 ; Gast - 1 ]"
     },
     "Create-Password": {
-      "Title": "Passwort erstellen",
-      "Description": "Ihr Passwort muss aus mindestens 8 Zeichen bestehen und einen Buchstaben und eine Zahl enthalten. Ihre Zugangsdaten werden mit Hilfe des Passworts verschlüsselt im Browser gespeichert.",
+      "Title": "Neues Passwort erstellen",
+      "Description": "Ihr neues Passwort muss aus mindestens 8 Zeichen bestehen und einen Buchstaben und eine Zahl enthalten.",
+      "Description-New": "Benützen Sie ihre festgelegte Benutzer ID, um sich bei DecentraVote anzumelden. Ihr neues Passwort muss aus mindestens 8 Zeichen bestehen und einen Buchstaben und eine Zahl enthalten.",
       "Label-1": "Passwort eingeben",
       "Label-2": "Passwort wiederholen",
       "Button": "Nächster Schritt",
@@ -128,26 +132,32 @@
       "Security-4": "Passwörter stimmen überein"
     },
     "Create-Mnemonic": {
-      "Title-New": "Mnemonic erstellen",
-      "Title-Import": "Mnemonic importieren",
-      "Description-New": "Klicken Sie auf das Feld mit den 12 Wörtern, um Sie in die Zwischenablage zu kopieren. Speichern Sie diese in einem Passwort-Manager, auf einem verschlüsselten externen Speichermedium oder in Papierform an einem sicheren Ort. Nur mit ihrer Hilfe können Sie Ihre Zugangsdaten wiederherstellen oder in einem anderen Browser einrichten. Geben Sie sie nie weiter und schützen Sie sie vor unberechtigtem Zugriff. Jeder in Kenntnis der 12 Wörter verfügt über Ihre Zugangsdaten und kann mit Ihrem Konto DecentraVote benutzen.",
-      "Description-Import": "Klicken Sie auf das Feld und fügen Sie Ihre Mnemonic ein. Speichern Sie diese in einem Passwort-Manager, auf einem verschlüsselten externen Speichermedium oder in Papierform an einem sicheren Ort. Nur mit ihrer Hilfe können Sie Ihre Zugangsdaten wiederherstellen oder in einem anderen Browser einrichten. Geben Sie sie nie weiter und schützen Sie sie vor unberechtigtem Zugriff. Jeder in Kenntnis der 12 Wörter verfügt über Ihre Zugangsdaten und kann mit Ihrem Konto DecentraVote benutzen.",
+      "Title-New": "Neues Konto erstellen",
+      "Title-Import": "Passwort wiederherstellen",
+      "Description-New": "Speichern Sie die Mnemonic (12 Wörter) in einem Passwort-Manager, auf einem verschlüsselten externen Speichermedium oder in Papierform an einem sicheren Ort. Nur mit ihrer Hilfe können Sie Ihre Zugangsdaten wiederherstellen. Geben Sie sie nie weiter und schützen Sie sie vor unberechtigtem Zugriff. Jeder in Kenntnis der 12 Wörter verfügt über Ihre Zugangsdaten und kann mit Ihrem Konto DecentraVote benutzen.",
+      "Description-Import": "Mit Hilfe ihrer Mnemonic (12 Wörter) können Sie ihr Passwort ändern. Klicken Sie auf das Feld und fügen Sie Ihre Mnemonic ein.",
       "Label-New": "Mnemonic kopieren",
-      "Label-Import": "Mnemonic importieren",
-      "Button": "Fertig!",
+      "Label-Import": "Mnemonic eingeben",
+      "Button": "Erstellen",
       "Clipboard-Success": "Kopieren erfolgreich!",
       "Copy-To-Clipboard": "In Zwischenablage kopieren"
     },
     "Button-Back": "Zurück"
   },
   "Login": {
-    "Info": "Bitte geben Sie Ihr Passwort ein",
-    "Button-Login": "Login",
-    "Button-Password": "Passwort vergessen",
+    "Info1": "Anmelden",
+    "Info2": "um mit DecentraVote fortzufahren",
+    "Username": "Benutzer ID",
+    "Username-Info": "Ihre festgelegte Benutzer ID",
+    "Password": "Passwort",
+    "Forgot-Password": "Passwort vergessen",
+    "Button-Login": "Anmelden",
+    "Button-Forgot-Password": "Passwort vergessen",
     "External": "Bitte beachten Sie die Anweisungen im neu geöffneten Fenster. Falls Ihr Browser dieses blockiert, bitten wir Sie Pop-Ups auf dieser Webseite zu erlauben.",
     "Token": {
-      "Title": "Zugangscode eingeben",
-      "Description": "Geben Sie Ihren persönlichen Zugangscode ein und drücken Sie auf Absenden.",
+      "Title": "Registrieren",
+      "Description": "Geben Sie Ihren persönlichen Registrierungscode ein und drücken Sie auf Absenden.",
+      "Label": "Registrierungscode",
       "Button": "Absenden"
     },
     "Copyright": "DecentraVote wurde von der iteratec GmbH entwickelt. Copyright (C) 2018-2022 iteratec",
@@ -164,6 +174,10 @@
     "Modal": "Weitere Informationen",
     "Header": "Lizenzinformationen:"
   },
+  "Help": {
+    "Button": "Hilfe",
+    "Description": "Benutzerdokumentation und Hilfe"
+  },
   "Recovery": {
     "Title": "Achtung!",
     "Description-1": "Im nächsten Schritt wird Ihre Mnemonic zurückgesetzt und Sie werden zum Setup weitergeleitet.",
@@ -177,8 +191,8 @@
       "Title": "Ethereum-Adresse verknüpfen",
       "Congratulations": "Herzlichen Glückwunsch",
       "Success": ", Sie haben sich erfolgreich als Nutzer verifiziert.",
-      "Info": "Um den Vorgang abzuschließen, drücken Sie auf Verknüpfen und registrieren Sie ihre Ethereum-Adresse auf der Blockchain.",
-      "Address": "Ihre verknüpfte Ethereum-Adresse:",
+      "Info": "Bitte überprüfen Sie ihre Daten. Im Falle von Fehlern, wenden Sie sich bitte an ihren Administrator.",
+      "Address": "Neue Ethereum-Adresse",
       "Button-Link": "Verknüpfen"
     },
     "Ethereum": {
@@ -213,12 +227,12 @@
     },
     "Form": {
       "Title": "Einladung editieren",
-      "Field1": "Feld 1",
-      "Field1-explanation": "Max, Max Mustermann",
-      "Field2": "Feld 2",
-      "Field2-explanation": "Mustermann, Firmenname GmbH",
-      "Field0": "ID",
-      "Field0-explanation": "Die einzigartige ID der Einladung",
+      "Name1": "Name 1",
+      "Name1-explanation": "Max, Max Mustermann",
+      "Name2": "Name 2",
+      "Name2-explanation": "Mustermann, Firmenname GmbH",
+      "Uid": "ID",
+      "Uid-explanation": "Die einzigartige ID der Einladung",
       "Role": "Rolle",
       "Option-Guest": "Gast",
       "Option-Member": "Mitglied",
@@ -296,9 +310,9 @@
       "Option-Guest": "Gast",
       "Option-Member": "Mitglied",
       "Option-Director": "Vorstand",
-      "Field0": "Feld 0",
-      "Field1": "Feld 1",
-      "Field2": "Feld 2",
+      "Uid": "ID",
+      "Name1": "Name 1",
+      "Name2": "Name 2",
       "Role": "Rolle",
       "Info": "Bitte formatieren Sie Ihre .json oder .csv Datei, wie unten angegeben."
     },
@@ -318,12 +332,12 @@
     },
     "Form": {
       "Title": "Nutzer editieren",
-      "Field1": "Feld 1",
-      "Field1-explanation": "Max, Max Mustermann",
-      "Field2": "Feld 2",
-      "Field2-explanation": "Mustermann, Firmenname GmbH",
-      "Field0": "ID",
-      "Field0-explanation": "Die einzigartige ID des Nutzers",
+      "Name1": "Name 1",
+      "Name1-explanation": "Max, Max Mustermann",
+      "Name2": "Name 2",
+      "Name2-explanation": "Mustermann, Firmenname GmbH",
+      "Uid": "ID",
+      "Uid-explanation": "Die einzigartige ID des Nutzers",
       "Role": "Rolle",
       "Option-Guest": "Gast",
       "Option-Member": "Mitglied",
@@ -481,12 +495,14 @@
       "Print": "Drucken",
       "Votes": "Abstimmungen",
       "Result": "Ergebnis",
-      "Eligible-Voters": "Stimmberechtigte",
+      "Eligible-Voters": "Stimmberechtigte Teilnehmer",
       "Excluded-Members": "Ausgeschlossene Mitglieder",
+      "TooLate-Voters": "Mitglieder die sich zu spät für diese Abstimmung angemeldet haben oder keine Stimme abgegeben haben",
       "Dash":  "-",
       "No-Counted-Votes": "Diese Versammlung hat keine ausgezählten Abstimmungen.",
       "No-Representations": "In dieser Versammlung gibt es keine erteilten Vollmachten.",
       "Vote-No-Excluded-Members": "Diese Abstimmung hat keine ausgeschlossenen Mitglieder.",
+      "Vote-No-TooLate-Voters": "Alle Mitglieder meldeten sich rechtzeitig an und gaben ihre Stimme ab.",
       "Cast-Votes-Singular": "abgegebene Stimme",
       "Cast-Votes-Plural": "abgegebene Stimmen"
     },
@@ -540,6 +556,7 @@
     "Tooltip-Edit": "Bearbeiten",
     "Tooltip-Entitled": "Stimmberechtigte",
     "Tooltip-Change-Request": "Änderungsantrag",
+    "Tooltip-Certificate": "Zertifikat anzeigen",
     "Button-Schedule-Voting": "Abstimmung planen",
     "Button-Open-Voting": "Abstimmung eröffnen",
     "Button-Archive-Voting": "Archivieren",
@@ -615,5 +632,29 @@
         }
       }
     }
+  },
+  "Certificate": {
+    "Meeting": "Versammlung",
+    "Vote": "Abstimmung",
+    "Description": "Beschreibung",
+    "Address": {
+      "Meeting": "Smart-Contract-Adresse der Versammlung",
+      "Vote": "Smart-Contract-Adresse der Abstimmung",
+      "Ballotbox": "Adresse der Ballotbox"
+    },
+    "Info": "Dieses Zertifikat beweißt, dass Sie eine gültige Stimme abgegeben haben und die jeweilige Ballotbox sich verplichtet hat diese Stimme zu verarbeiten. Die Authentizität ist durch eine valide elektronische Unterschrift (Signatur) von der Ballotbox gegeben.",
+    "Title": {
+      "1": "Zertifikat der",
+      "2": "Stimme",
+      "one-line": "abgegebenen"
+    },
+    "Vote-Decision": "Ihre abgegebene Stimme",
+    "Ballotbox-Owner": "Betreiber/Besitzer",
+    "Signature": {
+      "Name": "Signatur",
+      "Valid": "Signatur gültig",
+      "Invalid": "Signatur nicht gültig"
+    },
+    "Not-Found": "Keine Zertifikate auf ihrem Gerät/Browser gefunden"
   }
 }

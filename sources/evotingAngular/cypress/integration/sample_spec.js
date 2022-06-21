@@ -10,9 +10,9 @@ describe('Login test', () => {
     //cy.login("menu pretty waste little skill copper main absorb bacon still deliver finish");
     cy.register_users(1,1,1).then(users => {
       const admin_mnemoic = users.admins[0].mnemonic;
-      const admin_name = users.admins[0].field1;
+      const admin_name = users.admins[0].name1;
 
-      cy.login(admin_mnemoic);
+      cy.sessionLogin(admin_mnemoic);
       cy.visit("http://localhost:3999/app")
       cy.create_meeting("Vorstand")
       cy.get_e2e("meetingCard").first().click();

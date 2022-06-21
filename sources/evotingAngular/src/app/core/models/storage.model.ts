@@ -15,10 +15,9 @@ export class StorageData {
 }
 
 export class StorageClaim extends StorageData {
-  field1?: string;
-  field2?: string;
-  field0?: string;
-  salt?: string;
+  name1?: string;
+  name2?: string;
+  uid?: string;
 }
 
 export class StorageMetaData extends StorageData{

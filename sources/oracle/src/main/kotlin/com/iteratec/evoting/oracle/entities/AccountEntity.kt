@@ -10,8 +10,11 @@ import javax.persistence.Id
 
 @Entity
 class AccountEntity {
+
+    // Value generated ether by keycloak or from JWT
+    // Any type of id: example: Token-<Number>
     @Id
-    var uuid: String? = null
+    var id: String? = null
 
     @Column
     var address: String? = null

@@ -219,7 +219,7 @@ export class CryptoFacade {
       }
     }
     return [decisions, anonymousAccountsAlreadyUsed];
-  };
+  }
 
   /**
    * returns an array with the decisions of a vote

@@ -11,13 +11,15 @@ import javax.persistence.*
 @Table(
         name = "t_anonymous_ballot",
         uniqueConstraints = [
-            UniqueConstraint(columnNames = [ "vote_address", "zk_nullifier" ])
+            UniqueConstraint(columnNames = [ "vote_address", "zk_nullifier" ], name = "vote_address_nullifier_unique")
         ]
 )
-@SequenceGenerator(name = "seq", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name="anonymous_ballot_seq_generator",
+        sequenceName="anonymous_ballot_seq",
+        allocationSize=1)
 data class AnonymousBallotEntity(
         @Id
-        @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
+        @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "anonymous_ballot_seq_generator")
         @Column(name = "ballot_id")
         var id: Long? = null,
 

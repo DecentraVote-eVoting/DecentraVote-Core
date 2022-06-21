@@ -70,8 +70,8 @@ export class UserManageListComponent {
     // process Users to Cells
     this._users.forEach(user => {
       this.userListCells.push({
-        title: user.resolvedClaim.field1 + ' ' + user.resolvedClaim.field2,
-        subtitle: user.resolvedClaim.field0,
+        title: user.resolvedClaim.name1 + ' ' + user.resolvedClaim.name2,
+        subtitle: user.resolvedClaim.uid,
         detail: user.address,
         role: user.role,
         userRef: user
@@ -81,8 +81,8 @@ export class UserManageListComponent {
     // process importUsers to Cells
     this._importUsers.forEach(importUser => {
       this.userListCells.push({
-        title: importUser.field1 + ' ' + importUser.field2,
-        subtitle: importUser.field0,
+        title: importUser.name1 + ' ' + importUser.name2,
+        subtitle: importUser.uid,
         detail: 'User.Invited',
         role: new Role(importUser.role),
         validUntil: importUser.validUntil,

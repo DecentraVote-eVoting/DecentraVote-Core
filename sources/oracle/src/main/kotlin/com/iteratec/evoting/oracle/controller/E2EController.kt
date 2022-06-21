@@ -34,9 +34,12 @@ class E2EController(
     fun resetDatabase(): ResponseEntity<String> {
         return try {
             databaseService.deleteAllAccounts()
-            importService.removeAllUsers()
+            databaseService.deleteAllImportUser()
+            databaseService.deleteAllMnemonicEntities()
             web3jConfig.resetNonce()
-            accountService.registerInitialDirector()
+            val directorAddress = web3jConfig.firstDerivedAddress()
+            accountService.registerInitialDirector(directorAddress)
+            accountService.saveAdminMnemonicEntity(directorAddress)
             ResponseEntity.ok("Removed all Entries")
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()

@@ -6,12 +6,12 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError, map, shareReplay, timeout} from 'rxjs/operators';
 import {interval, Observable, throwError} from 'rxjs';
-import {jwtUser} from '@app/user/models/user.model';
+import {jwtUser, User} from '@app/user/models/user.model';
 import {ROUTE_PATHS} from '@app/route-paths';
 import {Store} from '@ngrx/store';
 import {State} from '@app/app.store';
 import {Router} from '@angular/router';
-import {ENDPOINT_AUTH, ENDPOINT_ORACLE} from '@core/models/common.model';
+import {ENDPOINT_AUTH, ENDPOINT_MNEMONIC, ENDPOINT_MNEMONIC_PASSWORD, ENDPOINT_ORACLE} from '@core/models/common.model';
 import {SignatureService} from '@core/services/signature.service';
 import {SignatureModel} from '@core/models/signature.model';
 import {ImportUser, ImportUserRaw} from '@import-user/models/import-user.model';
@@ -38,9 +38,35 @@ export class OracleService {
       .set('Access-Control-Allow-Origin', '*');
   }
 
-  registerMember(address: string, hashedSecret: number): Observable<string> {
+  changePassword(signature: SignatureModel, newPassword: string, encryptedMnemonic: string): Observable<void> {
+    return this.http.post<void>(this.oracleUrl + ENDPOINT_MNEMONIC_PASSWORD,
+      {
+        'password': newPassword,
+        'encryptedMnemonic': encryptedMnemonic
+      },
+      {headers: this.signatureService.appendSignatureToHttpRequest(this.commonHttpHeaders, signature)});
+  }
+
+  getMnemonic(username: string, hashedPassword: string): Observable<string> {
+    return this.http.post(this.oracleUrl + ENDPOINT_MNEMONIC,
+      {
+        'username': username,
+        'password': hashedPassword
+      },
+      {
+        headers: this.commonHttpHeaders,
+        responseType: 'text'
+      }
+    );
+  }
+
+  registerMember(address: string, hashedSecret: number, hashedPassword: string, encryptedMnemonic: string): Observable<string> {
     return this.http.post(this.oracleUrl + ENDPOINT_ORACLE + `/member?secret=` + hashedSecret,
-      address,
+      {
+        'address': address,
+        'password': hashedPassword,
+        'encryptedMnemonic': encryptedMnemonic
+      },
       {
         headers: this.commonHttpHeaders,
         responseType: 'text',
@@ -88,24 +114,25 @@ export class OracleService {
       {headers: this.commonHttpHeaders, withCredentials: true, responseType: 'text'});
   }
 
-  removeImportMember(field0: string, signature: SignatureModel): Observable<void> {
+  removeImportMember(uid: string, signature: SignatureModel): Observable<void> {
     return this.http.post<void>(this.oracleUrl + ENDPOINT_ORACLE + '/import/remove',
-      field0, {headers: this.signatureService.appendSignatureToHttpRequest(this.commonHttpHeaders, signature)});
+      uid, {headers: this.signatureService.appendSignatureToHttpRequest(this.commonHttpHeaders, signature)});
   }
 
-  replaceUser(address: string, signature: SignatureModel): Observable<string> {
+  replaceUser(user: User, signature: SignatureModel): Observable<string> {
     return this.http.post<string>(this.oracleUrl + ENDPOINT_ORACLE + '/import/replace',
-      address, {headers: this.signatureService.appendSignatureToHttpRequest(this.commonHttpHeaders, signature)});
+      {...user.resolvedClaim, address: user.address},
+      {headers: this.signatureService.appendSignatureToHttpRequest(this.commonHttpHeaders, signature)});
   }
 
-  extendAccessCodeValidity(field0: string, signature: SignatureModel): Observable<void> {
+  extendAccessCodeValidity(uid: string, signature: SignatureModel): Observable<void> {
     return this.http.post<void>(this.oracleUrl + ENDPOINT_ORACLE + '/import/extend',
-      field0, {headers: this.signatureService.appendSignatureToHttpRequest(this.commonHttpHeaders, signature)});
+      uid, {headers: this.signatureService.appendSignatureToHttpRequest(this.commonHttpHeaders, signature)});
   }
 
-  replaceAccessCode(field0: string, signature: SignatureModel): Observable<void> {
+  replaceAccessCode(uid: string, signature: SignatureModel): Observable<void> {
     return this.http.post<void>(this.oracleUrl + ENDPOINT_ORACLE + '/import/replaceAccessCode',
-      field0, {headers: this.signatureService.appendSignatureToHttpRequest(this.commonHttpHeaders, signature)});
+      uid, {headers: this.signatureService.appendSignatureToHttpRequest(this.commonHttpHeaders, signature)});
   }
 
   editImportUser(editedImportUser: ImportUser, signature: SignatureModel): Observable<void> {

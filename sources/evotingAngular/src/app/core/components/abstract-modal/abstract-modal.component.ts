@@ -2,10 +2,11 @@
  DecentraVote
  Copyright (C) 2018-2022 iteratec
  */
-import {HostListener, Input} from '@angular/core';
+import {Directive, HostListener, Input} from '@angular/core';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {PlatformLocation} from '@angular/common';
 
+@Directive()
 export abstract class AbstractModalComponent {
   @Input() close: boolean;
 

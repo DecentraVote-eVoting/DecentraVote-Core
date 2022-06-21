@@ -58,28 +58,21 @@ class BallotBoxService(
     fun verifyOpenBallot(voteAddress: String, ballot: OpenBallot) {
         logger.debug("Start validation for ${ballot.signedDecision.signingAddress}")
 
-        val votingRights = voteContractService.getNumberOfVotingRights(voteAddress, ballot.signedDecision.signingAddress)
-
         val openNullifier = Gson().fromJson(ballot.signedNullifier.message, OpenBallotNullifier::class.java)
 
-        if(ballot.signedDecision.signingAddress != ballot.signedNullifier.signingAddress && ballot.signedDecision.signingAddress != openNullifier.signerAsAddress())
+        if (ballot.signedDecision.signingAddress != ballot.signedNullifier.signingAddress && ballot.signedDecision.signingAddress != openNullifier.signerAsAddress())
             throw SignatureNotValid("Decision and Nullifier Signatures are different")
 
-        if(voteAddress != openNullifier.voteAddress.toLowerCase())
+        if (voteAddress != openNullifier.voteAddress.lowercase())
             throw SignatureNotValid("Nullifier Signature was not created for this vote")
 
-        try {
-            getBallotFromVoteForAddressWithNullifier(voteAddress, ballot.signedNullifier.message)
-            throw SignatureNotValid("Nullifier already used")
-        } catch (e: NoSuchElementException) { }
-
-        val votesCast = try {
-            getBallotsFromVoteForAddress(voteAddress, ballot.signedDecision.signingAddress.value).count()
-        } catch (e: NoSuchElementException) {
-            0
+        ballotExistsByVoteAddressAndNullifier(voteAddress, ballot.signedNullifier.message).let { exists ->
+            if (exists) throw SignatureNotValid("Nullifier already used")
         }
-        if (votingRights <= votesCast && openNullifier.index >= votingRights)
-            throw SignatureNotValid("No voting rights left")
+
+        voteContractService.getNumberOfVotingRights(voteAddress, ballot.signedDecision.signingAddress).let { voteRights ->
+            if (openNullifier.index >= voteRights) throw SignatureNotValid("No voting rights left")
+        }
     }
 
     @Throws(java.util.NoSuchElementException::class)
@@ -88,8 +81,12 @@ class BallotBoxService(
     }
 
     @Throws(java.util.NoSuchElementException::class)
-    fun getBallotFromVoteForAddressWithNullifier(voteAddress: String, nullifier: String): OpenBallotEntity {
+    fun getBallotFromVoteForAddressAndNullifier(voteAddress: String, nullifier: String): OpenBallotEntity {
         return openBallotRepository.findByVoteAddressAndSignedNullifierNullifier(voteAddress, nullifier).get()
+    }
+
+    fun ballotExistsByVoteAddressAndNullifier(voteAddress: String, nullifier: String): Boolean {
+        return openBallotRepository.existsByVoteAddressAndSignedNullifierNullifier(voteAddress, nullifier)
     }
 
     @Throws(java.util.NoSuchElementException::class)
@@ -103,12 +100,12 @@ class BallotBoxService(
     }
 
     @Throws(java.util.NoSuchElementException::class)
-    fun getCastedVoteLength(voteAddress: String): Number{
+    fun getCastedVoteLength(voteAddress: String): Number {
         return openBallotRepository.countAllByVoteAddress(voteAddress)
     }
 
     @Throws(java.util.NoSuchElementException::class)
-    fun getAnonCastedVoteLength(voteAddress: String): Number{
+    fun getAnonCastedVoteLength(voteAddress: String): Number {
         return anonymousBallotRepository.countAllByVoteAddress(voteAddress)
     }
 
@@ -119,6 +116,7 @@ class BallotBoxService(
             openBallotRepository.save(ballotEntity)
         } catch (e: Exception) {
             logger.error("Save Vote ${e.message}")
+            throw e
         }
     }
 
@@ -129,6 +127,7 @@ class BallotBoxService(
             anonymousBallotRepository.save(ballotEntity)
         } catch (e: Exception) {
             logger.error("Save Vote ${e.message}")
+            throw e
         }
     }
 

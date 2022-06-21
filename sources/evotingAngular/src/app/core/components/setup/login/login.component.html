@@ -1,0 +1,96 @@
+<!--
+DecentraVote
+Copyright (C) 2018-2022 iteratec
+-->
+<app-big-spinner *ngIf="requestLoading;">
+</app-big-spinner>
+
+<ng-container *ngIf="!requestLoading;">
+  <div class="row ml-0 mr-0 mb-5 mt-5">
+    <mat-tab-group
+      mat-stretch-tabs
+      dynamicHeight
+      [(selectedIndex)]="loginTabGroupIndex"
+      class="col-8 col-xl-4 col-lg-6 offset-2 offset-lg-3 offset-xl-4 ev-setup-card">
+      <mat-tab label="{{'Login.Info1' | translate}}">
+        <div>
+          <h5 class="ev-text-field__label mt-5 text-center">
+            {{'Login.Info1' | translate}}
+          </h5>
+          <p class="ev-text-field__description text-center">
+            {{'Login.Info2' | translate}}
+          </p>
+          <br>
+          <label for="loginUsername" class="ev-text-field__label mt-2">
+            {{'Login.Username' | translate}}
+          </label>
+          <input type="text"
+                 id="loginUsername"
+                 class="ev-text-field__input mb-2 w-70"
+                 (keyup.enter)="onKeyupLogin()"
+                 [formControl]="usernameControl"
+                 data-e2e="loginUsernameInput">
+
+          <label for="loginPassword" class="ev-text-field__label mt-2">
+            {{'Login.Password' | translate}}
+          </label>
+          <input type="password"
+                 id="loginPassword"
+                 class="ev-text-field__input mb-2 w-70"
+                 (keyup.enter)="onKeyupLogin()"
+                 [formControl]="passwordControl"
+                 data-e2e="loginPasswordInput">
+
+          <div class="row ml-0 mr-0 mb-1 mt-1">
+            <div class="col-12 text-center">
+              <a data-e2e="resetPasswordLink" href="#"
+                 (click)="changePassword.emit()">
+                {{'Login.Button-Forgot-Password' | translate}}
+              </a>
+            </div>
+          </div>
+
+          <div class="row ml-0 mr-0 mb-5 mt-5">
+            <div class="col-12 d-flex ev-flex-content-center">
+              <button class="btn ev-button"
+                      [disabled]="!isPasswordValid() || !isUsernameValid()"
+                      (click)="login()"
+                      data-e2e="loginButton">
+                {{'Login.Button-Login' | translate}}
+              </button>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Registrieren">
+        <h5 class="ev-text-field__label mt-5 text-center">
+          {{'Login.Token.Title' | translate}}
+        </h5>
+        <p class="ev-text-field__description text-center">
+          {{'Login.Token.Description' | translate}}
+        </p>
+        <br>
+        <label for="tokenInput" class="ev-text-field__label mt-2">
+          {{'Login.Token.Label' | translate}}
+        </label>
+        <input type="text"
+               id="tokenInput"
+               class="ev-text-field__input mb-2 w-70 text-center"
+               [formControl]="tokenControl"
+               (keyup.enter)="onKeyupRegister()"
+               data-e2e="tokenInp">
+
+        <div class="row ml-0 mr-0 mb-5 mt-5">
+          <div class="col-12 d-flex ev-flex-content-center">
+            <button class="btn ev-button"
+                    [disabled]="!isTokenValid() && !requestLoading"
+                    (click)="sendToken()"
+                    data-e2e="sendTokenBtn">
+              {{'Login.Token.Button' | translate}}
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</ng-container>

@@ -11,13 +11,15 @@ import javax.persistence.*
 @Table(
         name = "t_open_ballot",
         uniqueConstraints = [
-            UniqueConstraint(columnNames = [ "vote_address", "nullifier_json" ])
+            UniqueConstraint(columnNames = [ "vote_address", "nullifier_json" ], name = "vote_address_nullifier_json_unique")
         ]
 )
-@SequenceGenerator(name = "seq", initialValue = 1, allocationSize = 1)
+@SequenceGenerator(name="open_ballot_seq_generator",
+        sequenceName="open_ballot_seq",
+        allocationSize=1)
 data class OpenBallotEntity(
         @Id
-        @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq")
+        @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "open_ballot_seq_generator")
         @Column(name = "ballot_id")
         var id: Long? = null,
 

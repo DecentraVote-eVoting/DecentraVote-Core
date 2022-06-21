@@ -2,7 +2,7 @@
  DecentraVote
  Copyright (C) 2018-2022 iteratec
  */
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {AbstractModalComponent} from '@core/components/abstract-modal/abstract-modal.component';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {PlatformLocation} from '@angular/common';
@@ -10,7 +10,6 @@ import {ToasterType} from '@core/models/toaster.model';
 import {ImportUserRaw} from '@import-user/models/import-user.model';
 import {ToasterService} from '@core/services/toaster.service';
 import {ImportUserService} from '@import-user/services/import-user.service';
-import {SignatureService} from '@core/services/signature.service';
 import {ImportUserFacade} from '@import-user/services/import-user.facade';
 
 @Component({
@@ -20,30 +19,26 @@ import {ImportUserFacade} from '@import-user/services/import-user.facade';
                             [uploadIsValid]="uploadIsValid"
                             [errorStack]="errorStack"
                             [fileToUpload]="fileToUpload"
-                            [importUsersRaw]="importUsersRaw"
+                            [importUsersRaw]="importUsersValidated"
                             (uploadEvent)="onUploadFile($event)"
                             (importClickEvent)="onImportUsers($event)">
     </app-import-users-modal>`
 })
-export class ImportUsersModalSmartComponent extends AbstractModalComponent implements OnInit {
+export class ImportUsersModalSmartComponent extends AbstractModalComponent {
 
   constructor(protected modalRef: NgbActiveModal,
               private platform: PlatformLocation,
               private toasterService: ToasterService,
               private importService: ImportUserService,
-              private signatureService: SignatureService,
               private importUserFacade: ImportUserFacade) {
     super(modalRef, platform);
   }
 
-  importUsersRaw: ImportUserRaw[];
+  importUsersValidated: ImportUserRaw[];
   errorStack: string[] = [];
   uploadIsValid = false;
   fileToUpload: File;
   fileExtensionName: string;
-
-  ngOnInit() {
-  }
 
   onUploadFile(event: EventTarget) {
     const element = event as HTMLInputElement;
@@ -66,10 +61,14 @@ export class ImportUsersModalSmartComponent extends AbstractModalComponent imple
   }
 
   readFile(file: File) {
-    this.importService.readFile(file, new FileReader()).subscribe(fileContent => {
-      if (fileContent) {
+    if (!(file instanceof Blob)) {
+        return;
+    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (reader.result) {
         try {
-          this.parseUploadedFile(fileContent, this.fileExtensionName);
+          this.parseUploadedFile(reader.result as string, this.fileExtensionName);
         } catch (e) {
           this.errorStack.push(e.message);
         }
@@ -77,19 +76,20 @@ export class ImportUsersModalSmartComponent extends AbstractModalComponent imple
         this.errorStack.push('User.Import.Error-Empty-File');
       }
       this.uploadIsValid = this.errorStack.length === 0;
-    });
+    };
+    reader.readAsText(file);
   }
 
   parseUploadedFile(fileContent, fileExtensionName) {
     switch (fileExtensionName) {
       case 'json': {
-        const json = this.importService.parseJson(fileContent);
-        this.importUsersRaw = this.importService.validateJson(json);
+        const importUserRaw = this.importService.parseJson(fileContent);
+        this.importUsersValidated = this.importService.validateImportUserRawObject(importUserRaw);
         break;
       }
       case 'csv': {
-        const json = this.importService.parseCSV(fileContent);
-        this.importUsersRaw = this.importService.validateJson(json);
+        const importUserRaw = this.importService.parseCSV(fileContent);
+        this.importUsersValidated = this.importService.validateImportUserRawObject(importUserRaw);
         break;
       }
       default: {

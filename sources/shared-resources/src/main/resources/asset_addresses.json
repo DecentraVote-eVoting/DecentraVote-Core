@@ -13,11 +13,11 @@
   },
   {
     "filename": "de.json",
-    "hash": "0x04673d678c69ac7f10f080d5d3dcd0a4d746894c120e10c605e8d6e19b509229"
+    "hash": "0xca276f01a3c55d97e7a4aab22afcdf81a242a31e1c2f8075f7e1edc1ef1633da"
   },
   {
     "filename": "en.json",
-    "hash": "0x64d177ada3a3c544bfb4fd4ab28d044c61083ccbe47e13fceff5c2de5556caf8"
+    "hash": "0x8a34552f85a9c5630bfd52eef2d6e52d152787cc65a2e7b47a221988cb10b083"
   },
   {
     "filename": "logo.png",
@@ -26,14 +26,6 @@
   {
     "filename": "logo_sm.png",
     "hash": "0xa6f65816000672b8396b4db1cf8b02cb4e2c7571a1a82000684ebe3613d88dfd"
-  },
-  {
-    "filename": "snarkjs.js",
-    "hash": "0x8e9d20b28132a87dc663b8c368e0e5e5ae1c169b2d52352138ede85bed59daba"
-  },
-  {
-    "filename": "snarkjs.min.js",
-    "hash": "0x66c67175d98857518728ddbc30e18947fe3e6a41bbed173fad274356565ec7a2"
   },
   {
     "filename": "verification_key.json",

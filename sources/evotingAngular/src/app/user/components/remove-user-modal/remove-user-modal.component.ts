@@ -33,7 +33,7 @@ export class RemoveUserModalComponent extends AbstractModalComponent {
     if ('id' in this.user) {
       this.importUserFacade.removeImportedUser(
         this.user.id,
-        this.user.field0
+        this.user.uid
       );
     } else {
       this.userFacade.invalidateUser(this.user.address, this.user.claimHash);

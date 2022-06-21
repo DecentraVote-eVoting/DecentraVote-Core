@@ -13,6 +13,12 @@
         "build": {
           "builder": "ngx-build-plus:build",
           "options": {
+            "allowedCommonJsDependencies": [
+              "js-sha3",
+              "elliptic",
+              "bn.js",
+              "hash.js"
+            ],
             "outputPath": "dist/evotingAngular",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -47,7 +53,16 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true
+            },
+            "local-production": {
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,

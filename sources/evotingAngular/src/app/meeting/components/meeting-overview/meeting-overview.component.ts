@@ -19,6 +19,9 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {User} from '@user/models/user.model';
 import {EnvironmentService} from '@core/services/environment.service';
 import {Role} from '@user/models/role.model';
+import {COOKIE_ACCESS, COOKIE_REFRESH} from '@core/models/common.model';
+import {CookieService} from 'ngx-cookie-service';
+
 @Component({
   selector: 'app-meeting-overview',
   templateUrl: './meeting-overview.component.html'
@@ -39,7 +42,8 @@ export class MeetingOverviewComponent {
               private router: Router,
               private cryptoFacade: CryptoFacade,
               private sanitizer: DomSanitizer,
-              private env: EnvironmentService) {
+              private env: EnvironmentService,
+              private cookieService: CookieService) {
   }
   getSanitizerUrl(url: string) {
     return this.sanitizer.bypassSecurityTrustUrl(url);
@@ -93,6 +97,10 @@ export class MeetingOverviewComponent {
     this.modalService.openModal<ShowMnemonicModalComponent>(ShowMnemonicModalComponent, {close: true});
   }
 
+  showHelp() {
+    window.open('https://decentra.vote/#documentation', '_blank').focus();
+  }
+
   isUserDirector(user: User): boolean {
     return user.role.isRole(Role.DIRECTOR);
   }
@@ -107,8 +115,13 @@ export class MeetingOverviewComponent {
 
   logout() {
     SessionStorageUtil.removeMnemonic();
+    SessionStorageUtil.removeEncryptedMnemonic();
+    SessionStorageUtil.removeHashedPassword();
     this.cryptoFacade.resetSecret();
-    this.router.navigate([ROUTE_PATHS.LOGIN.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
+    this.cookieService.delete(COOKIE_ACCESS, '/');
+    this.cookieService.delete(COOKIE_REFRESH, '/');
+    this.cookieService.delete(COOKIE_ACCESS, '/app');
+    this.cookieService.delete(COOKIE_REFRESH, '/app');
     window.location.reload();
   }
 }

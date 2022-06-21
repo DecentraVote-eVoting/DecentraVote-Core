@@ -3,13 +3,13 @@
  Copyright (C) 2018-2022 iteratec
  */
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {map, switchMap} from 'rxjs/operators';
 import {EthersService} from '@core/services/ethers.service';
 import {ethers} from 'ethers';
 import * as circomlib from 'circomlib';
 import * as ffj from 'ffjavascript';
-import {AnonParameter} from "@voting/models/vote.model";
+import {AnonParameter} from '@voting/models/vote.model';
 
 const g1 = [BigInt('1'), BigInt('2'), BigInt('1')];
 
@@ -69,8 +69,6 @@ export class CryptographyService {
 
   generateNullifier(root: bigint, secret: bigint, index: bigint) {
     const secretRootHash = circomlib.mimcsponge.multiHash([secret.toString(), root.toString()], 0, 1);
-    console.log(secretRootHash);
-    console.log(circomlib.mimcsponge.multiHash([secretRootHash.toString(), index.toString()], 0, 1));
     return circomlib.mimcsponge.multiHash([secretRootHash.toString(), index.toString()], 0, 1);
   }
 
@@ -81,17 +79,12 @@ export class CryptographyService {
   generateSecret(): Observable<string> {
     return this.ethersService.getSignerIfReady().pipe(
       switchMap(signer => {
-        return Observable.fromPromise(signer.signMessage('THIS SINGATURE IS USED BY DECENTRAVOTE EXCLUSIVELY. DO NOT SIGN THIS MESSAGE ANYWHERE ELSE.'));
+        return from<Promise<any>>(signer.signMessage('THIS SINGATURE IS USED BY DECENTRAVOTE EXCLUSIVELY. DO NOT SIGN THIS MESSAGE ANYWHERE ELSE.'));
       }),
       map(signature => {
         return circomlib.mimc7.hash(signature, 0).toString();
       })
-    )
-    /*    return Observable.fromPromise(this.ethersService.signer.signMessage('THIS SINGATURE IS USED BY DECENTRAVOTE EXCLUSIVELY. DO NOT SIGN THIS MESSAGE ANYWHERE ELSE.'))
-          .pipe(map(signature => {
-            return circomlib.mimc7.hash(signature, 0).toString();
-            })
-          );*/
+    );
   }
 
   merkleParent(leftHash: bigint, rightHash: bigint) {

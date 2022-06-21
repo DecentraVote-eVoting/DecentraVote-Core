@@ -46,7 +46,7 @@ export class CacheService {
         response.headers.append(CACHE_DATE_ADDED, DateUtil.formatNow());
         response.headers.append(CACHE_REQUEST, key);
         cache.put(key, response).catch(_ => {
-          console.warn(`Could not save cache entry for: ${key}`)
+          console.warn(`Could not save cache entry for: ${key}`);
         });
       }
     });

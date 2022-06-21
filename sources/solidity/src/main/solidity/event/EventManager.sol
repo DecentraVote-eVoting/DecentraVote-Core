@@ -29,6 +29,13 @@ contract EventManager {
         emit ChangedVote(voteAddress);
     }
 
+    //only necessary for the load-test worker
+    event VoteOpen(address voteAddress);
+
+    function voteOpen(address voteAddress) external onlyByWhitelisted {
+        emit VoteOpen(voteAddress);
+    }
+
     //only necessary for the ballot box
     event VoteClosed(address voteAddress, bool anon);
 

@@ -10,9 +10,9 @@ import org.springframework.data.repository.CrudRepository
 import java.util.*
 
 interface ImportUserRepository : CrudRepository<ImportUser, Long> {
-    fun getByField0(field0: String): Optional<ImportUser>
+    fun getByUid(uid: String): Optional<ImportUser>
     fun getByAccessCode(accessCode: String): Optional<ImportUser>
 
-    @Query(value = "SELECT count(user) FROM ImportUser user WHERE user.field0 IN (:field0array) AND user.role != 0 AND user.used = FALSE")
-    fun getNumberOfDuplicateField0s(field0array: List<String>): Int
+    @Query(value = "SELECT count(user) FROM ImportUser user WHERE user.uid IN (:uidarray) AND user.role != 0 AND user.used = FALSE")
+    fun getNumberOfDuplicateUids(uidarray: List<String>): Int
 }

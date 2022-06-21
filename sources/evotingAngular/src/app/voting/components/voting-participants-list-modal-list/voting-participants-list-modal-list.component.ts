@@ -66,7 +66,7 @@ export class VotingParticipantsListModalListComponent {
 
   sortMembers() {
     this.filteredMembers = this.filteredMembers.sort((cell1, cell2) =>
-      cell1.resolvedClaim.field1.localeCompare(cell2.resolvedClaim.field1));
+      cell1.resolvedClaim.name1.localeCompare(cell2.resolvedClaim.name1));
   }
 
   getArray(pageNumber: number, usePagination: boolean): User[] {

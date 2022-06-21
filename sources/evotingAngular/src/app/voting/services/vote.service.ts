@@ -18,8 +18,11 @@ import {deepDistinctUntilChanged} from '@core/utils/pipe.util';
 import memoizee from 'memoizee';
 import {VoteStage} from '@voting/models/vote-stage.enum';
 import {VerifiableBallot} from '@voting/models/ballot-box.model';
-import {BigNumber} from 'ethers';
+import {BigNumber, ethers} from 'ethers';
 import {ObjectUtil} from '@core/utils/object.util';
+import {VoteCertificate} from '@core/models/signature.model';
+import {LocalStorageUtil} from '@core/utils/local-storage.util';
+import {Ballot} from '@core/models/ballot-box.model';
 
 /**
  * The service only holds methods that vote services need.
@@ -309,11 +312,56 @@ export class VoteService {
   });
 
   /**
+   * returns archive reason from storage
+   */
+  resolveVoteDecisionsFromCertificates(voteAddress: string, ballots: Ballot[], voteOptionsLength: number): Observable<number[]> {
+    return this.voteSelectors.getChairmanPrivateKey(voteAddress).pipe(
+      map(key => this.cryptoFacade.countVote(ballots, key._hex, voteOptionsLength))
+    );
+  }
+
+  /**
    * returns resolved metadata from hash from storage
    * @param {string} metaDataHash
    * @return {Observable<StorageVote>} extends StorageData and contains filename, description and title
    */
   getResolvedMetaDataFromHash(metaDataHash: string): Observable<StorageVote> {
     return this.storageService.getJsonData(metaDataHash);
+  }
+
+  /**
+   * returns an array of VoteCertificates for an array of signers for one vote
+   * @param {string[]} signers (for an anonymous vote, every casted vote has an unique signer)
+   * @param {string} voteAddress
+   */
+  getVerifiedVoteCertificates(signers: string[], voteAddress: string): VoteCertificate[] {
+    let result = [];
+    signers.forEach((signer: string) => {
+      const certs = LocalStorageUtil.getCertificates(voteAddress, signer)
+        .map((cert: VoteCertificate) => {
+          const ballot = JSON.parse(cert.certificate.message);
+          // 1. Check if voteAddress is the same
+          const validBallotAddress = ballot.voteAddress.toLowerCase() === voteAddress.toLowerCase();
+
+          // 2. Check Signature of Ballotbox
+          const resolvedBallotBoxSigner = ethers.utils.verifyMessage(
+            cert.certificate.message,
+            cert.certificate.signature
+          );
+          const validBaseSignature = resolvedBallotBoxSigner.toLowerCase() === cert.ballotBox.address.toLowerCase();
+
+          // 3. Check VoteDecision Signature
+          const resolvedDecisionSigner = ethers.utils.verifyMessage(
+            ballot.signedDecision.decision,
+            ballot.signedDecision.decisionSignature
+          );
+          const validDecisionSignature = resolvedDecisionSigner.toLowerCase() === signer.toLowerCase();
+
+          cert.isValid = validBaseSignature && validBallotAddress && validDecisionSignature;
+          return cert;
+        });
+      result = result.concat(certs);
+    });
+    return result;
   }
 }

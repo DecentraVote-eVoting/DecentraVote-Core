@@ -2,32 +2,44 @@
  DecentraVote
  Copyright (C) 2018-2022 iteratec
  */
-import {MNEMONIC} from '@core/models/common.model';
+import {SignatureModel, VoteCertificate} from '@core/models/signature.model';
+import {BallotBoxServer} from '@core/models/storage.model';
 import {ObjectUtil} from '@core/utils/object.util';
-import * as CryptoJS from 'crypto-js';
 
 export class LocalStorageUtil {
 
-  static getMnemonic(password: string): string {
-    const encryptedMnemonic = localStorage.getItem(MNEMONIC);
-    try {
-      return CryptoJS.AES.decrypt(encryptedMnemonic, password).toString(CryptoJS.enc.Utf8);
-    } catch (err) {
-      return null;
+  static getCertificates(voteAddress: string, signer: string): VoteCertificate[] {
+    return JSON.parse(localStorage.getItem(`certificates_${voteAddress.toLowerCase()}_${signer.toLowerCase()}`));
+  }
+
+  static setCertificate(voteAddress: string, signer: string, certificate: SignatureModel, ballotbox: BallotBoxServer) {
+    let certs: VoteCertificate[];
+    if (this.hasCertificates(voteAddress, signer)) {
+      certs = this.getCertificates(voteAddress, signer);
+    } else {
+      certs = [];
     }
+    certs.push({certificate: certificate, ballotBox: ballotbox} as VoteCertificate);
+    localStorage.setItem(`certificates_${voteAddress.toLowerCase()}_${signer.toLowerCase()}`, JSON.stringify(certs));
   }
 
-  static setMnemonic(mnemonic: string, password: string) {
-    const encryptedMnemonic = CryptoJS.AES.encrypt(mnemonic, password).toString();
-    localStorage.setItem(MNEMONIC, encryptedMnemonic);
+  static removeCertificates(voteAddress: string, signer: string) {
+    localStorage.removeItem(`certificates_${voteAddress.toLowerCase()}_${signer.toLowerCase()}`);
   }
 
-  static removeMnemonic() {
-    localStorage.removeItem(MNEMONIC);
+  static hasCertificates(voteAddress: string, signer: string): boolean {
+    return !ObjectUtil.isNullOrUndefined(localStorage.getItem(`certificates_${voteAddress.toLowerCase()}_${signer.toLowerCase()}`));
   }
 
-  static hasMnemonic(): boolean {
-    return !ObjectUtil.isNullOrUndefined(localStorage.getItem(MNEMONIC));
+  static localItemExist (query: string): boolean {
+    query = query.toLowerCase();
+    for (const i in localStorage) {
+      if (localStorage.hasOwnProperty(i)) {
+        if (i.includes(query) && typeof i === 'string') {
+          return true;
+        }
+      }
+    }
+    return false;
   }
-
 }

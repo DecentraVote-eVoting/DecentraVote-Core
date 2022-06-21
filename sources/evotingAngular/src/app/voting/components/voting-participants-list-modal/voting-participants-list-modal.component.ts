@@ -62,7 +62,7 @@ export class VotingParticipantsListModalComponent extends AbstractModalComponent
 
     combineLatest([
       this.votingFacade.getExcludedFromVoteList(this.vote.address),
-      this.votingFacade.getNonExcludedVoters(this.vote.address),
+      this.votingFacade.getNonExcludedMember(this.vote.address),
       this.votingFacade.getMemberExclusionLoadingState(this.vote.address)
     ]).pipe(takeUntil(this.unsubscribe$))
       .subscribe(([excluded, nonExcluded, loadingState]) => {

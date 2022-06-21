@@ -5,13 +5,13 @@
 import {NgModule} from '@angular/core';
 import {EffectsModule} from '@ngrx/effects';
 import {ImportUserEffects} from '@import-user/+state/import-user.effects';
-import { RemoveImportUserModalComponent } from './components/remove-import-user/remove-import-user-modal.component';
+import {RemoveImportUserModalComponent} from './components/remove-import-user/remove-import-user-modal.component';
 import {TranslateModule} from '@ngx-translate/core';
 import {CoreModule} from '@core/core.module';
 import {CommonModule} from '@angular/common';
-import { ImportUserAccessCodeModalComponent } from './components/import-user-access-code-modal/import-user-access-code-modal.component';
+import {ImportUserAccessCodeModalComponent} from './components/import-user-access-code-modal/import-user-access-code-modal.component';
 import {ReactiveFormsModule} from '@angular/forms';
-import { ImportUserEditModalComponent } from './components/import-user-edit-modal/import-user-edit-modal.component';
+import {ImportUserEditModalComponent} from './components/import-user-edit-modal/import-user-edit-modal.component';
 import {ClipboardModule} from "@angular/cdk/clipboard";
 
 const COMPONENTS = [

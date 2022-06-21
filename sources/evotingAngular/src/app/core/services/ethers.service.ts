@@ -5,7 +5,7 @@
 import {Injectable} from '@angular/core';
 import {ethers, Wallet} from 'ethers';
 import {BaseProvider} from '@ethersproject/providers/lib/base-provider';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, from, Observable} from 'rxjs';
 import {filter, map, switchMap, tap, withLatestFrom} from 'rxjs/operators';
 import {NonceManager} from '@ethersproject/experimental';
 import {RetryProvider} from '@core/utils/ethers/retry-provider';
@@ -78,7 +78,7 @@ export class EthersService {
   getSignerAddress(): Observable<string> {
     return this.getSignerIfReady().pipe(
       switchMap(signer => {
-        return Observable.fromPromise(signer.getAddress());
+        return from<Promise<string>>(signer.getAddress());
       })
     );
   }

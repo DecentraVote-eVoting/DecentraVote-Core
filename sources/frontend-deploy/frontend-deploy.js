@@ -30,12 +30,12 @@ if (task === 'deploy') {
 }
 utils.printSeperator();
 
-let profile = process.env.ENVIRONMENT;
+let profile = process.env.CUSTOMER;
 if (profile === undefined) {
-    console.log("env.ENVIRONMENT: No Profile specified. Using default profile: -local-");
+    console.log("env.CUSTOMER: No Profile specified. Using default profile: -local-");
     profile = "local";
 } else {
-    console.log("env.ENVIRONMENT: Using Profile: " + profile);
+    console.log("env.CUSTOMER: Using Profile: " + profile);
 }
 utils.printSeperator();
 

@@ -4,7 +4,6 @@
  */
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
-import {Observable} from 'rxjs';
 import {ROUTE_PATHS} from '@app/route-paths';
 import {EthersService} from '@core/services/ethers.service';
 import {SessionStorageUtil} from '@core/utils/session-storage.util';
@@ -20,8 +19,8 @@ export class IsSignerCreatedGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const loggedIn = this.isLoggedIn();
-    if(!loggedIn){
-      this.router.navigate([ROUTE_PATHS.LOGIN.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
+    if (!loggedIn) {
+      this.router.navigate([ROUTE_PATHS.SETUP.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
     }
     return loggedIn;
   }

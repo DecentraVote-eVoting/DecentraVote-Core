@@ -3,8 +3,7 @@
  Copyright (C) 2018-2022 iteratec
  */
 import {Injectable} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import {ImportUserFields, importUserJoiSchema, ImportUserRaw} from '@import-user/models/import-user.model';
+import {importUserJoiSchema, ImportUserRaw} from '@import-user/models/import-user.model';
 import * as Papa from 'papaparse';
 
 @Injectable({
@@ -15,26 +14,11 @@ export class ImportUserService {
   constructor() {
   }
 
-  readFile = (blob: Blob, reader: FileReader = new FileReader()) => new Observable(obs => {
-    if (!(blob instanceof Blob)) {
-      obs.error(new Error('`blob` must be an instance of File or Blob.'));
-      return;
-    }
-
-    reader.onerror = err => obs.error(err);
-    reader.onabort = err => obs.error(err);
-    reader.onload = () => obs.next(reader.result);
-    reader.onloadend = () => obs.complete();
-
-    return reader.readAsText(blob);
-  })
-
-  parseJson(fileContent): string {
+  parseJson(fileContent): ImportUserRaw[] {
     try {
       return JSON.parse(fileContent);
     } catch (e) {
       if (e instanceof SyntaxError) {
-        console.log(e.message);
         throw new Error(e.message);
       } else {
         throw new Error(`['EXPLICIT'] ${e.name}: ${e.message}`);
@@ -42,7 +26,7 @@ export class ImportUserService {
     }
   }
 
-  parseCSV(fileContent): ImportUserFields[] {
+  parseCSV(fileContent): ImportUserRaw[] {
     const parsedCsv = Papa.parse(fileContent, {
       header: true,
     });
@@ -54,11 +38,11 @@ export class ImportUserService {
     return parsedCsv.data;
   }
 
-  validateJson(json): ImportUserRaw[] {
-    if (!json || json.length <= 0) {
+  validateImportUserRawObject(data): ImportUserRaw[] {
+    if (!data || data.length <= 0) {
       return;
     }
-    const validatedObject = importUserJoiSchema.validate(json, {allowUnknown: true});
+    const validatedObject = importUserJoiSchema.validate(data, {allowUnknown: false});
     if (validatedObject.error) {
       throw new Error(validatedObject.error.message);
     }

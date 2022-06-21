@@ -10,18 +10,18 @@ import java.time.Instant
 
 abstract class ImportUserDataTransferObject {
     abstract val id: Long
-    abstract val field1: String
-    abstract val field2: String
-    abstract val field0: String
+    abstract val name1: String
+    abstract val name2: String
+    abstract val uid: String
     abstract val role: Int
     abstract val validUntil: Timestamp
 }
 
 data class ImportUserDto(
         override val id: Long,
-        override val field1: String,
-        override val field2: String,
-        override val field0: String,
+        override val name1: String,
+        override val name2: String,
+        override val uid: String,
         override val role: Int,
         override val validUntil: Timestamp
 ) : ImportUserDataTransferObject() {
@@ -29,9 +29,9 @@ data class ImportUserDto(
         fun mapFromImportUser(user: ImportUser) =
                 ImportUserDto(
                         user.id!!,
-                        user.field1!!,
-                        user.field2!!,
-                        user.field0!!,
+                        user.name1!!,
+                        user.name2!!,
+                        user.uid!!,
                         user.role!!,
                         user.validUntil?: Timestamp.from(Instant.MIN)
                 )
@@ -40,9 +40,9 @@ data class ImportUserDto(
 
 data class ImportUserWithAccessCodeDto(
         override val id: Long,
-        override val field1: String,
-        override val field2: String,
-        override val field0: String,
+        override val name1: String,
+        override val name2: String,
+        override val uid: String,
         override val role: Int,
         override val validUntil: Timestamp,
         val accessCode: String
@@ -51,9 +51,9 @@ data class ImportUserWithAccessCodeDto(
         fun mapFromImportUser(user: ImportUser) =
                 ImportUserWithAccessCodeDto(
                         user.id!!,
-                        user.field1!!,
-                        user.field2!!,
-                        user.field0!!,
+                        user.name1!!,
+                        user.name2!!,
+                        user.uid!!,
                         user.role!!,
                         user.validUntil?: Timestamp.from(Instant.MIN),
                         user.accessCode!!)

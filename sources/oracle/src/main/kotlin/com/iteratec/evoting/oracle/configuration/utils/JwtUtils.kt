@@ -99,7 +99,7 @@ class JwtUtils(private val rsaPublicKey: String?) {
     }
 
     @Throws(Exception::class)
-    fun createJwtToken(id: String, field0: String?, field1: String?, field2: String?, roles: List<String>, identityProvider: IdentityProvider): String? {
+    fun createJwtToken(id: String, uid: String?, name1: String?, name2: String?, roles: List<String>, identityProvider: IdentityProvider): String? {
         return if (identityProvider == IdentityProvider.Keycloak) {
             throw IllegalArgumentException("Die Erstellung von Keycloak JWTs übernimmt der Keycloak Server selbst.")
         } else {
@@ -107,9 +107,9 @@ class JwtUtils(private val rsaPublicKey: String?) {
             Jwts.builder()
                     .setIssuer(identityProvider.name)
                     .setSubject(identityProvider.name + "-" + id)
-                    .claim("field0", field0)
-                    .claim("field1", field1)
-                    .claim("field2", field2)
+                    .claim("uid", uid)
+                    .claim("name1", name1)
+                    .claim("name2", name2)
                     .claim("roles", roles)
                     .setExpiration(expiration)
                     .signWith(SignatureAlgorithm.RS256, privateKey)

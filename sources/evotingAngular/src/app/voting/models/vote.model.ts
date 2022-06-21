@@ -112,9 +112,9 @@ export class ExportVoteResult {
 }
 
 export class UserResult {
-  field1: string;
-  field2: string;
-  field0: string;
+  name1: string;
+  name2: string;
+  uid: string;
   ethAddress: string;
   options: string[];
 }

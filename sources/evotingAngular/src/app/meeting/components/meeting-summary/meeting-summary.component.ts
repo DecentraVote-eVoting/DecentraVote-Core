@@ -7,6 +7,8 @@ import {MeetingDetailModel} from '@meeting/models/meeting.model';
 import {MemberRepresentation} from '@meeting/models/meeting-member.model';
 import {AssetFiles} from '@core/models/asset.model';
 import {zoomLevel} from 'zoom-level';
+import {User} from '@user/models/user.model';
+import {UserSortPipe} from '@core/pipes/user-sort.pipe';
 
 
 @Component({
@@ -20,15 +22,25 @@ export class MeetingSummaryComponent implements OnInit {
     if (!representations) { return; }
     this.representationsSplit = this.getSplitLists(representations);
   }
+  @Input()
+  set memberWithVoteRights(users: User[]) {
+    if (!users) { return; }
+    users = this.userSortPipe.transform(users, 0);
+    this.memberWithVoteRightsSplit = this.getSplitLists(users);
+  }
   @Input() countedVoteAddresses: { voteAddress: string, isAnonymous: boolean }[];
   @Input() templateReady = false;
   @Output() voteDataReady = new EventEmitter<any>();
 
   assetFiles = AssetFiles;
-
+  memberWithVoteRightsSplit: User[][] = [];
   nColumns = 3;
+  nColumnsMembers = 3;
 
   representationsSplit: MemberRepresentation[][] = [];
+
+  constructor(private userSortPipe: UserSortPipe) {
+  }
 
   ngOnInit() {
     /*

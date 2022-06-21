@@ -15,6 +15,7 @@ class DataEntry(
     @Id
     val hash: String,
     @Lob
+    @Column(columnDefinition = "text NULL")
     val data: String,
     @Column
     val public: Boolean?

@@ -11,6 +11,7 @@ async function getFiles(dir, isAsset = false) {
     const files = fs.readdirSync(dir);
     const fileList = [];
     for (const file of files) {
+        if(file.includes("snark")) continue;
         if (fs.statSync(path.join(dir, file)).isDirectory()) {
             let dirFiles = await getFiles(path.join(dir, file), file === "assets" || isAsset);
             Array.prototype.push.apply(fileList, dirFiles);

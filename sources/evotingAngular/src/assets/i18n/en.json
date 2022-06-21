@@ -10,10 +10,12 @@
       "Info": "Info"
     },
     "Error": {
+      "Renew-Password": "Error changing password",
       "Extend-Access-Code-Validity": "Error extending access code validity",
       "Replace-Access-Code": "Error replacing access code",
       "Oracle": "The Oracle server is offline",
       "Login": "Error logging in with this password",
+      "Login-Register": "Error logging in, you are not a member",
       "Login-Token": "Error registering with this access code",
       "Register-Eth": "Error connecting the ethereum address",
       "Load-Members": "Error loading members",
@@ -55,7 +57,8 @@
       "Replace-User": "Error when replacing user",
       "Timeout": "Internet connection was interrupted for too long. Please reload the page.",
       "Title-Length-Vote": "Title has to be set and can not be longer than 200 letters.",
-      "Title-Length-Meeting": "Title has to be set and can not be longer than 100 letters."
+      "Title-Length-Meeting": "Title has to be set and can not be longer than 100 letters.",
+      "Hash-Not-Equal": "Resource from Storage is not valid. (Hash not equal)"
     },
     "Success": {
       "Import-Members": "Members imported successfully",
@@ -109,16 +112,17 @@
       "Button": "Get started!"
     },
     "New-Or-Import": {
-      "Title": "Create or import",
+      "Title": "Account management",
       "Description-New": "Would you like to create a new account? Click on Create and get a new mnemonic.",
-      "Description-Import": "Would you like to use an existing account? Click on Import and enter its mnemonic.",
+      "Description-Import": "You forgot your password? You can reset it with your mnemonic.",
       "Button-New": "Create",
-      "Button-Import": "Import",
-      "Field-Description": "field0: ID\n field1: Free text (e.g. First name)\n field2: Free text (e.g. Surname)\n role: [ Director - 6 ; Member - 2 ; Guest - 1 ]"
+      "Button-Password-Reset": "Reset Password",
+      "Field-Description": "uid: ID\n name1: Free text (e.g. First name)\n name2: Free text (e.g. Surname)\n role: [ Director - 6 ; Member - 2 ; Guest - 1 ]"
     },
     "Create-Password": {
-      "Title": "Create password",
-      "Description": "Your password needs to be at least 8 characters long and contain a letter and a number. Your access data will be encrypted using the password and stored in your browser.",
+      "Title": "Create new password",
+      "Description": "Your new password needs to be at least 8 characters long and contain a letter and a number.",
+      "Description-New": "Use your defined User ID to sign in to DecentraVote. Your new password needs to be at least 8 characters long and contain a letter and a number.",
       "Label-1": "Enter password",
       "Label-2": "Re-enter password",
       "Button": "Next step",
@@ -128,26 +132,32 @@
       "Security-4": "Passwords match"
     },
     "Create-Mnemonic": {
-      "Title-New": "Create mnemonic",
-      "Title-Import": "Import mnemonic",
-      "Description-New": "Click on the field showing 12 words to copy them to the clipboard. Save them in a password manager or store them on an encrypted external storage device or on a piece of paper kept in a safe place. You can only recover your access data or set up your access data in another browser using these words. Don't disclose them and protect them against unauthorized access. Anyone who knows these 12 words has your access data and can use DecentraVote with your account.",
-      "Description-Import": "Click on the field to paste your mnemonic. Save them in a password manager or store them on an encrypted external storage device or on a piece of paper kept in a safe place. You can only recover your access data or set up your access data in another browser using these words. Don't disclose them and protect them against unauthorized access. Anyone who knows these 12 words has your access data and can use DecentraVote with your account.",
+      "Title-New": "Create new account",
+      "Title-Import": "Recover password",
+      "Description-New": "Save the mnemonic (12 words) in a password manager or store them on an encrypted external storage device or on a piece of paper kept in a safe place. You can only recover your password using these words. Don't disclose them and protect them against unauthorized access. Anyone who knows these 12 words has your access data and can use DecentraVote with your account.",
+      "Description-Import": "With the help of your mnemonic (12 words) you can recover your password. Click on the field to paste your mnemonic.",
       "Label-New": "Copy mnemonic",
-      "Label-Import": "Import mnemonic",
-      "Button": "Finish setup!",
+      "Label-Import": "Paste mnemonic",
+      "Button": "Finish",
       "Clipboard-Success": "Copied successfully!",
       "Copy-To-Clipboard": "Copy to clipboard"
     },
     "Button-Back": "Back"
   },
   "Login": {
-    "Info": "Please enter your password",
-    "Button-Login": "Login",
-    "Button-Password": "Forgot password",
+    "Info1": "Sign in",
+    "Info2": "to continue with DecentraVote",
+    "Username": "User ID",
+    "Username-Info": "Your defined User ID",
+    "Password": "Password",
+    "Forgot-Password": "Forgot your password",
+    "Button-Login": "Sign in",
+    "Button-Forgot-Password": "Reset password",
     "External": "Please follow the instructions in the new window. If your browser is blocking it, please enable pop-ups for this website.",
     "Token": {
-      "Title": "Enter access code",
-      "Description": "Enter your personal access code and click the submit button.",
+      "Title": "Register",
+      "Description": "Enter your personal registration code and click the submit button.",
+      "Label": "Registration code",
       "Button": "Submit"
     },
     "Copyright": "DecentraVote was developed by iteratec GmbH. Copyright (C) 2018-2022 iteratec",
@@ -164,6 +174,10 @@
     "Modal": "more information",
     "Header": "License information:"
   },
+  "Help": {
+    "Button": "Help",
+    "Description": "User documentation and help"
+  },
   "Recovery": {
     "Title": "Warning!",
     "Description-1": "As next, your mnemonic will be reset and you will be forwarded to the setup.",
@@ -177,8 +191,8 @@
       "Title": "Connect Ethereum address",
       "Congratulations": "Congratulations",
       "Success": ", your membership has been verified.",
-      "Info": "In order to complete the process, click on the connect button and register your Ethereum address on the blockchain.",
-      "Address": "Your connected Ethereum address",
+      "Info": "Please check your data. In case of errors contact your administrator.",
+      "Address": "New Ethereum address",
       "Button-Link": "Connect"
     },
     "Ethereum": {
@@ -213,12 +227,12 @@
     },
     "Form": {
       "Title": "Edit invitation",
-      "Field1": "Field 1",
-      "Field1-explanation": "John, John Doe",
-      "Field2": "Field 2",
-      "Field2-explanation": "Doe, Company Name Inc.",
-      "Field0": "ID",
-      "Field0-explanation": "Unique identifier for this invitation",
+      "Name1": "Name 1",
+      "Name1-explanation": "John, John Doe",
+      "Name2": "Name 2",
+      "Name2-explanation": "Doe, Company Name Inc.",
+      "Uid": "ID",
+      "Uid-explanation": "Unique identifier for this invitation",
       "Role": "Role",
       "Option-Guest": "Guest",
       "Option-Member": "Member",
@@ -296,9 +310,9 @@
       "Option-Guest": "Guest",
       "Option-Member": "Member",
       "Option-Director": "Director",
-      "Field0": "Field 0",
-      "Field1": "Field 1",
-      "Field2": "Field 2",
+      "Uid": "ID",
+      "Name1": "Name 1",
+      "Name2": "Name 2",
       "Role": "Role",
       "Info": "Please format your .json or .csv file in this fashion."
     },
@@ -311,12 +325,12 @@
     },
     "Form": {
       "Title": "Edit user",
-      "Field1": "Field 1",
-      "Field1-explanation": "John, John Doe",
-      "Field2": "Field 2",
-      "Field2-explanation": "Doe, Company Name Inc.",
-      "Field0": "ID",
-      "Field0-explanation": "Unique identifier for this user",
+      "Name1": "Name 1",
+      "Name1-explanation": "John, John Doe",
+      "Name2": "Name 2",
+      "Name2-explanation": "Doe, Company Name Inc.",
+      "Uid": "ID",
+      "Uid-explanation": "Unique identifier for this user",
       "Role": "Role",
       "Option-Guest": "Guest",
       "Option-Member": "Member",
@@ -477,10 +491,12 @@
       "Result": "Result",
       "Eligible-Voters": "Eligible voters",
       "Excluded-Members": "Excluded members",
+      "TooLate-Voters": "Members that registered not in time for this vote or did not cast their vote",
       "Dash": "-",
       "No-Counted-Votes": "This meeting does not have counted votes.",
       "No-Representations": "This meeting does not have assigned representations.",
       "Vote-No-Excluded-Members": "This vote does not have excluded members.",
+      "Vote-No-TooLate-Voters": "All members registered in time and cast their vote.",
       "Cast-Votes-Singular": "cast vote",
       "Cast-Votes-Plural": "cast votes"
     },
@@ -534,6 +550,7 @@
     "Tooltip-Edit": "Edit",
     "Tooltip-Entitled": "Eligible voters",
     "Tooltip-Change-Request": "Amendment",
+    "Tooltip-Certificate": "Show Certificate",
     "Button-Schedule-Voting": "Schedule vote",
     "Button-Open-Voting": "Open vote",
     "Button-Archive-Voting": "Archive",
@@ -609,5 +626,29 @@
         }
       }
     }
+  },
+  "Certificate": {
+    "Meeting": "Meeting",
+    "Vote": "Vote",
+    "Description": "Description",
+    "Address": {
+      "Meeting": "Smart-Contract-Address from the meeting",
+      "Vote": "Smart-Contract-Address from the vote",
+      "Ballotbox": "Address of the Ballotbox"
+    },
+    "Info": "This certificate proofs that you have submitted a valid vote and the ballotbox is going to process this vote. The authenticity is guaranteed with a valid electronic signature from the ballotbox.",
+    "Title": {
+      "1": "Certificate of",
+      "2": "vote",
+      "one-line": "your"
+    },
+    "Vote-Decision": "Your vote decision",
+    "Ballotbox-Owner": "Operator/Owner",
+    "Signature": {
+      "Name": "Signature",
+      "Valid": "Signature valid",
+      "Invalid": "Signature non-valid"
+    },
+    "Not-Found": "No certificates found on your local machine/browser"
   }
 }

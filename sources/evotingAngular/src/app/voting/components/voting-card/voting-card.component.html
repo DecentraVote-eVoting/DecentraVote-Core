@@ -94,6 +94,14 @@ Copyright (C) 2018-2022 iteratec
                 data-e2e="openDeleteVoteModalButton">
           <mat-icon class="ev-button-disabled">delete</mat-icon>
         </button>
+        <button mat-icon-button
+                class="ev-icon material-icons-round ev-card--pointer ev-pdright"
+                (click)="openVoteCertificate.emit()"
+                ngbTooltip="{{'Voting.Tooltip-Certificate' | translate}}"
+                *ngIf="showCertificate()"
+                data-e2e="openVoteCertificateButton">
+          <mat-icon class="ev-button-disabled">workspace_premium</mat-icon>
+        </button>
       </div>
     </div>
   </div>

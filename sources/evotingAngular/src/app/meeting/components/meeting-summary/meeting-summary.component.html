@@ -59,6 +59,36 @@ Copyright (C) 2018-2022 iteratec
     <ng-template #noRepresentations>
       <p class="ev-summary-font-size-small text-center">{{'Voting.Summary.No-Representations' | translate}}</p>
     </ng-template>
+
+    <ng-template #membersTemplate let-members="members" let-showAddress="showAddress"
+                 let-boldText="boldText" let-showDividers="showDividers">
+      <div *ngFor="let member of members, last as isLast" class="ev-print-avoid-break-inside py-1"
+           [class.ev-summary-member-divider]="showDividers && !isLast">
+        <div class="ev-summary-font-size-small"
+             [class.font-weight-bolder]="boldText">
+          {{member | MemberName}}
+          <app-role-badges [userRole]="member.role"></app-role-badges>
+        </div>
+        <div class="d-md-block ev-summary-font-size-small">
+          {{member.resolvedClaim.uid}}
+        </div>
+        <div *ngIf="showAddress" class="d-md-block ev-summary-font-size-x-small">
+          {{member.address}}
+        </div>
+      </div>
+    </ng-template>
+
+    <div *ngIf="memberWithVoteRightsSplit.length > 0" class="mb-3">
+      <h4 class="ev-summary-font-size-large text-center">{{'Voting.Summary.Eligible-Voters' | translate}}</h4>
+      <div class="row">
+        <div *ngFor="let _ of [].constructor(nColumnsMembers), let i = index" class="col">
+          <ng-template *ngTemplateOutlet="membersTemplate;
+          context: {members: this.memberWithVoteRightsSplit[i % nColumnsMembers], showAddress: true,
+          boldText: false, showDividers: true}">
+          </ng-template>
+        </div>
+      </div>
+    </div>
   </ng-container>
 
 
@@ -68,6 +98,7 @@ Copyright (C) 2018-2022 iteratec
       <ng-container *ngIf="countedVoteAddresses.length !== 0; else noCountedVotes">
         <div *ngFor="let voteAddressAndAnonymity of countedVoteAddresses">
           <app-voting-summary-smart [voteAddress]="voteAddressAndAnonymity.voteAddress"
+                                    [meetingAddress]="meeting.address"
                                     [isAnonymous]="voteAddressAndAnonymity.isAnonymous"
                                     [templateReady]="templateReady"
                                     (voteDataReady)="voteDataReady.emit()">

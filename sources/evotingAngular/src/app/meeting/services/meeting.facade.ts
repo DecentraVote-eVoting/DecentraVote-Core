@@ -48,7 +48,8 @@ export class MeetingFacade {
           fromRoot.getMeetingState,
           meetingReducer.getRegisteredVoterAddressesSelectorFunction(meetingAddress)
         )
-      )
+      ),
+      filter(val => !!val)
     );
   });
 

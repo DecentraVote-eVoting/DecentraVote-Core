@@ -8,15 +8,15 @@ describe("Create and Edit Vote",() => {
       cy.log(users)
       // getting all user infos
       const admin_mnemonic = users.admins[0].mnemonic;
-      const admin_name = users.admins[0].field1;
+      const admin_name = users.admins[0].name1;
       const member1_mnemonic = users.members[0].mnemonic;
-      const member1_name = users.members[0].field1;
+      const member1_name = users.members[0].name1;
       const member2_mnemonic = users.members[1].mnemonic;
-      const member2_name = users.members[1].field1;
+      const member2_name = users.members[1].name1;
       const guest_mnemonic = users.guests[0].mnemonic;
 
       // Creating a new meeting with chairperson "Vorstand" and a new vote
-      cy.login(admin_mnemonic);
+      cy.sessionLogin(admin_mnemonic);
       cy.visit("http://localhost:3999/app")
       cy.create_meeting("Vorstand", true)
       cy.get_e2e("meetingCard").first().click();
@@ -52,21 +52,21 @@ describe("Create and Edit Vote",() => {
 
 
       // login to guest and member2 account and check if they can only see but not participate in vote
-      cy.login(guest_mnemonic)
+      cy.sessionLogin(guest_mnemonic)
       cy.checkVisibility();
 
-      cy.login(member2_mnemonic)
+      cy.sessionLogin(member2_mnemonic)
       cy.checkVisibility();
 
       // login to member1 account and register for meeting
-      cy.login(member1_mnemonic)
+      cy.sessionLogin(member1_mnemonic)
       cy.reload()
       cy.register();
       cy.get_e2e("AuthorityOverviewButton").should("not.exist");
       cy.get(".d-none").contains("Teilnehmer").click();
 
       /*open vote and set vote "Nein"*/
-      cy.login(admin_mnemonic);
+      cy.sessionLogin(admin_mnemonic);
       cy.reload()
       cy.get_e2e("openVoteButton").click();
       cy.get_e2e("confirmation-modal-button-confirm").click();
@@ -74,13 +74,13 @@ describe("Create and Edit Vote",() => {
 
 
       /*open vote and set vote=Ja for both voting rights*/
-      cy.login(member1_mnemonic)
+      cy.sessionLogin(member1_mnemonic)
       cy.reload()
       cy.set_multiple_votes(date_id_1, "Ja")
 
 
       /*Create anonymous vote and run voting*/
-      cy.login(admin_mnemonic)
+      cy.sessionLogin(admin_mnemonic)
       cy.reload()
       const date_id_2 = date_id_1 + 1
       cy.create_vote(date_id_2, true)
@@ -89,12 +89,12 @@ describe("Create and Edit Vote",() => {
       cy.set_vote(date_id_2, "Ja")
 
       /*open vote and set both voting rights*/
-      cy.login(member1_mnemonic)
+      cy.sessionLogin(member1_mnemonic)
       cy.reload()
       cy.set_multiple_votes(date_id_2, "Ja")
 
 
-      cy.login(admin_mnemonic)
+      cy.sessionLogin(admin_mnemonic)
       cy.reload()
 
       /*open new vote and archive it*/
@@ -111,7 +111,7 @@ describe("Create and Edit Vote",() => {
       cy.toggle_meeting_dropdown("toggleVisibilityDropdownEntry", "ausblenden")
 
       /*check if member can't see meeting anymore*/
-      cy.login(member1_mnemonic)
+      cy.sessionLogin(member1_mnemonic)
       cy.visit("http://localhost:3999/app")
       cy.get_e2e("meetingCard").should("not.exist")
     })

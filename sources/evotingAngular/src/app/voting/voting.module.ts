@@ -40,6 +40,9 @@ import {VoteVerificationComponent} from './components/vote-verification/vote-ver
 import {NgCircleProgressModule} from 'ng-circle-progress';
 import {VotingSummarySmartComponent} from './components/voting-summary/voting-summary-smart.component';
 import {VotingSummaryComponent} from '@voting/components/voting-summary/voting-summary.component';
+import {VoteCertificateComponent} from './components/vote-certificate/vote-certificate.component';
+import {VoteCertificateSmartComponent} from '@voting/components/vote-certificate/vote-certificate-smart.component';
+import {QRCodeModule} from 'angularx-qrcode';
 
 const COMPONENTS = [
   VotingOverviewSmartComponent,
@@ -51,10 +54,6 @@ const COMPONENTS = [
   VotingDetailResultListComponent,
   VotingDetailResultListSmartComponent,
   VotingParticipantsListModalListComponent,
-  VoteVerificationSmartComponent,
-  VoteVerificationComponent,
-  VotingSummarySmartComponent,
-  VotingSummaryComponent,
 ];
 
 const MODAL_COMPONENTS = [
@@ -66,36 +65,45 @@ const MODAL_COMPONENTS = [
   SaveSortingModalComponent
 ];
 
+const WINDOW_COMPONENTS = [
+  VoteVerificationSmartComponent,
+  VoteVerificationComponent,
+  VotingSummarySmartComponent,
+  VotingSummaryComponent,
+  VoteCertificateComponent,
+  VoteCertificateSmartComponent
+];
+
 @NgModule({
   declarations: [
     COMPONENTS,
     MODAL_COMPONENTS,
-    VoteVerificationComponent,
-    VotingSummarySmartComponent,
+    WINDOW_COMPONENTS
   ],
   entryComponents: [
     MODAL_COMPONENTS
   ],
-  imports: [
-    CommonModule,
-    NgbModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatInputModule,
-    RouterModule,
-    CoreModule,
-    TranslateModule,
-    SortablejsModule,
-    MatProgressBarModule,
-    MatExpansionModule,
-    MatButtonToggleModule,
-    PortalModule,
-    EffectsModule.forFeature([VotingEffects, BallotBoxEffects]),
-    NgCircleProgressModule,
-  ],
-  exports: [COMPONENTS, MODAL_COMPONENTS],
+    imports: [
+        CommonModule,
+        NgbModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MatButtonModule,
+        MatIconModule,
+        MatInputModule,
+        RouterModule,
+        CoreModule,
+        TranslateModule,
+        SortablejsModule,
+        MatProgressBarModule,
+        MatExpansionModule,
+        MatButtonToggleModule,
+        PortalModule,
+        EffectsModule.forFeature([VotingEffects, BallotBoxEffects]),
+        NgCircleProgressModule,
+        QRCodeModule,
+    ],
+  exports: [COMPONENTS, MODAL_COMPONENTS, WINDOW_COMPONENTS],
 })
 export class VotingModule {
 }

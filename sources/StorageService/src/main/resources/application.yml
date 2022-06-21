@@ -15,18 +15,29 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL95Dialect
         show_sql: false
-        default_schema: ${DEFAULT_SCHEMA:storage1}
+        default_schema: ${DEFAULT_SCHEMA:storage}
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
   datasource:
-    platform: postgres
     url: jdbc:postgresql:${DB_URL://localhost:6543}/${DB_NAME:postgres}
     username: ${DB_USER:postgres}
     password: ${DB_PASSWORD:postgres}
     driverClassName: org.postgresql.Driver
-    hikari:
-      connection-init-sql: CREATE SCHEMA IF NOT EXISTS ${DEFAULT_SCHEMA:storage1};
+    hikari: # https://github.com/brettwooldridge/HikariCP#configuration-knobs-baby
+      connectionTimeout: 60000 # Default 30000
+      minimum-idle: 1
+      maximum-pool-size: 10
+      max-lifetime: 30000
+      idle-timeout: 10000 # 10000ms is the minimum allowed
+  flyway:
+    url: jdbc:postgresql:${DB_URL://localhost:6543}/${DB_NAME:postgres}
+    schemas: ${DEFAULT_SCHEMA:storage}
+    user: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+  sql:
+    init:
+      platform: postgres
 
 web3:
   mnemonic: ${WEB3_MNEMONIC:}
@@ -40,6 +51,5 @@ web3:
 assetFile: ""
 assetArgument1: ""
 assetArgument2: ""
-
 
 

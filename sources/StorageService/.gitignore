@@ -33,7 +33,6 @@ build/
 
 ### CUSTOM ###
 StorageService/db/
-db/
 
 ### Solidity ###
 /src/**/resources/blockchain

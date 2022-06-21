@@ -12,10 +12,10 @@
   },
   "devDependencies": {},
   "scripts": {
-    "local": "node frontend-deploy.js local assets",
+    "local": "node frontend-deploy.js",
     "e2e": "node frontend-deploy.js e2e assets",
     "deploy": "node frontend-deploy.js deploy"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "iteratec GmbH",
+  "license": "MIT"
 }

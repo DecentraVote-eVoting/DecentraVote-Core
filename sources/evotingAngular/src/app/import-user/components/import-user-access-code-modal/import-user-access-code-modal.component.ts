@@ -15,7 +15,6 @@ import {OracleService} from '@core/services/oracle.service';
 import {ToasterService} from '@core/services/toaster.service';
 import {SignatureService} from '@core/services/signature.service';
 import {ImportUserFacade} from '@import-user/services/import-user.facade';
-import {ObjectUtil} from '@core/utils/object.util';
 import {FormControl} from '@angular/forms';
 
 @Component({
@@ -49,7 +48,7 @@ export class ImportUserAccessCodeModalComponent extends AbstractModalComponent i
     // send request to oracle endpoint to replace access code
     this.signatureService.createSignature(false).pipe(
       switchMap((signature: SignatureModel) => {
-        return this.oracleService.replaceAccessCode(this.importUser.field0, signature)
+        return this.oracleService.replaceAccessCode(this.importUser.uid, signature)
           .pipe(catchError(_ => {
             this.toasterService.addToaster({
               type: ToasterType.ERROR,
@@ -70,7 +69,7 @@ export class ImportUserAccessCodeModalComponent extends AbstractModalComponent i
       takeUntil(this.unsubscribe$),
       map((importUsers: ImportUser[]) =>
         importUsers.find((importUser: ImportUser) =>
-          importUser.field0 === this.importUser.field0
+          importUser.uid === this.importUser.uid
           && importUser.accessCode !== oldAccessCode)),
       filter((importUser: ImportUser) => importUser !== undefined)
     ).subscribe((importUser: ImportUser) => {
@@ -83,7 +82,7 @@ export class ImportUserAccessCodeModalComponent extends AbstractModalComponent i
     // send request to oracle endpoint to extend access code validity
     this.signatureService.createSignature(false).pipe(
       switchMap((signature: SignatureModel) => {
-        return this.oracleService.extendAccessCodeValidity(this.importUser.field0, signature)
+        return this.oracleService.extendAccessCodeValidity(this.importUser.uid, signature)
           .pipe(catchError(_ => {
             this.toasterService.addToaster({
               type: ToasterType.ERROR,

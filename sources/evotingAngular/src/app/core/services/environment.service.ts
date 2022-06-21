@@ -21,8 +21,19 @@ export class EnvironmentService {
   constructor() {
     if (environment.production) {
       this.network = localStorage.getItem('network');
-      this.organizationAddress = localStorage.getItem('decentravote-organization');
-      this.oracleURL = 'https://oracle.' + this.organizationAddress + '.de';
+      const customer = localStorage.getItem('decentravote-organization').replace('.decentravoteapp', '');
+      let url;
+      let address;
+
+      if (customer.includes('.')) {
+        url = customer;
+        address = customer.split('.')[0] + '.decentravoteapp';
+      } else {
+        url = customer + '.main';
+        address = customer + '.decentravoteapp';
+      }
+      this.organizationAddress = address;
+      this.oracleURL = `https://oracle-${url}.decentravoteapp.de`;
     } else {
       this.network = 'local';
       this.organizationAddress = 'local.decentravoteapp';

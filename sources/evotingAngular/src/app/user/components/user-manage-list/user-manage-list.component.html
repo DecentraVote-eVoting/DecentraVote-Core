@@ -49,7 +49,7 @@ Copyright (C) 2018-2022 iteratec
         <ng-container *ngIf="userListCell.userRef && showUserTools() && !meetingsLoading">
           <button [disabled]="!enableChangeActions"
                   mat-icon-button
-                  [attr.data-e2e]="'replaceUserButton-' + userListCell.userRef.resolvedClaim.field0"
+                  [attr.data-e2e]="'replaceUserButton-' + userListCell.userRef.resolvedClaim.uid"
                   class="ev-icon material-icons-round ev-card--pointer"
                   (click)="this.replaceUserEvent.emit(userListCell.userRef)">
             <mat-icon>wifi_protected_setup</mat-icon>
@@ -84,14 +84,14 @@ Copyright (C) 2018-2022 iteratec
           </span>
 
           <button mat-icon-button
-                  [attr.data-e2e]="'manageAccessCodeButton-' + userListCell.importUserRef.field0"
+                  [attr.data-e2e]="'manageAccessCodeButton-' + userListCell.importUserRef.uid"
                   class="ev-icon material-icons-round ev-card--pointer"
                   (click)="this.manageAccessCodeEvent.emit(userListCell.importUserRef)">
             <mat-icon>lock_clock</mat-icon>
           </button>
 
           <button mat-icon-button
-                  [attr.data-e2e]="'editUserButton-' + userListCell.importUserRef.field0"
+                  [attr.data-e2e]="'editUserButton-' + userListCell.importUserRef.uid"
                   class="ev-icon material-icons-round ev-card--pointer"
                   (click)="this.editImportUserEvent.emit(userListCell.importUserRef)">
             <mat-icon>create</mat-icon>
@@ -99,7 +99,7 @@ Copyright (C) 2018-2022 iteratec
 
           <button [disabled]="!enableChangeActions"
                   mat-icon-button
-                  [attr.data-e2e]="'deleteUserButton-' + userListCell.importUserRef.field0"
+                  [attr.data-e2e]="'deleteUserButton-' + userListCell.importUserRef.uid"
                   class="ev-icon material-icons-round ev-card--pointer"
                   (click)="this.deleteImportUserEvent.emit(userListCell.importUserRef)">
             <mat-icon class="ev-button-disabled">delete</mat-icon>

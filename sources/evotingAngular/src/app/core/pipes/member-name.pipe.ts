@@ -17,9 +17,9 @@ export class MemberNamePipe implements PipeTransform {
       return '';
     }
     if ('id' in user) {
-      return user.field1 + ' ' + user.field2;
+      return user.name1 + ' ' + user.name2;
     } else {
-      return user.resolvedClaim.field1 + ' ' + user.resolvedClaim.field2;
+      return user.resolvedClaim.name1 + ' ' + user.resolvedClaim.name2;
     }
   }
 }

@@ -29,9 +29,8 @@ synchronization:
   rate: ${SYNC_RATE:600000} #Sync every 10 Minutes if keycloak is enabled
 
 spring:
-  application:
-    name: decentraVote-oracle
   jpa:
+    generate-ddl: true
     database: POSTGRESQL
     properties:
       hibernate:
@@ -39,7 +38,7 @@ spring:
         show_sql: false
         default_schema: ${DEFAULT_SCHEMA:oracle}
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
   datasource:
     platform: postgres
@@ -48,7 +47,17 @@ spring:
     password: ${DB_PASSWORD:postgres}
     driverClassName: org.postgresql.Driver
     hikari:
-      connection-init-sql: CREATE SCHEMA IF NOT EXISTS ${DEFAULT_SCHEMA:oracle};
+      #connection-init-sql: CREATE SCHEMA IF NOT EXISTS ${DEFAULT_SCHEMA:oracle};
+      connectionTimeout: 60000 # Default 30000
+      minimum-idle: 1
+      maximum-pool-size: 10
+      max-lifetime: 30000
+      idle-timeout: 10000 # 10000ms is the minimum allowed
+  flyway:
+    url: jdbc:postgresql:${DB_URL://localhost:6543}/${DB_NAME:postgres}
+    schemas: ${DEFAULT_SCHEMA:oracle}
+    user: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
 
 web3:
   mnemonic: ${WEB3_MNEMONIC:}
@@ -60,6 +69,8 @@ web3:
   httpRpcServer: ${WEB3_HTTP_RPC_SERVER:}
   wsRpcServer: ${WEB3_WS_RPC_SERVER:}
 
+admin:
+  password: ${ADMIN_PASSWORD:admin}
 
 storageService:
   enabled: ${STORAGE_ENABLED:true}

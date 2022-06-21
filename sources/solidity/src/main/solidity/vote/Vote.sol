@@ -137,7 +137,7 @@ contract Vote is ExcludedList {
         openedAtBlock = block.number;
         chairpersonPublicKey = _publicKey;
         eventManager.changedVote(address(this));
-        eventManager.log(address(this), "Vote Open");
+        eventManager.voteOpen(address(this));
     }
 
     function endVote()

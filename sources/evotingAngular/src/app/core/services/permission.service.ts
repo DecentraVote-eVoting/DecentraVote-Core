@@ -100,6 +100,9 @@ export class PermissionService implements OnDestroy {
           || (userIsChairperson && p.meeting.stage >= MeetingStage.OPEN))
           && p.vote.stage === VoteStage.CREATED;
 
+      case Permission.VOTING_CERTIFICATE:
+        return p.vote.stage >= VoteStage.OPENED && p.vote.stage < VoteStage.ARCHIVED;
+
       case Permission.MEETING_CREATE_AUTHORITY:
       case Permission.MEETING_REMOVE_AUTHORITY:
         return this.userIsDirector && p.meeting.stage === MeetingStage.CREATED;

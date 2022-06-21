@@ -28,9 +28,9 @@ export class UserEditModalComponent extends AbstractModalComponent implements On
     if (user === undefined) { return; } // GUARD
     this._user = user;
     this.userForm.patchValue({
-      field1: this._user.resolvedClaim.field1,
-      field2: this._user.resolvedClaim.field2,
-      field0: this._user.resolvedClaim.field0,
+      name1: this._user.resolvedClaim.name1,
+      name2: this._user.resolvedClaim.name2,
+      uid: this._user.resolvedClaim.uid,
       role: Role.findMostSignificantRole(this._user.role)
     });
   }
@@ -43,9 +43,9 @@ export class UserEditModalComponent extends AbstractModalComponent implements On
   roleIds: number[];
 
   userForm = this.formBuilder.group({
-    field1: [''],
-    field2: [''],
-    field0: [{value: '', disabled: true}],
+    name1: [''],
+    name2: [''],
+    uid: [{value: '', disabled: true}],
     role: ['']
   });
 
@@ -78,8 +78,8 @@ export class UserEditModalComponent extends AbstractModalComponent implements On
     const editedUser: User = JSON.parse(JSON.stringify(this._user));
     const formRole = new Role(this.userForm.value.role);
 
-    editedUser.resolvedClaim.field1 = this.userForm.value.field1;
-    editedUser.resolvedClaim.field2 = this.userForm.value.field2;
+    editedUser.resolvedClaim.name1 = this.userForm.value.name1;
+    editedUser.resolvedClaim.name2 = this.userForm.value.name2;
 
     if (this.allowEditRole()) {
       if (formRole.isRole(Role.GUEST)) {
@@ -131,9 +131,9 @@ export class UserEditModalComponent extends AbstractModalComponent implements On
   }
 
   changesExist(editedUser: User): boolean {
-    return editedUser.resolvedClaim.field0 !== this.userForm.value.field0 ||
-      editedUser.resolvedClaim.field1 !== this.userForm.value.field1 ||
-      editedUser.resolvedClaim.field2 !== this.userForm.value.field2 ||
+    return editedUser.resolvedClaim.uid !== this.userForm.value.uid ||
+      editedUser.resolvedClaim.name1 !== this.userForm.value.name1 ||
+      editedUser.resolvedClaim.name2 !== this.userForm.value.name2 ||
       editedUser.role !== this.userForm.value.role;
   }
 

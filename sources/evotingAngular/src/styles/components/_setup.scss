@@ -23,3 +23,13 @@ Copyright (C) 2018-2022 iteratec
 .ev-setup-password-error {
   color: $color-password-error;
 }
+
+.ev-setup-screen {
+  max-width: 151ch;
+  padding: 3em 0em;
+  margin: auto;
+}
+
+.ev-login-footer {
+  transform: translate(0, -30%);
+}

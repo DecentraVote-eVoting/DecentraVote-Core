@@ -51,7 +51,7 @@ export class ReplaceUserModalSmartComponent extends AbstractModalComponent imple
     this.signatureService.createSignature(false).pipe(
       takeUntil(this.unsubscribe$),
       switchMap( (signature: SignatureModel) => {
-        return this.oracleService.replaceUser(this.user.address, signature);
+        return this.oracleService.replaceUser(this.user, signature);
       }),
       catchError(err => from([
         core.ErrorAction({message: err && err.message}),
@@ -69,7 +69,7 @@ export class ReplaceUserModalSmartComponent extends AbstractModalComponent imple
       takeUntil(this.unsubscribe$),
       map((importUserArray: ImportUser[]) => {
         importUserArray.filter((importUser) => {
-          if (importUser.field0 === this.user.resolvedClaim.field0) {
+          if (importUser.uid === this.user.resolvedClaim.uid) {
             this.accessCodeControl.setValue(importUser.accessCode);
           }
         });

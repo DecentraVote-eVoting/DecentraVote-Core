@@ -6,7 +6,7 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs';
 import {ROUTE_PATHS} from '@app/route-paths';
-import {LocalStorageUtil} from '@core/utils/local-storage.util';
+import {SessionStorageUtil} from '@core/utils/session-storage.util';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,7 @@ export class IsSetupCompleteGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | boolean {
 
-    if (!LocalStorageUtil.hasMnemonic()) {
+    if (!SessionStorageUtil.hasMnemonic()) {
       this.router.navigate([ROUTE_PATHS.SETUP.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
       return false;
     }

@@ -4,7 +4,7 @@
  */
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, of, ReplaySubject} from 'rxjs';
+import {from, Observable, of, ReplaySubject} from 'rxjs';
 import {catchError, concatMap, map} from 'rxjs/operators';
 import {CryptographyService} from './cryptography.service';
 import {StorageService} from '@core/services/storage.service';
@@ -66,7 +66,7 @@ export class ZkProofService {
   createProof(params: AnonParameter): Observable<ZKProofDTO> {
     console.log('fullProve with params');
     // console.log(params);
-    return Observable.fromPromise(snarkjs.groth16.fullProve(params, this.wasm, this.zkey)).pipe(
+    return from<Promise<any>>(snarkjs.groth16.fullProve(params, this.wasm, this.zkey)).pipe(
       concatMap(({proof, publicSignals}) => {
         console.log('Request Wasm File');
         this.storageService.getData(AssetFiles.WASM, true)
@@ -91,7 +91,7 @@ export class ZkProofService {
 
   public verifyProof(vkey = this.verificationKey, proof, publicSignals): Observable<boolean> {
     //console.log('verifying Proof');
-    return Observable.fromPromise(snarkjs.groth16.verify(vkey, publicSignals, proof));
+    return from<Promise<any>>(snarkjs.groth16.verify(vkey, publicSignals, proof));
   }
 
 }

@@ -6,7 +6,6 @@ package com.iteratec.evoting.storageservice.controller
 
 import com.iteratec.evoting.storageservice.configuration.Web3jConfig
 import com.iteratec.evoting.storageservice.dto.StorageData
-import com.iteratec.evoting.storageservice.service.OrganizationContractService
 import com.iteratec.evoting.storageservice.service.StorageService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -32,8 +31,6 @@ class E2EController(
         val storageService: StorageService,
         @Autowired
         val web3jConfig: Web3jConfig,
-        @Autowired
-        val organizationContractService: OrganizationContractService,
 ) {
 
     val logger: Logger = LoggerFactory.getLogger(StorageController::class.java)

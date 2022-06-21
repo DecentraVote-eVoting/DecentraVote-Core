@@ -6,14 +6,20 @@
   "scripts": {
     "deploy": "node deploy.js",
     "deploy-dev": "cross-env DEV_MODE=true node deploy.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy-clean": "cross-env DEV_MODE=true CLEAN_DEPLOY=true node deploy.js",
+    "node": "ganache -p 7545 -m \"menu pretty waste little skill copper main absorb bacon still deliver finish\" --miner.instamine=\"strict\"",
+    "development": "concurrently --restart-after 1000 \"npm run node\" \"npm run deploy-clean\""
   },
-  "author": "",
-  "license": "ISC",
+  "author": "iteratec GmbH",
+  "license": "MIT",
   "dependencies": {
     "@ensdomains/ensjs": "^2.0.1",
     "@ethersproject/experimental": "^5.4.0",
     "cross-env": "^7.0.3",
     "ethers": "^5.5.1"
+  },
+  "devDependencies": {
+    "concurrently": "^7.2.1",
+    "ganache": "^7.3.0"
   }
 }

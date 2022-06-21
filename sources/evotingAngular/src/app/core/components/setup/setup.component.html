@@ -2,28 +2,33 @@
 DecentraVote
 Copyright (C) 2018-2022 iteratec
 -->
-<div class="w-100">
-
+<div class="w-100 ev-setup-screen">
+  <app-logo-header></app-logo-header>
   <ng-container [ngSwitch]="currentStep">
 
-    <app-setup-get-started *ngSwitchCase="setupStep.GET_STARTED"
-                           (getStartedAction)="increaseStep()">
-    </app-setup-get-started>
+    <app-login *ngSwitchCase="setupStep.MAIN_LOGIN"
+               (loginAction)="loginComplete()"
+               (changePassword)="changePasswordStep()"
+               (registerAction)="register($event)">
+    </app-login>
 
-    <app-setup-new-or-import *ngSwitchCase="setupStep.NEW_OR_IMPORT"
-                             (createNewAction)="setNewOrImport($event)">
-    </app-setup-new-or-import>
-
-    <app-setup-create-password *ngSwitchCase="setupStep.CREATE_PASSWORD"
-                               (createPasswordAction)="setPassword($event)"
-                               (backAction)="resetNewOrImport()">
-    </app-setup-create-password>
-
-    <app-setup-create-mnemonic *ngSwitchCase="setupStep.CREATE_MNEMONIC"
+    <app-setup-mnemonic-password *ngSwitchCase="setupStep.MNEMONIC_PASSWORD"
                                [isCreatingNew]="isCreatingNew"
-                               (createMnemonicAction)="setMnemonic($event)"
+                               [jwtUser]="jwtUser"
+                               (createMnemonicAction)="setMnemonicAndPassword($event)"
                                (backAction)="resetPassword()">
-    </app-setup-create-mnemonic>
+    </app-setup-mnemonic-password>
 
   </ng-container>
 </div>
+<footer class="ev-login-footer text-center" *ngIf="currentStep.valueOf() == 1">
+  <a href="https://decentra.vote/#documentation" target="_blank">
+    {{'Help.Description' | translate}}
+  </a>
+  <div class="mt-3">
+    {{'Login.Copyright' | translate}}
+  </div>
+  <a (click)="onOpenLicenseModal()" [routerLink]="">
+    {{'Login.Modal' | translate}}
+  </a>
+</footer>

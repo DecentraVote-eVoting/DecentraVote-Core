@@ -13,14 +13,17 @@ export const GetVoteAddressesAction = createAction(
   '[Vote] Get Vote Addresses',
   props<{ generalMeetingAddress: string }>()
 );
+
 export const GetVoteAddressesSuccessAction = createAction(
   '[Vote] Get Vote Addresses Success',
   props<{ voteModel: VoteModel[] }>()
 );
+
 export const GetVoteDetailAction = createAction(
   '[Vote] Get Vote Detail',
   props<{ voteAddress: string, external?: boolean }>()
 );
+
 export const GetVoteDetailSuccessAction = createAction(
   '[Vote] Get Vote Detail Success',
   props<{ voteRaw: VoteModel }>()
@@ -39,6 +42,7 @@ export const EditVoteAction = createAction(
   '[Vote] Edit Vote',
   props<{ voteModel: CreateVoteModel, metaData: StorageVote, attachment: Blob }>()
 );
+
 export const EditVoteSuccessAction = createAction(
   '[Vote] Edit Vote Success',
   props<{ voteAddress: string }>()
@@ -48,6 +52,7 @@ export const ChangeStageAction = createAction(
   '[Vote] Change Stage',
   props<{ voteModel: CreateVoteModel, stage: VoteStage, reason?: StorageArchiveReason }>()
 );
+
 export const ChangeStageSuccessAction = createAction(
   '[Vote] Change Stage Success',
   props<{ voteModel: CreateVoteModel, stage: VoteStage, reason?: string }>()
@@ -72,6 +77,7 @@ export const ExcludeFromVoteAction = createAction(
   '[Vote] Exclude From Vote',
   props<{ voteAddress: string, addressesToBlock: string[] }>()
 );
+
 export const ExcludeFromVoteSuccessAction = createAction(
   '[Vote] Exclude From Vote Success',
   props<{ voteAddress: string, addressesToBlock: string[] }>()
@@ -86,6 +92,7 @@ export const DeleteVoteAction = createAction(
   '[Vote] Delete Vote',
   props<{ meetingAddress: string, voteAddress: string }>()
 );
+
 export const DeleteVoteSuccessAction = createAction(
   '[Vote] Delete Vote Success',
   props<{ meetingAddress: string, voteAddress: string }>()

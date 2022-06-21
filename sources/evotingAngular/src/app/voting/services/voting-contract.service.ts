@@ -5,8 +5,7 @@
 import {Injectable} from '@angular/core';
 import contractAbi
   from '../../../../../solidity/target/generated/abi/com.iteratec.evoting.solidity.contracts/Vote.json';
-import 'rxjs/add/observable/fromPromise';
-import {Observable} from 'rxjs';
+import {from, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {EthersService} from '@core/services/ethers.service';
 import {Contract, Overrides} from 'ethers';
@@ -36,7 +35,7 @@ export class VotingContractService {
   }
 
   getVoteRaw(votingAddress: string): Observable<VoteModel> {
-    return Observable.fromPromise(this.getContract(votingAddress).getVoteDto()).pipe(
+    return from(this.getContract(votingAddress).getVoteDto()).pipe(
       map((vote: VoteDto) => {
         return {...vote, address: votingAddress, selectedVoteOptions: []};
       })
@@ -58,7 +57,7 @@ export class VotingContractService {
     }
 
 
-    return Observable.fromPromise(contract.castVote(
+    return from<Promise<any>>(contract.castVote(
       decisions.map((val) => val.toString()),
       publicKeys.map((val) => val.map(val1 => val1.toString())),
       {
@@ -70,30 +69,30 @@ export class VotingContractService {
   }
 
   excludeFromVote(votingAddress: string, addressesToBlock: string[]) {
-    return Observable.fromPromise(this.getContract(votingAddress).excludeVoters(addressesToBlock, this.overrides));
+    return from(this.getContract(votingAddress).excludeVoters(addressesToBlock, this.overrides));
   }
 
   openVoting(votingAddress: string, publicKey, reduced: number[]): Observable<TransactionResponse> {
-    return Observable.fromPromise(this.getContract(votingAddress).openVote(publicKey.map(val => val.toString()), reduced, this.overrides));
+    return from<Promise<any>>(this.getContract(votingAddress).openVote(publicKey.map(val => val.toString()), reduced, this.overrides));
   }
 
   closeVoting(votingAddress: string): Observable<TransactionResponse> {
-    return Observable.fromPromise(this.getContract(votingAddress).endVote(this.overrides));
+    return from<Promise<any>>(this.getContract(votingAddress).endVote(this.overrides));
   }
 
   enableTallying(votingAddress: string, privateKey: bigint) {
-    return Observable.fromPromise(this.getContract(votingAddress).startCountingVotes(privateKey.toString(), this.overrides));
+    return from(this.getContract(votingAddress).startCountingVotes(privateKey.toString(), this.overrides));
   }
 
   archiveVoting(votingAddress: string, reason: string) {
-    return Observable.fromPromise(this.getContract(votingAddress).cancelVote(reason, this.overrides));
+    return from(this.getContract(votingAddress).cancelVote(reason, this.overrides));
   }
 
   setAnonymous(votingAddress: string, anonymous: boolean) {
-    return Observable.fromPromise(this.getContract(votingAddress).setAnonymous(anonymous, this.overrides));
+    return from(this.getContract(votingAddress).setAnonymous(anonymous, this.overrides));
   }
 
   editVote(votingAddress: string, metadata: string, attachmentHash: string, options: string[], anonymous: boolean) {
-    return Observable.fromPromise(this.getContract(votingAddress).editVote(metadata, attachmentHash, options, anonymous, this.overrides));
+    return from(this.getContract(votingAddress).editVote(metadata, attachmentHash, options, anonymous, this.overrides));
   }
 }

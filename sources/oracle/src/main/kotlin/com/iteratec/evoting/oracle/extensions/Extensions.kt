@@ -13,8 +13,8 @@ fun String.toHash(): String = Hash.sha3String(this)
 fun <T> Optional<T>.unwrap(): T? = orElse(null)
 
 fun Account.toClaim(): String = "{" +
-        "\"field1\":\"${this.field1}\"," +
-        "\"field2\":\"${this.field2}\"," +
-        "\"field0\":\"${this.field0}\"," +
+        "\"name1\":\"${this.name1}\"," +
+        "\"name2\":\"${this.name2}\"," +
+        "\"uid\":\"${this.uid}\"," +
         "\"salt\":\"${RandomStringUtils.randomAlphanumeric(20)}\"" +
         "}"

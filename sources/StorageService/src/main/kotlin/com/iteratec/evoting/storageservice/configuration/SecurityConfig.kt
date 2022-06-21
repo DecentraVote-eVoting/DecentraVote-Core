@@ -21,18 +21,17 @@ class SecurityConfig : WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity) {
         http
                 .csrf().disable()
-                .cors().configurationSource(corsConfigurationSource()).and()
-                .authorizeRequests().antMatchers("/api/**").permitAll()
+                .cors().configurationSource(corsConfigurationSource())
+                .and().authorizeRequests().antMatchers("/api/**").permitAll()
                 .and().authorizeRequests().anyRequest().denyAll()
     }
 
     @Bean
     fun corsConfigurationSource(): CorsConfigurationSource? {
         val configuration = CorsConfiguration()
-        configuration.allowedOrigins = listOf("*")
-        configuration.allowedMethods = listOf("GET", "POST")
-        configuration.allowCredentials = true
-        configuration.allowedHeaders = listOf("*")
+        configuration.addAllowedOriginPattern("*")
+        configuration.addAllowedHeader("*")
+        configuration.addAllowedMethod("*")
         val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source

@@ -68,7 +68,7 @@ Copyright (C) 2018-2022 iteratec
                     <ng-container *ngFor="let userOption of user.options">
                       <ng-container *ngIf="userOption === currentOption.value">
                         <div class="d-flex justify-content-between flex-wrap">
-                          <div class="ev-typography">{{user.field1}} {{user.field2}}, {{user.field0}}</div>
+                          <div class="ev-typography">{{user.name1}} {{user.name2}}, {{user.uid}}</div>
                         </div>
                       </ng-container>
                     </ng-container>
@@ -101,7 +101,7 @@ Copyright (C) 2018-2022 iteratec
               <mat-expansion-panel class="ev-expansion-panel">
                 <mat-expansion-panel-header (click)="toggleOne(user.result.ethAddress)">
                   <mat-panel-title class="ev-typography ev-typography--heading1">
-                    {{user.result.field1}} {{user.result.field2}}, {{user.result.field0}}
+                    {{user.result.name1}} {{user.result.name2}}, {{user.result.uid}}
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <ul class="list-group list-group-flush">

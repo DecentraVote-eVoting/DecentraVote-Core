@@ -24,9 +24,9 @@ export class ImportUserEditModalComponent extends AbstractModalComponent {
     if (importUser === undefined) { return; } // GUARD
     this._importUser = importUser;
     this.importUserForm.patchValue({
-      field1: this._importUser.field1,
-      field2: this._importUser.field2,
-      field0: this._importUser.field0,
+      name1: this._importUser.name1,
+      name2: this._importUser.name2,
+      uid: this._importUser.uid,
       role: this._importUser.role
     });
   }
@@ -34,9 +34,9 @@ export class ImportUserEditModalComponent extends AbstractModalComponent {
   _importUser: ImportUser;
 
   importUserForm = this.formBuilder.group({
-    field1: [''],
-    field2: [''],
-    field0: [{value: '', disabled: true}],
+    name1: [''],
+    name2: [''],
+    uid: [{value: '', disabled: true}],
     role: ['']
   });
 
@@ -53,8 +53,8 @@ export class ImportUserEditModalComponent extends AbstractModalComponent {
     const editedImportUser: ImportUser = JSON.parse(JSON.stringify(this._importUser));
     const formRole = new Role(this.importUserForm.value.role);
 
-    editedImportUser.field1 = this.importUserForm.value.field1;
-    editedImportUser.field2 = this.importUserForm.value.field2;
+    editedImportUser.name1 = this.importUserForm.value.name1;
+    editedImportUser.name2 = this.importUserForm.value.name2;
 
     if (formRole.isRole(Role.GUEST)) {
       const importUserRole = new Role(this._importUser.role);

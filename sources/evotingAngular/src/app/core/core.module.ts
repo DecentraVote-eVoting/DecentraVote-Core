@@ -5,9 +5,6 @@
 import {NgModule} from '@angular/core';
 import {ToasterComponent} from '@core/components/toaster/toaster.component';
 import {SpinnerComponent} from '@core/components/spinner/spinner.component';
-import {RegisterEthComponent} from '@core/components/onboarding/register-eth-addr/register-eth.component';
-import {LoginResponsePageComponent} from '@core/components/onboarding/login-response-page/login-response-page.component';
-import {LoadingEthComponent} from '@core/components/onboarding/loading-eth/loading-eth.component';
 import {MemberNamePipe} from '@core/pipes/member-name.pipe';
 import {EffectsModule} from '@ngrx/effects';
 import {CoreEffects} from '@core/+state/core.effects';
@@ -17,42 +14,33 @@ import {NgbDateAdapter, NgbDateNativeAdapter, NgbDateParserFormatter, NgbModule}
 import {NgbCustomDateFormatter} from '@core/services/ngb-custom-date-formatter';
 import {RouterModule} from '@angular/router';
 import {SetupComponent} from '@core/components/setup/setup.component';
-import {SetupGetStartedComponent} from '@core/components/setup/setup-get-started/setup-get-started.component';
-import {SetupCreatePasswordComponent} from '@core/components/setup/setup-create-password/setup-create-password.component';
-import {ReactiveFormsModule} from '@angular/forms';
-import {SetupCreateMnemonicComponent} from '@core/components/setup/setup-create-mnemonic/setup-create-mnemonic.component';
-import {LoginComponent} from './components/login/login.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ResolveAssetPipe} from '@core/pipes/resolve-asset.pipe';
-import {SetupNewOrImportComponent} from '@core/components/setup/setup-new-or-import/setup-new-or-import.component';
-import {ExternalAuthComponent} from './components/onboarding/external-auth/external-auth.component';
-import {TokenAuthComponent} from '@core/components/onboarding/token-auth/token-auth.component';
 import {LogoHeaderComponent} from '@core/components/logo-header/logo-header.component';
-import {RecoveryComponent} from '@core/components/recovery/recovery.component';
 import {BigSpinnerComponent} from '@core/components/big-spinner/big-spinner.component';
 import {ShowMnemonicModalComponent} from '@core/components/show-mnemonic-modal/show-mnemonic-modal.component';
 import {UserEffects} from '@app/user/+state/user.effects';
-import { RoleBadgesComponent } from './components/role-badges/role-badges.component';
+import {RoleBadgesComponent} from './components/role-badges/role-badges.component';
 import {SolidityErrorPipe} from '@core/pipes/solidity-error.pipe';
 import {CastPipe} from '@core/pipes/cast.pipe';
-import { ConfirmationDialogModalComponent } from './components/confirmation-dialog-modal/confirmation-dialog-modal.component';
-import { DropdownDirective} from '../meeting/components/dropdown/dropdown.component';
+import {ConfirmationDialogModalComponent} from './components/confirmation-dialog-modal/confirmation-dialog-modal.component';
+import {DropdownDirective} from '@meeting/components/dropdown/dropdown.component';
 import {MatMenuModule} from '@angular/material/menu';
-import {NgCircleProgressModule} from "ng-circle-progress";
+import {NgCircleProgressModule} from 'ng-circle-progress';
 import {ClipboardModule} from '@angular/cdk/clipboard';
-import {paginationComponent} from "@core/components/pagination/pagination.component";
+import {paginationComponent} from '@core/components/pagination/pagination.component';
 import {UserSortPipe} from '@core/pipes/user-sort.pipe';
-import {LicenseComponent} from "@core/components/license/license.component";
+import {LicenseComponent} from '@core/components/license/license.component';
+import {LoginComponent} from '@core/components/setup/login/login.component';
+import {SetupMnemonicPasswordComponent} from '@core/components/setup/setup-mnemonic-password/setup-mnemonic-password.component';
+import {MatTabsModule} from '@angular/material/tabs';
+import {LoadingEthComponent} from '@core/components/setup/loading-eth/loading-eth.component';
+import {StringBreakPipe} from './pipes/string-break.pipe';
 
 const COMPONENTS = [
   ToasterComponent,
   SpinnerComponent,
   LogoHeaderComponent,
-  RegisterEthComponent,
-  LoadingEthComponent,
-  LoginResponsePageComponent,
-  LoginComponent,
-  ExternalAuthComponent,
-  TokenAuthComponent,
   BigSpinnerComponent,
   RoleBadgesComponent,
   ConfirmationDialogModalComponent,
@@ -63,11 +51,9 @@ const COMPONENTS = [
 
 const COMPONENTS_SETUP = [
   SetupComponent,
-  SetupGetStartedComponent,
-  SetupNewOrImportComponent,
-  SetupCreatePasswordComponent,
-  SetupCreateMnemonicComponent,
-  RecoveryComponent
+  SetupMnemonicPasswordComponent,
+  LoadingEthComponent,
+  LoginComponent
 ];
 
 const MODAL_COMPONENTS = [
@@ -83,20 +69,22 @@ const PIPES = [
 ];
 
 @NgModule({
-  declarations: [COMPONENTS, COMPONENTS_SETUP, MODAL_COMPONENTS, PIPES],
+    declarations: [COMPONENTS, COMPONENTS_SETUP, MODAL_COMPONENTS, PIPES, LoginComponent, StringBreakPipe],
   entryComponents: [MODAL_COMPONENTS],
-    imports: [
-        CommonModule,
-        NgbModule,
-        RouterModule,
-        EffectsModule.forFeature([CoreEffects, UserEffects]),
-        TranslateModule,
-        ReactiveFormsModule,
-        MatMenuModule,
-        NgCircleProgressModule,
-        ClipboardModule
-    ],
-  exports: [COMPONENTS, COMPONENTS_SETUP, PIPES],
+  imports: [
+    CommonModule,
+    NgbModule,
+    RouterModule,
+    EffectsModule.forFeature([CoreEffects, UserEffects]),
+    TranslateModule,
+    ReactiveFormsModule,
+    MatMenuModule,
+    NgCircleProgressModule,
+    ClipboardModule,
+    MatTabsModule,
+    FormsModule
+  ],
+    exports: [COMPONENTS, COMPONENTS_SETUP, PIPES, StringBreakPipe],
   providers: [
     {
       provide: NgbDateAdapter,

@@ -1,0 +1,8 @@
+{
+  "wsRpcServer": "ws://localhost:7545",
+  "httpRpcServer": "http://localhost:7545",
+  "networkId": 1337,
+  "gasPrice": 2000000000,
+  "gasLimit": 30000000,
+  "ensRegistryAddress": ""
+}

@@ -111,9 +111,9 @@ class AccessController {
 
             val jwt = this.jwtUtils.createJwtToken(
                     user.id.toString(),
-                    user.field0,
-                    user.field1,
-                    user.field2,
+                    user.uid,
+                    user.name1,
+                    user.name2,
                     role,
                     JwtUtils.IdentityProvider.Token
             )

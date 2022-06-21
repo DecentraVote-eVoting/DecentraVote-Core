@@ -28,6 +28,8 @@ import {ObjectUtil} from '@core/utils/object.util';
 import {SignatureService} from '@core/services/signature.service';
 import {SignatureModel} from '@core/models/signature.model';
 import {Role} from '@user/models/role.model';
+import {ToasterService} from '@core/services/toaster.service';
+import {ToasterType} from '@core/models/toaster.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +45,8 @@ export class StorageService {
               private cacheService: CacheService,
               private organizationContractService: OrganizationContractService,
               private cryptoFacade: CryptoFacade,
-              private signatureService: SignatureService
+              private signatureService: SignatureService,
+              private toasterService: ToasterService
   ) {
     // @ts-ignore
     this.commonHttpHeaders = new HttpHeaders({withCredentials: true})
@@ -106,9 +109,18 @@ export class StorageService {
               }
             ).pipe(
               timeout(this.REQUEST_TIMEOUT),
-              mergeMap((json: {} ) => {
-                this.cacheService.setItem(hash, json[0].data);
-                return of(json[0].data);
+              map((json: {} ) => {
+                const _data = json[0].data;
+                const hashFromResponse = this.cryptoFacade.getKeccak256(_data);
+                if (hash !== hashFromResponse) {
+                  this.toasterService.addToaster({
+                    type: ToasterType.ERROR,
+                    message: 'Message.Error.Hash-Not-Equal'
+                  });
+                  throw Error(`hash value not equal: ${hash} != ${hashFromResponse}`);
+                }
+                this.cacheService.setItem(hash, _data);
+                return _data;
               }),
               catchError((err) => {
                 LoggingUtil.error(err);
@@ -181,13 +193,20 @@ export class StorageService {
               }
             ).pipe(
               timeout(this.REQUEST_TIMEOUT),
-              mergeMap((data: [{'hash', 'data'}]) => {
-                const result = hashes.map(h => {
-                  return {hash: h, data: data.find(j => j.hash === h).data};
+              map((data: [{'hash', 'data'}]) => {
+                return hashes.map((hash: string) => {
+                  const _data = data.find(j => j.hash === hash).data;
+                  const hashFromResponse = this.cryptoFacade.getKeccak256(_data);
+                  if (hash !== hashFromResponse) {
+                    this.toasterService.addToaster({
+                      type: ToasterType.ERROR,
+                      message: 'Message.Error.Hash-Not-Equal'
+                    });
+                    throw Error(`hash value not equal: ${hash} != ${hashFromResponse}`);
+                  }
+                  this.cacheService.setItem(hash, _data);
+                  return {hash: hash, data: _data};
                 });
-                // TODO Move caching outside?
-                result.forEach(d => this.cacheService.setItem(d.hash, d.data));
-                return of(result);
               }),
               catchError((err) => {
                 LoggingUtil.error(err);

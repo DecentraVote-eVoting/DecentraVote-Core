@@ -8,14 +8,14 @@ export interface SimpleEntity<T> {
 }
 
 export class SetupStep {
-  static readonly GET_STARTED: number = 1;
-  static readonly NEW_OR_IMPORT: number = 2;
-  static readonly CREATE_PASSWORD: number = 3;
-  static readonly CREATE_MNEMONIC: number = 4;
-  static readonly FINISH: number = 5;
+  static readonly MAIN_LOGIN: number = 1;
+  static readonly MNEMONIC_PASSWORD: number = 2;
+  static readonly FINISH: number = 3;
 }
 
-export const MNEMONIC: string = 'decentravote-mnemonic';
+export const MNEMONIC = 'decentravote-mnemonic';
+export const MNEMONIC_ENCRYPTED = 'decentravote-mnemonic-encrypted';
+export const HASHED_PASSWORD = 'hashed_password';
 export const TOKEN_ACCESS = 'access_token';
 export const TOKEN_REFRESH = 'refresh_token';
 export const COOKIE_ACCESS = 'evoting-access';
@@ -30,6 +30,7 @@ export const CACHE_DATE_ADDED = 'X-Date-Added';
 export const CACHE_REQUEST = 'X-Request';
 export const CACHE_CLEANUP_DAYS = 15;
 export const DEFAULT_DATE_FORMAT = 'YYYY-MM-DD-HH-mm-ss';
+export const SETUP_COMPLETE = 'setup-complete';
 
 export class AuthenticationMethod {
   static readonly KEYCLOAK: string = 'Keycloak';
@@ -42,4 +43,6 @@ export const ENDPOINT_STORAGE_GET = '/api/storage/get';
 export const ENDPOINT_RELAY = '/api/relay';
 export const ENDPOINT_ORACLE = '/api';
 export const ENDPOINT_AUTH = '/auth';
+export const ENDPOINT_MNEMONIC = '/api/mnemonic';
+export const ENDPOINT_MNEMONIC_PASSWORD = '/api/mnemonic/password';
 export const ENDPOINT_ALT_PROOFGEN = 'https://3691pafwih.execute-api.eu-central-1.amazonaws.com/default/proofGen';

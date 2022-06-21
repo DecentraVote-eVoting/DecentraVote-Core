@@ -13,7 +13,6 @@ import {StorageService} from '@core/services/storage.service';
 import {AbstractModalComponent} from '@core/components/abstract-modal/abstract-modal.component';
 import {MeetingFacade} from '../../services/meeting.facade';
 import {PlatformLocation} from '@angular/common';
-import 'rxjs-compat/add/observable/empty';
 import {UserFacade} from '@app/user/services/user.facade';
 
 
@@ -101,8 +100,8 @@ export class CreateMeetingModalComponent extends AbstractModalComponent implemen
     if (!this.selectedChairperson) {
       return '';
     } else {
-      return this.selectedChairperson.resolvedClaim.field1 + ' ' +
-        this.selectedChairperson.resolvedClaim.field2;
+      return this.selectedChairperson.resolvedClaim.name1 + ' ' +
+        this.selectedChairperson.resolvedClaim.name2;
     }
   }
 

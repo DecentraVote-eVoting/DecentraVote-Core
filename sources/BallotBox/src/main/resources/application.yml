@@ -5,10 +5,6 @@
 server:
   port: 4000
 
-# API Configuration
-api:
-  requestMapping: "/api/ballotbox"
-
 # Web3j Configuration
 web3:
   mnemonic: ${WEB3_MNEMONIC:}
@@ -27,8 +23,7 @@ logging:
           ballotbox: ${LOG_LVL:INFO}
 
 spring:
-  application:
-    name: decentraVote-ballotBox
+  generate-ddl: true
   profiles:
     active: ${SPRING_PROFILES:receiver,sender}
   jpa:
@@ -37,9 +32,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL95Dialect
         show_sql: false
-        default_schema: ${DEFAULT_SCHEMA:ballotbox1}
+        default_schema: ${DEFAULT_SCHEMA:ballotbox}
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
   datasource:
     platform: postgres
@@ -48,7 +43,16 @@ spring:
     password: ${DB_PASSWORD:postgres}
     driverClassName: org.postgresql.Driver
     hikari:
-      connection-init-sql: CREATE SCHEMA IF NOT EXISTS ${DEFAULT_SCHEMA:ballotbox1};
+      connectionTimeout: 60000 # Default 30000
+      minimum-idle: 1
+      maximum-pool-size: 10
+      max-lifetime: 30000
+      idle-timeout: 10000 # 10000ms is the minimum allowed
+  flyway:
+    url: jdbc:postgresql:${DB_URL://localhost:6543}/${DB_NAME:postgres}
+    schemas: ${DEFAULT_SCHEMA:ballotbox}
+    user: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
 
 storageService:
   url: ${SS_URL:http://localhost:3000}

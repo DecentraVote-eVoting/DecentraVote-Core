@@ -5,27 +5,28 @@ Copyright (C) 2018-2022 iteratec
 package com.iteratec.evoting.oracle.entities
 
 import java.sql.Timestamp
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
 
 
 @Entity
+@SequenceGenerator(name="import_user_seq_generator",
+        sequenceName="import_user_seq",
+        allocationSize=1)
 class ImportUser {
 
         @Id
-        @GeneratedValue
+        @GeneratedValue(strategy = GenerationType.SEQUENCE,
+                generator="import_user_seq_generator")
         var id: Long? = null
 
         @Column
-        var field1: String? = null
+        var name1: String? = null
 
         @Column
-        var field2: String? = null
+        var name2: String? = null
 
         @Column(unique = true)
-        var field0: String? = null
+        var uid: String? = null
 
         @Column
         var accessCode: String? = null

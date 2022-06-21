@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse
 class JwtFilter(private val jwtUtils: JwtUtils, private val cookieUtils: CookieUtils) : OncePerRequestFilter() {
 
 
-    private fun handleAccessToken(request: HttpServletRequest, response: HttpServletResponse): AbstractAuthenticationToken? {
+    private fun handleAccessToken(request: HttpServletRequest): AbstractAuthenticationToken? {
         var accessToken: String? = cookieUtils.getAccessToken(request)
         if (accessToken == null) {
             accessToken = request.getHeader("X-Authorization")
@@ -41,7 +41,7 @@ class JwtFilter(private val jwtUtils: JwtUtils, private val cookieUtils: CookieU
     @Throws(ServletException::class, IOException::class)
     override fun doFilterInternal(request: HttpServletRequest, response: HttpServletResponse, chain: FilterChain) {
         try {
-            val authToken = handleAccessToken(request, response)
+            val authToken = handleAccessToken(request)
             if (authToken != null) {
                 SecurityContextHolder.getContext().authentication = authToken
             }

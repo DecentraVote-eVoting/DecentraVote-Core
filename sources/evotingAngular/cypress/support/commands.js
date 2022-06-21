@@ -28,17 +28,32 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import * as CryptoJS from 'crypto-js';
 import {getFakeUsers} from "./fakeUser";
 import {getMultiDataParams} from "./storageUtil";
 import {resetWithUsers} from "./blockchain";
+import * as sessionUtil from "./sessionUtils"
 import 'cypress-file-upload';
 
-Cypress.Commands.add("login", (mnemonic) => {
-  cy.log("Login with mnemonic: " + mnemonic);
-  sessionStorage.setItem("decentravote-mnemonic", mnemonic);
-  const encryptedMnemonic = CryptoJS.AES.encrypt(mnemonic, 'Test1234!').toString();
-  localStorage.setItem("decentravote-mnemonic", encryptedMnemonic);
+Cypress.Commands.add("login", (username, password) => {
+  cy.get_e2e("loginUsernameInput").should("exist").type(username)
+  cy.get_e2e("loginPasswordInput").should("exist").type(password)
+  cy.get_e2e("loginButton").should("exist").click()
+})
+
+Cypress.Commands.add("sessionLogin", (mnemonic) => sessionUtil.backgroundSessionLogin(mnemonic))
+Cypress.Commands.add("sessionLogout", () => sessionUtil.backgroundSessionLogout())
+
+Cypress.Commands.add("manualLogout", () => {
+  cy.get_e2e("accountDropdownButton").should("exist").click()
+  cy.get_e2e("logoutDropdownEntry").should("exist").click({ force: true })
+})
+
+Cypress.Commands.add("forgotPassword", (mnemonic, password) => {
+  cy.get_e2e("resetPasswordLink").should("exist").click()
+  cy.get_e2e("mnemonicTextField").should("exist").type(mnemonic)
+  cy.get_e2e("createPasswordInp").type(password)
+  cy.get_e2e("createPasswordConfirmInp").type(password)
+  cy.get_e2e("createAccountBtn").click()
 })
 
 Cypress.Commands.add('get_e2e', (selector, ...args) => {
@@ -264,7 +279,7 @@ Cypress.Commands.add("import_users", () => {
   const userImports = 'user_import_small.json';
   cy.get_e2e("fileInput").attachFile(userImports);
 
-  cy.get(`[id=userField0_2]`).clear()
+  cy.get(`[id=userUid_2]`).clear()
   cy.get_e2e("importButton").should("be.disabled")
   cy.get_e2e("removeUserButton").eq(2).click(2)
 
@@ -277,13 +292,13 @@ Cypress.Commands.add("import_existing_users", () => {
   const userImports = 'user_import_small.json';
   cy.get_e2e("fileInput").attachFile(userImports);
 
-  cy.get(`[id=userField0_2]`).should("exist")
+  cy.get(`[id=userUid_2]`).should("exist")
   cy.get_e2e("importButton").should("be.disabled")
   cy.get_e2e("dismissButton").click()
 })
 
 
-Cypress.Commands.add("manage_access_code",(userId) => {
+Cypress.Commands.add("manage_access_code",(userId, password) => {
   cy.wait(2000)
   cy.get_e2e("manageAccessCodeButton-" + userId).should('be.visible').click()
 
@@ -295,45 +310,34 @@ Cypress.Commands.add("manage_access_code",(userId) => {
       cy.get_e2e("dismissButton").click()
       cy.get_e2e("backToGeneralMeetingButton").click()
 
-      cy.get_e2e("accountDropdownButton").click()
-      cy.get_e2e("logoutDropdownEntry").click({ force: true })
-
-      cy.get_e2e("resetPasswordLink").click()
-      cy.get_e2e("resetPasswordConfirmButton").click()
-
-      cy.test_user_registration(accessCode)
+      cy.manualLogout()
+      cy.test_user_registration(accessCode, password)
     })
 })
 
 /*This command expects the access code of the user*/
-Cypress.Commands.add("test_user_registration", (accessCode) => {
-  let password = "asdfasdf1234"
-  cy.get_e2e("getStartedBtn").click()
-  cy.get_e2e("createAccountBtn").click()
-  cy.get_e2e("createPasswordInp").type(password)
-  cy.get_e2e("createPasswordConfirmInp").type(password)
-  cy.get_e2e("createPasswordBtn").click()
+Cypress.Commands.add("test_user_registration", (accessCode, password) => {
+  cy.get('[id^=mat-tab-label-0-1]').click()
+
+  cy.log(accessCode)
+  cy.get_e2e("tokenInp").type(accessCode)
+  cy.get_e2e("sendTokenBtn").should('be.enabled').click()
 
   cy.get_e2e("mnemonicTextField")
     .invoke("val")
     .then(mnemonic => {
-      cy.log(mnemonic)
-      cy.get_e2e("createMnemonicBtn").click()
 
-      cy.log(accessCode)
-      cy.get_e2e("tokenInp").type(accessCode)
-
-      cy.get_e2e("sendTokenBtn").click()
-      cy.get_e2e("connectAccountButton").click()
+      console.log(mnemonic)
+      cy.get_e2e("createPasswordInp").type(password)
+      cy.get_e2e("createPasswordConfirmInp").type(password)
+      cy.get_e2e("createAccountBtn").click()
 
       cy.get_e2e("accountDropdownButton").click()
       cy.get_e2e("showMnemonicDropdownEntry").click({ force: true })
 
-      cy.get_e2e("mnemonicTextArea")
-        .invoke("val")
-        .then(mnemonic2 => {
-          expect(mnemonic).equal(mnemonic2);
-        })
+      cy.get_e2e("mnemonicTextArea").invoke("val").then(mnemonic2 => {
+        expect(mnemonic).equal(mnemonic2);
+      })
     })
 })
 
@@ -355,12 +359,12 @@ Cypress.Commands.add("verify_address", () => {
   cy.get_e2e("address").should('have.length', 2)
 })
 
-Cypress.Commands.add("test_user_reregistration", (userId) => {
-  cy.wait(2000)
+Cypress.Commands.add("test_user_reregistration", (userId, password) => {
+  cy.wait(3000)
   cy.get_e2e("replaceUserButton-" + userId).should('be.visible').click()
 
   cy.get_e2e("replaceUserButton").click()
 
   cy.get_e2e("dismissButton").click()
-  cy.manage_access_code(userId)
+  cy.manage_access_code(userId, password)
 })

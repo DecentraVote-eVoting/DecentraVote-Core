@@ -75,5 +75,6 @@ export const coreState = createFeatureSelector<CoreState>('core');
 export const getSecret = createSelector(coreState, (state: CoreState) => state.secret);
 export const getStorageServer = createSelector(coreState, (state: CoreState) => state.storageServer);
 export const getBallotBoxServer = createSelector(coreState, (state: CoreState) => state.ballotBoxServer);
-export const areServersLoading = createSelector(coreState, (state: CoreState) => state.storageServerLoading || state.ballotBoxServerLoading);
+export const areServersLoading = createSelector(coreState, (state: CoreState) =>
+  state.storageServerLoading || state.ballotBoxServerLoading);
 export const getAuthOptions = createSelector(coreState, (state: CoreState) => state.authOptions);

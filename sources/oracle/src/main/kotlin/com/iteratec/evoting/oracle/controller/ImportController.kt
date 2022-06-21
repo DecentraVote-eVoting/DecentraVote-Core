@@ -5,6 +5,7 @@ Copyright (C) 2018-2022 iteratec
 package com.iteratec.evoting.oracle.controller
 
 import com.iteratec.evoting.oracle.dtos.ImportUserDataTransferObject
+import com.iteratec.evoting.oracle.dtos.ReplaceImportUserDto
 import com.iteratec.evoting.oracle.entities.ImportUser
 import com.iteratec.evoting.oracle.enums.SolidityRole
 import com.iteratec.evoting.oracle.exceptions.DuplicateUser
@@ -143,14 +144,14 @@ class ImportController(
 
     @PostMapping("/replace")
     fun replaceUser(request: HttpServletRequest,
-                    @RequestBody address: String,
+                    @RequestBody data: ReplaceImportUserDto,
                     @RequestHeader("Signature") signature: String,
                     @RequestHeader("Message") message: String)
             : ResponseEntity<Any> {
         return try {
             val role = signatureService.getRoleFromSignature(Signature(signature, message))
             if (SolidityRole.DIRECTOR.check(role))
-                ResponseEntity.ok().body(this.importService.replaceUser(address))
+                ResponseEntity.ok().body(this.importService.replaceUser(data))
             else
                 throw SignatureNotValid("Signature has no Director Role")
 

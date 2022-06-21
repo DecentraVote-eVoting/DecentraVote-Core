@@ -7,7 +7,7 @@ import {SpinnerService} from '@core/services/spinner.service';
 import {MeetingContractService} from '@meeting/services/meeting-contract.service';
 import {VotingContractService} from '@voting/services/voting-contract.service';
 import {Action} from '@ngrx/store';
-import {Actions, Effect, ofType} from '@ngrx/effects';
+import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {EMPTY, from, Observable, of, zip} from 'rxjs';
 import {Spinner} from '@core/models/spinner.model';
 import {catchError, concatMap, first, flatMap, map, mergeMap, switchMap} from 'rxjs/operators';
@@ -32,8 +32,9 @@ import {SignatureService} from '@core/services/signature.service';
 import {BallotBoxService} from '@core/services/ballot-box.service';
 import {ZkProofService} from '@core/services/zk-proof.service';
 import {ObjectUtil} from '@core/utils/object.util';
-import {SignatureModel} from '@core/models/signature.model';
+import {SignatureModel, VoteCertificate} from '@core/models/signature.model';
 import {LambdaProofGenService} from '@core/services/lambda-proofgen.service';
+import {LocalStorageUtil} from '@core/utils/local-storage.util';
 
 @Injectable(
 )
@@ -54,147 +55,152 @@ export class VotingEffects {
   ) {
   }
 
-  @Effect()
-  readonly getVotes$: Observable<Action> = this.actions$.pipe(
-    ofType(vote.GetVoteAddressesAction),
-    switchMap(({generalMeetingAddress}) => {
-        this.spinnerService.addSpinner(Spinner.LOAD_VOTINGS);
-        return this.meetingContractService.getVoteAddressesFromMeeting(generalMeetingAddress).pipe(
-          map((votingAddresses: string[]) => {
-              return vote.GetVoteAddressesSuccessAction({
-                voteModel: votingAddresses.map(address => <VoteModel>{address: address})
-              });
-            },
-            catchError(err => from([
-              vote.ErrorAction({message: err && err.message, spinner: Spinner.LOAD_VOTINGS}),
-              core.NotificationAction({level: ToasterType.ERROR, message: 'Message.Error.Load-Votings', err})
-            ]))
-          )
-        );
-      }
-    )
-  );
-
-  @Effect()
-  readonly getVoteAddressesSuccess$ = this.actions$.pipe(
-    ofType(vote.GetVoteAddressesSuccessAction),
-    switchMap(({voteModel}) => {
-      if (voteModel.length === 0) {
-        this.spinnerService.removeSpinner(Spinner.LOAD_VOTINGS);
-      }
-      return from(voteModel.map(vm => vote.GetVoteDetailAction({
-        voteAddress: vm.address
-      })));
-    })
-  );
-
-  @Effect()
-  readonly getVoteDetail$: Observable<Action> = this.actions$.pipe(
-    ofType(vote.GetVoteDetailAction),
-    concatMap(({voteAddress, external}) => {
-      return this.votingContractService.getVoteRaw(voteAddress);
-    }),
-    flatMap((voteRaw: VoteModel) => {
-      let ballotAction: Action;
-      if (ObjectUtil.isEmptyHash(voteRaw.treeHash)) {
-        ballotAction = ballotBoxActions.GetBallotsFromBallotBoxService({
-          voteAddress: voteRaw.address,
-          isAnonymous: voteRaw.isAnonymous
-        });
-      } else {
-        ballotAction = ballotBoxActions.GetBallotsFromStorageService({
-          voteAddress: voteRaw.address,
-          treeHash: voteRaw.treeHash,
-          isAnonymous: voteRaw.isAnonymous
-        });
-      }
-      return [
-        ballotAction,
-        vote.GetVoteDetailSuccessAction({voteRaw: voteRaw})
-      ];
-    }),
-    catchError(err => from([
-      vote.ErrorAction({message: err && err.message, spinner: Spinner.LOAD_VOTING_DETAILS}),
-      core.NotificationAction({level: ToasterType.ERROR, message: 'Message.Error.Load-Votings', err})
-    ]))
-  );
-
-  @Effect()
-  readonly getVoteDetailSuccessAction$: Observable<Action> = this.actions$.pipe(
-    ofType(vote.GetVoteDetailSuccessAction),
-    switchMap(() => {
-      this.spinnerService.removeSpinner(Spinner.LOAD_VOTINGS);
-      return EMPTY;
-    })
-  );
-
-  @Effect()
-  readonly createVote$: Observable<Action> = this.actions$.pipe(
-    ofType(vote.CreateVoteAction),
-    mergeMap(({voteModel, metaData, attachment}) => {
-      this.spinnerService.addSpinner(Spinner.CREATE_VOTING);
-      return zip(
-        this.storageService.saveJsonData(metaData),
-        this.storageService.saveJsonMultiData(voteModel.voteOptions),
-        this.storageService.saveBlobData(attachment)
-      ).pipe(
-        first(),
-        switchMap(([
-                     metaDataHashValue,
-                     optionHashValues,
-                     attachmentHashValue
-                   ]) => {
-          return this.meetingContractService.createVote(
-            voteModel.meetingAddress,
-            optionHashValues,
-            metaDataHashValue,
-            attachmentHashValue,
-            voteModel.isAnonymous
-          ).pipe(
-            switchMap((tx: any) => {
-              return Observable.fromPromise(tx.wait()).pipe(
-                map((res: any) => {
-                  if (res.status === TRANSACTION_STATUS_OK) {
-                    return vote.CreateVoteSuccessAction();
-                  } else {
-                    throw new Error('Error mining Transaction');
-                  }
-                })
-              );
-            }),
-            catchError(err => from([
-              vote.ErrorAction({message: err && err.message, spinner: Spinner.CREATE_VOTING}),
-              core.NotificationAction({
-                level: ToasterType.ERROR,
-                message: 'Message.Error.Create-Voting',
-                err
-              })
-            ]))
+  readonly getVotes$: Observable<Action> = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(vote.GetVoteAddressesAction),
+      switchMap(({generalMeetingAddress}) => {
+          this.spinnerService.addSpinner(Spinner.LOAD_VOTINGS);
+          return this.meetingContractService.getVoteAddressesFromMeeting(generalMeetingAddress).pipe(
+            map((votingAddresses: string[]) => {
+                return vote.GetVoteAddressesSuccessAction({
+                  voteModel: votingAddresses.map(address => <VoteModel>{address: address})
+                });
+              },
+              catchError(err => from([
+                vote.ErrorAction({message: err && err.message, spinner: Spinner.LOAD_VOTINGS}),
+                core.NotificationAction({level: ToasterType.ERROR, message: 'Message.Error.Load-Votings', err})
+              ]))
+            )
           );
-        }),
-        catchError(err => from([
-          vote.ErrorAction({message: err && err.message, spinner: Spinner.CREATE_VOTING}),
-          core.NotificationAction({
-            level: ToasterType.ERROR,
-            message: err.message,
-            err
-          })
-        ]))
-      );
-    })
+        }
+      )
+    );
+  });
+
+  readonly getVoteAddressesSuccess$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(vote.GetVoteAddressesSuccessAction),
+      switchMap(({voteModel}) => {
+        if (voteModel.length === 0) {
+          this.spinnerService.removeSpinner(Spinner.LOAD_VOTINGS);
+        }
+        return from(voteModel.map(vm => vote.GetVoteDetailAction({
+          voteAddress: vm.address
+        })));
+      })
+    );
+  });
+
+  readonly getVoteDetail$: Observable<Action> = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(vote.GetVoteDetailAction),
+      concatMap(({voteAddress, external}) => {
+        return this.votingContractService.getVoteRaw(voteAddress);
+      }),
+      flatMap((voteRaw: VoteModel) => {
+        let ballotAction: Action;
+        if (ObjectUtil.isEmptyHash(voteRaw.treeHash)) {
+          ballotAction = ballotBoxActions.GetBallotsFromBallotBoxService({
+            voteAddress: voteRaw.address,
+            isAnonymous: voteRaw.isAnonymous
+          });
+        } else {
+          ballotAction = ballotBoxActions.GetBallotsFromStorageService({
+            voteAddress: voteRaw.address,
+            treeHash: voteRaw.treeHash,
+            isAnonymous: voteRaw.isAnonymous
+          });
+        }
+        return [
+          ballotAction,
+          vote.GetVoteDetailSuccessAction({voteRaw: voteRaw})
+        ];
+      }),
+      catchError(err => from([
+        vote.ErrorAction({message: err && err.message, spinner: Spinner.LOAD_VOTING_DETAILS}),
+        core.NotificationAction({level: ToasterType.ERROR, message: 'Message.Error.Load-Votings', err})
+      ]))
+    );
+  });
+
+  readonly getVoteDetailSuccessAction$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(vote.GetVoteDetailSuccessAction),
+      switchMap(() => {
+        this.spinnerService.removeSpinner(Spinner.LOAD_VOTINGS);
+        return EMPTY;
+      })
+    ), {dispatch: false}
   );
 
-  @Effect()
-  readonly createVoteSuccess$: Observable<Action> = this.actions$.pipe(
+  readonly createVote$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
+      ofType(vote.CreateVoteAction),
+      mergeMap(({voteModel, metaData, attachment}) => {
+        this.spinnerService.addSpinner(Spinner.CREATE_VOTING);
+        return zip(
+          this.storageService.saveJsonData(metaData),
+          this.storageService.saveJsonMultiData(voteModel.voteOptions),
+          this.storageService.saveBlobData(attachment)
+        ).pipe(
+          first(),
+          switchMap(([
+                       metaDataHashValue,
+                       optionHashValues,
+                       attachmentHashValue
+                     ]) => {
+            return this.meetingContractService.createVote(
+              voteModel.meetingAddress,
+              optionHashValues,
+              metaDataHashValue,
+              attachmentHashValue,
+              voteModel.isAnonymous
+            ).pipe(
+              switchMap((tx: any) => {
+                return from<Promise<any>>(tx.wait()).pipe(
+                  map((res: any) => {
+                    if (res.status === TRANSACTION_STATUS_OK) {
+                      return vote.CreateVoteSuccessAction();
+                    } else {
+                      throw new Error('Error mining Transaction');
+                    }
+                  })
+                );
+              }),
+              catchError(err => from([
+                vote.ErrorAction({message: err && err.message, spinner: Spinner.CREATE_VOTING}),
+                core.NotificationAction({
+                  level: ToasterType.ERROR,
+                  message: 'Message.Error.Create-Voting',
+                  err
+                })
+              ]))
+            );
+          }),
+          catchError(err => from([
+            vote.ErrorAction({message: err && err.message, spinner: Spinner.CREATE_VOTING}),
+            core.NotificationAction({
+              level: ToasterType.ERROR,
+              message: err.message,
+              err
+            })
+          ]))
+        );
+      }))
+  );
+
+  readonly createVoteSuccess$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.CreateVoteSuccessAction),
     switchMap(() => {
       this.spinnerService.removeSpinner(Spinner.CREATE_VOTING);
       return EMPTY;
     })
+    ), {dispatch: false}
   );
 
-  @Effect()
-  readonly editVote$: Observable<Action> = this.actions$.pipe(
+  readonly editVote$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.EditVoteAction),
     switchMap(({voteModel, metaData, attachment}) => {
       this.spinnerService.addSpinner(Spinner.CHANGE_STATUS);
@@ -216,7 +222,7 @@ export class VotingEffects {
             voteModel.isAnonymous
           ).pipe(
             switchMap((tx: any) => {
-              return Observable.fromPromise(tx.wait()).pipe(
+              return from<Promise<any>>(tx.wait()).pipe(
                 map((res: any) => {
                   if (res.status === TRANSACTION_STATUS_OK) {
                     return vote.EditVoteSuccessAction({
@@ -240,20 +246,20 @@ export class VotingEffects {
         })
       );
     })
-  );
+  ));
 
-  @Effect()
-  readonly editVoteSuccess$: Observable<Action> = this.actions$.pipe(
+  readonly editVoteSuccess$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.EditVoteSuccessAction),
     map(({voteAddress}) => {
       this.spinnerService.removeSpinner(Spinner.CHANGE_STATUS);
       // TODO remove after event system update
       return vote.GetVoteDetailAction({voteAddress});
     })
-  );
+  ));
 
-  @Effect()
-  readonly changeStage$: Observable<Action> = this.actions$.pipe(
+  readonly changeStage$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.ChangeStageAction),
     space(500),
     mergeMap(({voteModel, stage, reason}) => {
@@ -278,7 +284,7 @@ export class VotingEffects {
             switchMap(([[, publicKey], leaves]: [[bigint, bigint[]], number[]]) => {
               return this.votingContractService.openVoting(voteModel.address, publicKey, leaves);
             }),
-            switchMap((tx: TransactionResponse) => Observable.fromPromise(tx.wait())),
+            switchMap((tx: TransactionResponse) => from<Promise<any>>(tx.wait())),
             map((res: any) => {
               if (res.status === TRANSACTION_STATUS_OK) {
                 return vote.ChangeStageSuccessAction({voteModel, stage});
@@ -289,7 +295,7 @@ export class VotingEffects {
           );
         case VoteStage.CLOSED:
           return this.votingContractService.closeVoting(voteModel.address).pipe(
-            switchMap((tx: TransactionResponse) => Observable.fromPromise(tx.wait())),
+            switchMap((tx: TransactionResponse) => from<Promise<any>>(tx.wait())),
             map((res: TransactionReceipt) => {
               if (res.status === TRANSACTION_STATUS_OK) {
                 return vote.ChangeStageSuccessAction({voteModel, stage});
@@ -309,7 +315,7 @@ export class VotingEffects {
               return this.votingContractService.enableTallying(voteModel.address, privateKey);
             }),
             switchMap((tx: TransactionResponse) => {
-              return Observable.fromPromise(tx.wait());
+              return from<Promise<any>>(tx.wait());
             }),
             map((res: TransactionReceipt) => {
               if (res.status === TRANSACTION_STATUS_OK) {
@@ -326,7 +332,7 @@ export class VotingEffects {
             switchMap((reasonHash) => {
               return this.votingContractService.archiveVoting(voteModel.address, reasonHash).pipe(
                 switchMap((tx: any) => {
-                  return Observable.fromPromise(tx.wait()).pipe(
+                  return from<Promise<any>>(tx.wait()).pipe(
                     map((res: any) => {
                       if (res.status === TRANSACTION_STATUS_OK) {
                         return vote.ChangeStageSuccessAction({voteModel, stage, reason: reasonHash});
@@ -345,26 +351,27 @@ export class VotingEffects {
       vote.ErrorAction({message: err && err.message, spinner: Spinner.CHANGE_STATUS}),
       core.NotificationAction({level: ToasterType.ERROR, message: 'Message.Error.Change-Stage', err})
     ]))
-  );
+  ));
 
-  @Effect()
-  readonly changeStageSuccess$: Observable<Action> = this.actions$.pipe(
+  readonly changeStageSuccess$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.ChangeStageSuccessAction),
     switchMap(() => {
       this.spinnerService.removeSpinner(Spinner.CHANGE_STATUS);
       return EMPTY;
     })
+  ), {dispatch: false}
   );
 
-  @Effect()
-  readonly deleteVote$: Observable<Action> = this.actions$.pipe(
+  readonly deleteVote$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.DeleteVoteAction),
     switchMap(({meetingAddress, voteAddress}) => {
       this.spinnerService.addSpinner(Spinner.DELETE_VOTING);
       return this.meetingContractService.deleteVote(meetingAddress, voteAddress)
         .pipe(
           switchMap((tx: any) => {
-            return Observable.fromPromise(tx.wait()).pipe(
+            return from<Promise<any>>(tx.wait()).pipe(
               map((res: any) => {
                 if (res.status === TRANSACTION_STATUS_OK) {
                   return vote.DeleteVoteSuccessAction({
@@ -387,19 +394,20 @@ export class VotingEffects {
           ]))
         );
     })
-  );
+  ));
 
-  @Effect()
-  readonly deleteVoteSuccess$: Observable<Action> = this.actions$.pipe(
+  readonly deleteVoteSuccess$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.DeleteVoteSuccessAction),
     switchMap(() => {
       this.spinnerService.removeSpinner(Spinner.DELETE_VOTING);
       return EMPTY;
     })
+  ), {dispatch: false}
   );
 
-  @Effect()
-  readonly castVoteBB$: Observable<Action> = this.actions$.pipe(
+  readonly castVoteBB$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.CastVoteAction),
     space(500),
     mergeMap(({voteOptions, voteAddress, startIndex}) => {
@@ -456,7 +464,7 @@ export class VotingEffects {
               this.signatureService.signBallots(ballots),
               of([]),
               this.signatureService.signNullifier(nullifier)
-              );
+            );
           }
         }),
         map(([ballots, proofs, nullifier]) => {
@@ -469,18 +477,24 @@ export class VotingEffects {
             });
           }
         ),
-        switchMap((castVotes: BallotDTO[] ) => {
-          return zip(...castVotes.map(castVoteDTO => this.ballotBoxService.castVote(voteAddress, castVoteDTO, !!(castVoteDTO.zkProof))));
+        switchMap((castVotes: BallotDTO[]) => {
+            return zip(...castVotes.map(castVoteDTO => this.ballotBoxService.castVote(voteAddress, castVoteDTO, !!(castVoteDTO.zkProof))));
           }
         ),
-        map((_) => {
-          return vote.CastVoteSuccessAction({
-            voteAddress: voteAddress
+        map((certificates: VoteCertificate[]) => {
+          certificates.forEach((cert: VoteCertificate, index: number) => {
+            if (cert == null) { throw Error(`Ballotbox Certificate ${index} is invalid`); }
+            LocalStorageUtil.setCertificate(
+              voteAddress,
+              JSON.parse(cert.certificate.message).signedDecision.signer,
+              cert.certificate,
+              cert.ballotBox
+            );
           });
+          return vote.CastVoteSuccessAction({voteAddress: voteAddress});
         }),
         catchError(err => {
-          return from(
-            [
+          return from([
               vote.ErrorAction({message: err && err.message, spinner: Spinner.CAST_VOTE}),
               core.NotificationAction({
                 level: ToasterType.ERROR,
@@ -492,25 +506,25 @@ export class VotingEffects {
         })
       );
     })
-  );
+  ));
 
-  @Effect()
-  readonly voteSuccess$: Observable<Action> = this.actions$.pipe(
+  readonly voteSuccess$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.CastVoteSuccessAction),
     switchMap(({voteAddress}) => {
       this.spinnerService.removeSpinner(Spinner.CAST_VOTE);
       return from([vote.GetVoteDetailAction({voteAddress})]);
     })
-  );
+  ));
 
-  @Effect()
-  readonly excludeFromVote$ = this.actions$.pipe(
+  readonly excludeFromVote$ = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.ExcludeFromVoteAction),
     switchMap(({voteAddress, addressesToBlock}) => {
       this.spinnerService.addSpinner(Spinner.EXCLUDE_MEMBERS);
       return this.votingContractService.excludeFromVote(voteAddress, addressesToBlock).pipe(
         switchMap((tx: any) => {
-          return Observable.fromPromise(tx.wait()).pipe(
+          return from<Promise<any>>(tx.wait()).pipe(
             switchMap((res: any) => {
               if (res.status === TRANSACTION_STATUS_OK) {
                 return of(vote.ExcludeFromVoteSuccessAction({
@@ -524,27 +538,29 @@ export class VotingEffects {
           );
         }));
     })
-  );
+  ));
 
-  @Effect()
-  readonly excludeFromVoteSuccess$: Observable<Action> = this.actions$.pipe(
+  readonly excludeFromVoteSuccess$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.ExcludeFromVoteSuccessAction),
     switchMap(() => {
       this.spinnerService.removeSpinner(Spinner.EXCLUDE_MEMBERS);
       return EMPTY;
     })
+  ), {dispatch: false}
   );
 
-  @Effect()
-  readonly anonymousAccountAlreadyRegistered$: Observable<Action> = this.actions$.pipe(
+  readonly anonymousAccountAlreadyRegistered$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.AnonymousAccountAlreadyRegisteredAction),
     switchMap(() => {
       return EMPTY;
     })
+  ), {dispatch: false}
   );
 
-  @Effect()
-  readonly error$: Observable<Action> = this.actions$.pipe(
+  readonly error$: Observable<Action> = createEffect(() =>
+    this.actions$.pipe(
     ofType(vote.ErrorAction),
     switchMap(({message, spinner}) => {
       LoggingUtil.error(message);
@@ -553,5 +569,6 @@ export class VotingEffects {
       }
       return EMPTY;
     })
+  ), {dispatch: false}
   );
 }

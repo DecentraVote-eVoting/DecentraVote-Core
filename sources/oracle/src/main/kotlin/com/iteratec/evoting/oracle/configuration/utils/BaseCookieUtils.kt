@@ -40,6 +40,6 @@ abstract class BaseCookieUtils {
     }
 
     private val path: String
-        private get() = "/"
+        get() = "/"
 
 }

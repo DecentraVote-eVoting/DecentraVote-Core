@@ -2,11 +2,11 @@
  DecentraVote
  Copyright (C) 2018-2022 iteratec
  */
-import {Component, OnInit, ElementRef, Input, NgModule, Directive} from '@angular/core';
-import {MatMenuTrigger, _MatMenu} from '@angular/material/menu';
+import {Directive, ElementRef, Input, OnInit} from '@angular/core';
+import {MatMenuTrigger} from '@angular/material/menu';
 
 @Directive({
-  selector: '[app-dropdown]'
+  selector: '[appDropdown]'
 })
 export class DropdownDirective implements OnInit {
 

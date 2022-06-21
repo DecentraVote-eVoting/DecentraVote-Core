@@ -29,7 +29,7 @@ export class RemoveImportUserModalComponent extends AbstractModalComponent {
   onRemoveImportUser() {
     this.importUserFacade.removeImportedUser(
       this.importUser.id,
-      this.importUser.field0
+      this.importUser.uid
     );
     this.dismiss();
   }

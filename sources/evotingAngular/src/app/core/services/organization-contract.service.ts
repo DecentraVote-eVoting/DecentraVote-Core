@@ -5,7 +5,6 @@
 import {Injectable} from '@angular/core';
 import contractAbi
   from '../../../../../solidity/target/generated/abi/com.iteratec.evoting.solidity.contracts/Organization.json';
-import 'rxjs/add/observable/fromPromise';
 import {Observable} from 'rxjs/Observable';
 import {from, ReplaySubject} from 'rxjs';
 import {Contract, Overrides} from 'ethers';
@@ -60,11 +59,11 @@ export class OrganizationContractService {
   }
 
   getMeetings(): Observable<string[]> {
-    return Observable.fromPromise(this.getContract().getGeneralMeetingList());
+    return from<Promise<string[]>>(this.getContract().getGeneralMeetingList());
   }
 
   createMeeting(startDate: Date, endDate: Date, chairpersonAddress: string, metaDataHash: string): Observable<string> {
-    return Observable.fromPromise(this.getContract().createNewGeneralMeeting(
+    return from<Promise<string>>(this.getContract().createNewGeneralMeeting(
       Math.round(startDate.getTime() / 1000),
       Math.round(endDate.getTime() / 1000),
       chairpersonAddress,
@@ -75,30 +74,30 @@ export class OrganizationContractService {
   }
 
   removeMeeting(entityAddress: string) {
-    return Observable.fromPromise(this.getContract().removeGeneralMeeting(entityAddress, this.overrides));
+    return from(this.getContract().removeGeneralMeeting(entityAddress, this.overrides));
   }
 
   getUserRole(entityAddress: string): Observable<number> {
-    return Observable.fromPromise(this.getContract().getUserRole(entityAddress));
+    return from<Promise<number>>(this.getContract().getUserRole(entityAddress));
   }
 
   editUser(entityAddress: string, claimHash: string, roleNumber: number): Observable<boolean> {
-    return Observable.fromPromise(this.getContract().editUser(entityAddress, claimHash, roleNumber));
+    return from<Promise<boolean>>(this.getContract().editUser(entityAddress, claimHash, roleNumber));
   }
 
   listOfUser(): Observable<[string[], string[], number[]]> {
-    return Observable.fromPromise(this.getContract().getUser());
+    return from<Promise<[string[], string[], number[]]>>(this.getContract().getUser());
   }
 
   nextIndexForRoot(root: string): Observable<number> {
-    return Observable.fromPromise(this.getContract().nextIndexForRoot(root));
+    return from<Promise<number>>(this.getContract().nextIndexForRoot(root));
   }
 
   isAccountRegisteredForRootAndIndex(root: string, index: number, account: string): Observable<number> {
-    return Observable.fromPromise(this.getContract().isAccountRegisteredForRootAndIndex(root, index, account));
+    return from<Promise<number>>(this.getContract().isAccountRegisteredForRootAndIndex(root, index, account));
   }
 
   eventManager(): Observable<string> {
-    return Observable.fromPromise(this.contract.eventManager());
+    return from<Promise<string>>(this.contract.eventManager());
   }
 }

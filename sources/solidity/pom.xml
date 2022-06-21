@@ -5,26 +5,22 @@
     <parent>
         <groupId>de.iteratec.evoting</groupId>
         <artifactId>decentraVote</artifactId>
-        <version>0.0.1</version>
+        <version>1.1.0</version>
     </parent>
 
     <groupId>com.iteratec.evoting</groupId>
     <artifactId>solidity</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.0</version>
+    <version>1.1.0</version>
     <name>Solidity</name>
-    <description>Solidity Compiler and Deployer</description>
-
-    <properties>
-        <java.version>11</java.version>
-    </properties>
+    <description>Solidity Compiler</description>
 
     <dependencies>
         <!-- Web3j -->
         <dependency>
             <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
-            <version>4.8.1</version>
+            <version>4.9.1</version>
         </dependency>
     </dependencies>
 
@@ -32,20 +28,7 @@
     <build>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <version>2.0.0</version>
-                <executions>
-                    <execution>
-                        <id>download-licenses</id>
-                        <goals>
-                            <goal>download-licenses</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- Compile Solidity -->
+            <!-- Verify Solidity Version-->
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>3.2.0</version>
@@ -70,6 +53,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Compile Solidity -->
             <plugin>
                 <groupId>org.web3j</groupId>
                 <artifactId>web3j-maven-plugin</artifactId>

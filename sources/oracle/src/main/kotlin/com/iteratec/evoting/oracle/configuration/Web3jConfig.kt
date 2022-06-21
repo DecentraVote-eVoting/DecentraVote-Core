@@ -19,6 +19,7 @@ import org.springframework.core.io.ResourceLoader
 import org.web3j.abi.datatypes.generated.Bytes32
 import org.web3j.crypto.Bip32ECKeyPair
 import org.web3j.crypto.Credentials
+import org.web3j.crypto.Keys
 import org.web3j.crypto.MnemonicUtils
 import org.web3j.ens.NameHash
 import org.web3j.protocol.Web3j
@@ -165,7 +166,7 @@ class Web3jConfig(
         )
         val derivedKeyPair = Bip32ECKeyPair.deriveKeyPair(masterKeypair, derivationPath)
         val credentials = Credentials.create(derivedKeyPair)
-        return credentials.address
+        return Keys.toChecksumAddress(credentials.address)
     }
 
     fun resetNonce() {

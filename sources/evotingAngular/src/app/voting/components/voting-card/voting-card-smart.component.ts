@@ -17,8 +17,6 @@ import {ArchiveVotingModalComponent} from '@voting/components/archive-voting-mod
 import {VotingDetailModalSmartComponent} from '@voting/components/voting-detail-modal/voting-detail-modal-smart.component';
 import {VotingParticipantsListModalComponent} from '@voting/components/voting-participants-list-modal/voting-participants-list-modal.component';
 import {DeleteVotingModalComponent} from '@voting/components/delete-voting-modal/delete-voting-modal.component';
-import 'rxjs-compat/add/observable/interval';
-import 'rxjs-compat/add/observable/timer';
 
 @Component({
   selector: 'app-voting-card-smart',
@@ -43,6 +41,7 @@ import 'rxjs-compat/add/observable/timer';
                        (openVotingModal)="this.openVotingModal()"
                        (openParticipantsModal)="this.openParticipantsModal()"
                        (openDeleteModal)="this.openDeleteModal()"
+                       (openVoteCertificate)="this.openVoteCertificate()"
       >
       </app-voting-card>
     </ng-container>
@@ -143,6 +142,12 @@ export class VotingCardSmartComponent implements OnInit, OnDestroy {
         meeting: this.meeting,
         vote: this.voteCardModel
       });
+  }
+
+  openVoteCertificate() {
+    window.open(`./#/certificate/${this.meeting.address}/${this.voteAddress}`,
+      '_blank',
+      `height=${screen.height / 1.2},width=${screen.width / 1.5}`);
   }
 
   ngOnDestroy() {

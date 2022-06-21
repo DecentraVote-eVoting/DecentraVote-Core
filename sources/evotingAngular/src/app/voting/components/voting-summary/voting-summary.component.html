@@ -6,7 +6,8 @@ Copyright (C) 2018-2022 iteratec
 
   <div class="d-flex align-items-center">
     <h3 class="ev-summary-font-size-large">{{voteDetail.title}}</h3>
-    <i class="material-icons-round non-interactive ev-icon-size-adjusted ml-2">{{isAnonymous ? 'visibility_off' : 'visibility'}}</i>
+    <i
+      class="material-icons-round non-interactive ev-icon-size-adjusted ml-2">{{isAnonymous ? 'visibility_off' : 'visibility'}}</i>
   </div>
 
   <div *ngIf="voteDetail.description.length > 0"
@@ -24,7 +25,7 @@ Copyright (C) 2018-2022 iteratec
         <app-role-badges [userRole]="member.role"></app-role-badges>
       </div>
       <div class="d-md-block ev-summary-font-size-small">
-        {{member.resolvedClaim.field0}}
+        {{member.resolvedClaim.uid}}
       </div>
       <div *ngIf="showAddress" class="d-md-block ev-summary-font-size-x-small">
         {{member.address}}
@@ -74,16 +75,22 @@ Copyright (C) 2018-2022 iteratec
     </ng-template>
   </div>
 
-  <div *ngIf="nonExcludedUsersSplit.length > 0" class="mb-3">
-    <h4 class="ev-summary-font-size">{{'Voting.Summary.Eligible-Voters' | translate}}:</h4>
-    <div class="row">
-      <div *ngFor="let _ of [].constructor(nColumnsMembers), let i = index" class="col">
-        <ng-template *ngTemplateOutlet="membersTemplate;
-          context: {members: this.nonExcludedUsersSplit[i % nColumnsMembers], showAddress: true,
+  <div *ngIf="!isAnonymous">
+    <h4 class="ev-summary-font-size">{{'Voting.Summary.TooLate-Voters' | translate}}:</h4>
+    <div *ngIf="tooLateMembersSplit.length > 0; else noTooLateMembers" class="mb-3">
+      <div class="row">
+        <div *ngFor="let _ of [].constructor(nColumnsMembers), let i = index" class="col">
+          <ng-template *ngTemplateOutlet="membersTemplate;
+          context: {members: this.tooLateMembersSplit[i % nColumnsMembers], showAddress: true,
           boldText: false, showDividers: true}">
-        </ng-template>
+          </ng-template>
+        </div>
       </div>
     </div>
+
+    <ng-template #noTooLateMembers>
+      <p class="ev-summary-font-size-small">{{'Voting.Summary.Vote-No-TooLate-Voters' | translate}}</p>
+    </ng-template>
   </div>
 
   <h4 class="ev-summary-font-size">{{'Voting.Summary.Excluded-Members' | translate}}:</h4>

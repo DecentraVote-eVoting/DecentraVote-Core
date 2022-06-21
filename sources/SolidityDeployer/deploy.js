@@ -15,11 +15,18 @@ const ballotboxDerivationPath = `m/44'/60'/0'/0/6`
 const domain = "baseurl"
 const baseURL = `.${domain}.com`
 
+let customer = process.env.CUSTOMER;
+console.log("OLD $ENVIRONMENT -> (NEW) CUSTOMER: " + customer);
+if (!customer) {
+    customer = "local"
+}
 
-let environment = process.env.ENVIRONMENT;
-console.log("$ENVIRONMENT: " + environment);
+let environment = process.env.BASE_ENVIRONMENT;
+console.log("$BASE_ENVIRONMENT: " + environment);
 if (!environment) {
-    environment = "local"
+    environment = ""
+} else {
+    environment = "." + environment
 }
 
 let network = process.env.NETWORK;
@@ -85,22 +92,22 @@ const storageAddress = new ethers.Wallet(ethers.utils.HDNode.fromMnemonic(mnemon
 const ballotboxAddress = new ethers.Wallet(ethers.utils.HDNode.fromMnemonic(mnemonic).derivePath(ballotboxDerivationPath)).address
 
 
-let environmentConfig = process.env.ENV_CONFIG;
-if (environmentConfig) {
-    environmentConfig = JSON.parse(environmentConfig)
+let customerConfig = process.env.ENV_CONFIG;
+if (customerConfig) {
+    customerConfig = JSON.parse(customerConfig)
 } else {
     console.log("Did not find ENV_CONFIG. Use local default")
-    environmentConfig = {
+    customerConfig = {
         expectedUserCount: 1000,
         expectedDirectorCount: 5,
         expectedMeetings: 10,
         expectedVotesPerMeeting: 20
     };
 }
-const expectedUserCount = ethers.BigNumber.from(environmentConfig.expectedUserCount);
-const expectedDirectorCount = ethers.BigNumber.from(environmentConfig.expectedDirectorCount);
-const expectedMeetings = ethers.BigNumber.from(environmentConfig.expectedMeetings);
-const expectedVotesPerMeeting = ethers.BigNumber.from(environmentConfig.expectedVotesPerMeeting);
+const expectedUserCount = ethers.BigNumber.from(customerConfig.expectedUserCount);
+const expectedDirectorCount = ethers.BigNumber.from(customerConfig.expectedDirectorCount);
+const expectedMeetings = ethers.BigNumber.from(customerConfig.expectedMeetings);
+const expectedVotesPerMeeting = ethers.BigNumber.from(customerConfig.expectedVotesPerMeeting);
 const envGasPrice = ethers.BigNumber.from(config.gasPrice.toString())
 
 // Expected expenses in Wei for one Member
@@ -130,7 +137,7 @@ async function main() {
 
     let ensRegistryContract;
     let publicResolver;
-    if (!config.ensRegistryAddress) {
+    if (!config.ensRegistryAddress || process.env.CLEAN_DEPLOY) {
         console.log("FOUND NO ENS REGISTRY");
         [ensRegistryContract, publicResolver] = await deployENS();
         config.ensRegistryAddress = ensRegistryContract.address;
@@ -202,27 +209,27 @@ async function main() {
     // register storage
     console.log("Register storage ...");
     let storageURL;
-    if (environment === "local") {
+    if (customer === "local") {
         storageURL = "http://localhost:3000"
     } else {
-        storageURL = "https://storage." + environment + baseURL
+        storageURL = `https://storage-${customer}${environment}.${baseURL}`
     }
     await organizationContract.addStorage(storageAddress, storageURL, overrides);
 
     //register Ballotbox
     console.log("Register ballotbox ...");
     let ballotURL;
-    if (environment === "local") {
+    if (customer === "local") {
         ballotURL = "http://localhost:4000"
     } else {
-        ballotURL = "https://ballotbox." + environment + baseURL
+        ballotURL = `https://ballotbox-${customer}${environment}.${baseURL}`
     }
 
     await organizationContract.addBallotBox(ballotboxAddress, ballotURL, overrides);
 
     const DV_NODE = ethers.utils.namehash(domain);
-    const ENV_LABEL = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(environment));
-    const ENV_NODE = ethers.utils.namehash(environment + "." + domain);
+    const ENV_LABEL = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(customer));
+    const ENV_NODE = ethers.utils.namehash(customer + "." + domain);
 
     // Getting old organization Address
 
@@ -238,9 +245,9 @@ async function main() {
     }
 
     // Register new organization to be resolved from ens
-    console.log(`Creating ENS subdomain: ${environment}.${domain} ...`);
+    console.log(`Creating ENS subdomain: ${customer}.${domain} ...`);
     await ensRegistryContract.setSubnodeRecord(DV_NODE, ENV_LABEL, await master_wallet.getAddress(), publicResolver.address, 64, overrides);
-    console.log(`Setting ens entry of ${environment}.${domain} to ${organizationContract.address} ...`);
+    console.log(`Setting ens entry of ${customer}.${domain} to ${organizationContract.address} ...`);
     await publicResolver["setAddr(bytes32,address)"](ENV_NODE, organizationContract.address, overrides);
 }
 

@@ -7,11 +7,20 @@ import {SetupStep} from '@core/models/common.model';
 import {Router} from '@angular/router';
 import {ROUTE_PATHS} from '@app/route-paths';
 import {EthersService} from '@core/services/ethers.service';
-import {first} from 'rxjs/operators';
-import {Subject} from 'rxjs';
+import {Subject, throwError} from 'rxjs';
 import {OrganizationFacade} from '@core/services/organization.facade.service';
-import {LocalStorageUtil} from '@core/utils/local-storage.util';
 import {SessionStorageUtil} from '@core/utils/session-storage.util';
+import {CryptoFacade} from '@core/services/crypto.facade';
+import {LicenseComponent} from '@core/components/license/license.component';
+import {ModalService} from '@core/services/modal.service';
+import {SignatureService} from '@core/services/signature.service';
+import {catchError, first, switchMap} from 'rxjs/operators';
+import {SignatureModel} from '@core/models/signature.model';
+import {OracleService} from '@core/services/oracle.service';
+import {ToasterType} from '@core/models/toaster.model';
+import {ToasterService} from '@core/services/toaster.service';
+import {jwtUser} from '@user/models/user.model';
+import {LoggingUtil} from '@core/utils/logging.util';
 
 @Component({
   selector: 'app-setup',
@@ -19,24 +28,21 @@ import {SessionStorageUtil} from '@core/utils/session-storage.util';
 })
 export class SetupComponent implements OnDestroy {
 
-  currentStep = SetupStep.GET_STARTED;
+  currentStep = SetupStep.MAIN_LOGIN;
   setupStep = SetupStep;
   isCreatingNew = true;
-  password = '';
+  jwtUser: jwtUser;
 
   private unsubscribe$ = new Subject();
 
   constructor(private router: Router,
               private ethersService: EthersService,
-              private organizationFacade: OrganizationFacade) {
-
-    this.organizationFacade.getMnemonic()
-      .pipe(first())
-      .subscribe(mnemonic => {
-        if (mnemonic === null) {
-          router.navigate([ROUTE_PATHS.LOGIN.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
-        }
-      });
+              private organizationFacade: OrganizationFacade,
+              private cryptoFacade: CryptoFacade,
+              private modalService: ModalService,
+              private signatureService: SignatureService,
+              private oracleService: OracleService,
+              private toasterService: ToasterService) {
   }
 
   ngOnDestroy() {
@@ -44,47 +50,79 @@ export class SetupComponent implements OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  increaseStep() {
-    this.currentStep++;
-
-    if (this.currentStep === SetupStep.FINISH) {
-      this.router.navigate([ROUTE_PATHS.MEETING_OVERVIEW.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
-    }
+  loginComplete() {
+    this.router.navigate([ROUTE_PATHS.MEETING_OVERVIEW.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
   }
 
-  decreaseStep() {
-    this.currentStep--;
-
-    if (this.currentStep === SetupStep.GET_STARTED) {
-      this.router.navigate([ROUTE_PATHS.SETUP.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
-    }
+  changePasswordStep() {
+    this.isCreatingNew = false;
+    this.currentStep = this.setupStep.MNEMONIC_PASSWORD.valueOf();
   }
 
-  setNewOrImport(isNew: boolean) {
-    this.isCreatingNew = isNew;
-    this.increaseStep();
-  }
-
-  resetNewOrImport() {
+  register(jwt: jwtUser) {
     this.isCreatingNew = true;
-    this.decreaseStep();
-  }
-
-  setPassword(password: string) {
-    this.password = password;
-    this.increaseStep();
+    this.jwtUser = jwt;
+    this.currentStep = this.setupStep.MNEMONIC_PASSWORD.valueOf();
   }
 
   resetPassword() {
-    this.password = '';
-    this.decreaseStep();
+    SessionStorageUtil.removeHashedPassword();
+    this.currentStep = this.setupStep.MAIN_LOGIN.valueOf();
   }
 
-  setMnemonic(mnemonic: string) {
-    LocalStorageUtil.setMnemonic(mnemonic, this.password);
-    SessionStorageUtil.setMnemonic(mnemonic);
-    this.ethersService.createSigner(mnemonic);
-    this.increaseStep();
+  setMnemonicAndPassword(obj) {
+    SessionStorageUtil.setHashedPassword(this.cryptoFacade.getKeccak256(obj.password));
+    SessionStorageUtil.setMnemonic(obj.mnemonic);
+    SessionStorageUtil.setEncryptedMnemonic(SessionStorageUtil.encryptMnemonic(obj.mnemonic, obj.password));
+    this.ethersService.createSigner(obj.mnemonic);
+
+    if (this.isCreatingNew) {
+      this.cryptoFacade.getSecretHash()
+        .pipe(first())
+        .subscribe(secretHash => {
+          this.oracleService.registerMember(
+            obj.address,
+            secretHash,
+            SessionStorageUtil.getHashedPassword(),
+            SessionStorageUtil.getEncryptedMnemonic()
+          ).pipe(first())
+            .subscribe((transactionHash: string) => {
+              this.router.navigate([ROUTE_PATHS.LINK_ETH_ADDRESS.valueOf()],
+                {
+                  queryParams: {
+                    transactionHash: transactionHash
+                  }
+                }).catch(_ => console.warn('Could not navigate to route'));
+            }, error => {
+              document.cookie = 'evoting-access= ; expires = Thu, 01 Jan 1970 00:00:00 GMT';
+              LoggingUtil.error(error);
+            });
+        });
+    } else {
+      this.signatureService.createSignature(false).pipe(
+        first(),
+        switchMap((signature: SignatureModel) =>
+          this.oracleService.changePassword(
+            signature,
+            SessionStorageUtil.getHashedPassword(),
+            SessionStorageUtil.getEncryptedMnemonic()
+          ).pipe(
+            catchError(err => {
+              this.toasterService.addToaster(
+                {
+                  type: ToasterType.ERROR,
+                  message: 'Message.Error.Renew-Password'
+                });
+              LoggingUtil.error(err);
+              return throwError(err);
+            })
+          )
+        )).subscribe(_ => this.loginComplete());
+    }
+  }
+
+  onOpenLicenseModal() {
+    this.modalService.openModal<LicenseComponent>(LicenseComponent, {});
   }
 
 }

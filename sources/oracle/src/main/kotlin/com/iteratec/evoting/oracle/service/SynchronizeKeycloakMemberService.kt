@@ -34,13 +34,13 @@ class SynchronizeKeycloakMemberService(
                 val keycloakUuids: List<String?> = keycloak.users().list().map { account: UserRepresentation -> account.id }
                 val registeredAccounts: List<AccountEntity> = databaseService.getAllAccounts()
 
-                registeredAccounts.filterNot { it.uuid in keycloakUuids }
+                registeredAccounts.filterNot { it.id in keycloakUuids }
                         .map { account: AccountEntity ->
                             organizationContract.editUser(account.address as String, Numeric.hexStringToByteArray(account.membershipClaim), Uint8(0)).also { trx: String ->
                                 logger.info("Account: ${account.address} is removed from the Blockchain: TransactionHash: $trx")
                             }
-                            databaseService.deleteAccount(account.uuid as String).also {
-                                logger.info("Account: ${account.address} with uuid: ${account.uuid} is removed from the Database")
+                            databaseService.deleteAccount(account.id as String).also {
+                                logger.info("Account: ${account.address} with uuid: ${account.id} is removed from the Database")
                             }
                         }
                 logger.debug("Synchronization finished successfully")

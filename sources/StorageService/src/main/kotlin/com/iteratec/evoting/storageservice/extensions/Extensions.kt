@@ -7,5 +7,5 @@ package com.iteratec.evoting.storageservice.extensions
 import org.web3j.crypto.Hash
 import java.util.*
 
-fun String.toHash(): String = Hash.sha3String(this)
+fun String.toHash(): String = Hash.sha3String(this) ?: throw Exception()
 fun <T> Optional<T>.unwrap(): T? = orElse(null)

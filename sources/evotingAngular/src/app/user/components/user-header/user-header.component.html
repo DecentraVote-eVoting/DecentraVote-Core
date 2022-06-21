@@ -13,7 +13,7 @@ Copyright (C) 2018-2022 iteratec
     <span class=" ev-typography--black mr-5">{{'User.Manage.Title' | translate}}</span>
     <span *ngIf="user !== undefined"
           class="ev-typography--light mb-2">
-        {{'User.Manage.Current-User' | translate}}: {{user.resolvedClaim.field2}}
+        {{'User.Manage.Current-User' | translate}}: {{user.resolvedClaim.name2}}
       <app-role-badges [userRole]="user.role"></app-role-badges>
       </span>
   </div>

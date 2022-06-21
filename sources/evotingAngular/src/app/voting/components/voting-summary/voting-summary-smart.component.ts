@@ -2,28 +2,31 @@
  DecentraVote
  Copyright (C) 2018-2022 iteratec
  */
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {VoteFacade} from '@voting/services/vote.facade';
-import {first, map, switchMap, tap} from 'rxjs/operators';
-import {ExportVoteResult, UserResult, VoteDetailModel, VoteResult} from '@voting/models/vote.model';
-import {combineLatest, ReplaySubject} from 'rxjs';
+import {first, map, switchMap, takeUntil, tap} from 'rxjs/operators';
+import {UserResult, VoteDetailModel, VoteOption, VoteResult} from '@voting/models/vote.model';
+import {combineLatest, ReplaySubject, Subject} from 'rxjs';
 import {Observable} from 'rxjs/Observable';
 import {User} from '@user/models/user.model';
+import {MemberWithVotingCount} from '@meeting/models/meeting-member.model';
+import {StorageVote} from '@core/models/storage.model';
 
 @Component({
   selector: 'app-voting-summary-smart',
   template: `
     <app-voting-summary [voteDetail]="voteDetail"
                         [excludedUsers]="excludedUsers"
-                        [nonExcludedUsers]="nonExcludedUsers"
+                        [tooLateMembers]="tooLateMembers"
                         [isAnonymous]="isAnonymous"
                         [templateReady]="templateReady"
                         [results]="results$ | async">
     </app-voting-summary>`
 })
-export class VotingSummarySmartComponent implements OnInit {
+export class VotingSummarySmartComponent implements OnInit, OnDestroy {
 
   @Input() voteAddress: string;
+  @Input() meetingAddress: string;
   @Input() isAnonymous: boolean;
   @Input() templateReady: boolean;
   @Output() voteDataReady = new EventEmitter<any>();
@@ -32,24 +35,28 @@ export class VotingSummarySmartComponent implements OnInit {
   results$: Observable<UserResult[] | VoteResult[]>;
 
   excludedUsers: User[] = [];
-  nonExcludedUsers: User[] = [];
+  tooLateMembers: User[] = [];
   metadata;
   voteOptions;
 
   voteResultsReady$ = new ReplaySubject(1);
   excludedMembersReady$ = new ReplaySubject(1);
-  nonExcludedMembersReady$ = new ReplaySubject(1);
+  tooLateMembersReady$ = new ReplaySubject(1);
+
+  private unsubscribe$ = new Subject();
 
   constructor(
-    private voteFacade: VoteFacade,
-  ) {}
+    private voteFacade: VoteFacade
+  ) {
+  }
 
   getResults(): Observable<UserResult[] | VoteResult[]> {
     return combineLatest([
       this.voteFacade.getResolvedMetaDataByAddress(this.voteAddress),
       this.voteFacade.getVoteOptions(this.voteAddress),
     ]).pipe(
-      switchMap(([metaData, voteOptions]) => {
+      takeUntil(this.unsubscribe$),
+      switchMap(([metaData, voteOptions]: [StorageVote, VoteOption]) => {
         this.voteDetail = {
           address: this.voteAddress,
           title: metaData.title,
@@ -58,8 +65,8 @@ export class VotingSummarySmartComponent implements OnInit {
           voteOptions
         } as VoteDetailModel;
         return this.isAnonymous ? this.voteFacade.getNotVerifiedResult(this.voteAddress) :
-          this.voteFacade.getResultsByVoteDecisionAddress(this.voteDetail).pipe(
-            map((exportVoteResult: ExportVoteResult) => exportVoteResult.userResults)
+          this.voteFacade.getResultsByVoteDecisionAddress(this.voteAddress).pipe(
+            map((userResults: UserResult[]) => userResults)
           );
       }),
       first(),
@@ -71,24 +78,33 @@ export class VotingSummarySmartComponent implements OnInit {
     this.results$ = this.getResults();
 
     this.voteFacade.getExcludedFromVoteList(this.voteAddress)
-      .pipe(first())
-      .subscribe(users => {
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((users: MemberWithVotingCount[]) => {
         this.excludedUsers = users;
         this.excludedMembersReady$.next();
       });
 
-    this.voteFacade.getNonExcludedVoters(this.voteAddress)
-      .pipe(first(), tap())
-      .subscribe(users => {
-        this.nonExcludedUsers = users;
-        this.nonExcludedMembersReady$.next();
-      });
+    if (!this.isAnonymous) {
+      this.voteFacade.getTooLateRegisteredMemberForVote(this.meetingAddress, this.voteAddress)
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe((users: MemberWithVotingCount[]) => {
+          this.tooLateMembers = users;
+          this.tooLateMembersReady$.next();
+        });
+    } else {
+      this.tooLateMembersReady$.next();
+    }
 
     combineLatest([
       this.voteResultsReady$,
       this.excludedMembersReady$,
-      this.nonExcludedMembersReady$
-    ]).pipe(first(), tap(() => this.voteDataReady.emit())
+      this.tooLateMembersReady$
+    ]).pipe(takeUntil(this.unsubscribe$), tap(() => this.voteDataReady.emit())
     ).subscribe();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

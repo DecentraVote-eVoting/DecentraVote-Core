@@ -102,7 +102,7 @@ export class VotingDetailResultListComponent {
     if (searchString) {
       this.page = 1;
       const filteredNew = Object.assign({}, ...Object.entries(this.resultsByUser)
-        .filter(([_, value]) => `${value.result.field1} ${value.result.field2}`
+        .filter(([_, value]) => `${value.result.name1} ${value.result.name2}`
           .toLowerCase()
           .includes(searchString.toLowerCase()))
         .map(([k, v]) => ({[k]: v}))

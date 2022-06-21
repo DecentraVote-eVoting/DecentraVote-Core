@@ -33,7 +33,7 @@ export class OrganizationFacade {
   getMnemonic(): Observable<string> {
     const mnemonic = SessionStorageUtil.getMnemonic();
     if (!mnemonic) {
-      this.router.navigate([ROUTE_PATHS.LOGIN.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
+      this.router.navigate([ROUTE_PATHS.SETUP.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
     }
     return of(mnemonic);
   }

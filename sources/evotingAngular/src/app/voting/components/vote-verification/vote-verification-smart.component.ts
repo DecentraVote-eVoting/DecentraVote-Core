@@ -28,7 +28,7 @@ import {MeetingContractService} from '@meeting/services/meeting-contract.service
 import {UserFacade} from '@user/services/user.facade';
 import {ResolvedClaim, User} from '@user/models/user.model';
 import {LoadUsersAction} from '@user/+state/user.actions';
-import {CheckedBallot, VoteVerificationService} from "@voting/services/vote-verification.service";
+import {CheckedBallot, VoteVerificationService} from '@voting/services/vote-verification.service';
 
 interface InvalidUserWithOption {
   option: string;
@@ -134,7 +134,6 @@ export class VoteVerificationSmartComponent implements OnInit, AfterViewInit, On
     });
 
     // Setting Title
-    // TODO: WHY DO WE NEED TO LAOD THE WHOLE VOTECARDMODEL TO GET THE TITEL?
     this.paramObservable$.pipe(
       switchMap(([, voteAddress]) => this.voteFacade.getVoteCardModelByAddress(voteAddress))
     ).subscribe(vote => this.title = vote.title);

@@ -5,9 +5,9 @@
 import Joi from 'joi';
 
 export interface ImportUserFields {
-  field0: string;
-  field1: string;
-  field2: string;
+  uid: string;
+  name1: string;
+  name2: string;
 }
 
 export interface ImportUserRaw extends ImportUserFields {
@@ -27,9 +27,9 @@ export interface ExportUser extends ImportUserFields {
 
 export const importUserJoiSchema = Joi.array().items(
   Joi.object({
-    field0: Joi.string()
-      .required(),
-    field1: Joi.string(),
-    field2: Joi.string(),
+    uid: Joi.string().required(),
+    name1: Joi.string(),
+    name2: Joi.string(),
+    role: Joi.number()
   })
 );

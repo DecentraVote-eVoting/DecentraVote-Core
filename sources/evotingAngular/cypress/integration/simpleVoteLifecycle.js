@@ -6,8 +6,8 @@ describe('Create and remove meeting', () => {
   it('basic Login', () => {
     cy.register_users(1,0,0).then(users => {
       const admin_mnemonic = users.admins[0].mnemonic;
-      const admin_name = users.admins[0].field1;
-      cy.login(admin_mnemonic);
+      const admin_name = users.admins[0].name1;
+      cy.sessionLogin(admin_mnemonic);
       cy.visit("http://localhost:3999/app")
 
       // Create meeting and delete meeting

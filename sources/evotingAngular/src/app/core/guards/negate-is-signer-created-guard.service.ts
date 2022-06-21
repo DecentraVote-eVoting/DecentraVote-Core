@@ -4,10 +4,8 @@
  */
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
-import {Observable} from 'rxjs';
 import {ROUTE_PATHS} from '@app/route-paths';
 import {EthersService} from '@core/services/ethers.service';
-import {SessionStorageUtil} from '@core/utils/session-storage.util';
 import {IsSignerCreatedGuard} from '@core/guards/is-signer-created-guard.service';
 
 @Injectable({
@@ -22,9 +20,9 @@ export class NegateIsSignerCreatedGuardService implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const signerCreated = this.isSignerCreatedGuard.isLoggedIn();
-    if(signerCreated == true){
+    if (signerCreated === true) {
       this.router.navigate([ROUTE_PATHS.MEETING_OVERVIEW]);
     }
-    return !signerCreated
+    return !signerCreated;
   }
 }

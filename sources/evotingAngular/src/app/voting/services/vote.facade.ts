@@ -35,7 +35,6 @@ import {deepDistinctUntilChanged} from '@core/utils/pipe.util';
 import memoizee from 'memoizee';
 import {UserFacade} from '@app/user/services/user.facade';
 import {VerifiableBallot} from '@voting/models/ballot-box.model';
-import {TransformUtil} from '@core/utils/transform.util';
 
 /**
  * The facade only holds methods that are (not exclusively) used by components.
@@ -285,11 +284,11 @@ export class VoteFacade {
   });
 
   /**
-   * returns list of members that are not excluded from vote
+   * returns list of members that are not excluded from vote (can be more member than registered to this meeting)
    * @param {string} voteAddress
    * @return {Observable<VotingMember[]>} contains member representative and vote count as well as potential vote count
    */
-  getNonExcludedVoters: ((string) => Observable<User[]>) = memoizee((voteAddress: string) => {
+  getNonExcludedMember: ((string) => Observable<User[]>) = memoizee((voteAddress: string) => {
     return combineLatest([
       this.memberFacade.getMembers(),
       this.selectors.getExcludedList(voteAddress)
@@ -310,25 +309,22 @@ export class VoteFacade {
    * @param {VoteDetailModel} vote
    * @return {Observable<ExportVoteResult>} contains vote description, title, attachment, options and results
    */
-  getResultsByVoteDecisionAddress: ((VoteDetailModel) => Observable<ExportVoteResult>) = memoizee((vote: VoteDetailModel) => {
+  getResultsByVoteDecisionAddress: ((voteAddress: string) => Observable<UserResult[]>) = memoizee((voteAddress: string) => {
     return combineLatest([
-      this.getUsersThatVotedByVoteAddress(vote.address),
-      this.selectors.getVerifiableBallotsByVoteAddress(vote.address),
-      this.selectors.getChairmanPrivateKey(vote.address),
-      this.selectors.getAttachmentHash(vote.address),
-      this.voteService.getResolvedVoteOptions(vote.address),
+      this.getUsersThatVotedByVoteAddress(voteAddress),
+      this.selectors.getVerifiableBallotsByVoteAddress(voteAddress),
+      this.selectors.getChairmanPrivateKey(voteAddress),
+      this.voteService.getResolvedVoteOptions(voteAddress),
     ]).pipe(
       debounceTime(15),
       map(([
              usersThatVoted,
              verifiableBallots,
              chairPrivateKey,
-             attachmentHash,
              options]: [
         User[],
         VerifiableBallot[],
         BigNumber,
-        string,
         StorageVotingOption[],
       ]) => {
         const uniqueUserResults: { [key: string]: UserResult } = {};
@@ -355,14 +351,7 @@ export class VoteFacade {
           userResults.push(uniqueUserResults[key]);
         });
 
-        return <ExportVoteResult>{
-          title: vote.title,
-          description: vote.description,
-          attachmentFileName: vote.filename,
-          attachmentHash: vote.filename ? attachmentHash : '',
-          options: TransformUtil.transformStorageVotingOptionArrayToStringArray(vote.voteOptions),
-          userResults
-        };
+        return userResults;
       }),
       deepDistinctUntilChanged(),
       shareReplay(1)
@@ -416,6 +405,25 @@ export class VoteFacade {
    */
   getLeaves: ((voteAddress: string) => Observable<BigNumber[]>) = memoizee((voteAddress: string) => {
     return this.selectors.getLeaves(voteAddress);
+  });
+
+  /**
+   * returns all registered member from a meeting that did not register in time for a vote
+   * @return {Observable<string[]>}
+   */
+  getTooLateRegisteredMemberForVote: ((meetingAddress: string, voteAddress: string) => Observable<User[]>)
+    = memoizee((meetingAddress: string, voteAddress: string) => {
+    return combineLatest([
+      this.meetingFacade.getMembersWithVotingCount(meetingAddress),
+      this.getExcludedFromVoteList(voteAddress),
+      this.getResultsByVoteDecisionAddress(voteAddress),
+    ]).pipe(
+      map(([memberWithVoteCount, excluded, voters]: [User[], User[], UserResult[]]) => {
+        return memberWithVoteCount
+          .filter(member => !excluded.map(val => val.address).includes(member.address))
+          .filter(member => !voters.map(val => val.ethAddress).includes(member.address));
+      })
+    );
   });
 
   /**

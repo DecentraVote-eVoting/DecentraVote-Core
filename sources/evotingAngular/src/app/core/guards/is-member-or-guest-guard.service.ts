@@ -9,7 +9,6 @@ import {map} from 'rxjs/operators';
 import {OrganizationContractService} from '../services/organization-contract.service';
 import {EthersService} from '@core/services/ethers.service';
 import {ROUTE_PATHS} from '@app/route-paths';
-import {AuthenticationMethod} from '@core/models/common.model';
 import {OrganizationFacade} from '@core/services/organization.facade.service';
 import {UserFacade} from '@user/services/user.facade';
 import {Role} from '@user/models/role.model';
@@ -32,26 +31,26 @@ export class IsMemberOrGuestGuard implements CanActivate {
           if (role.value > Role.NONE.value) {
             return true;
           }
-          this.redirectToAuth();
+          this.router.navigate([ROUTE_PATHS.SETUP.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
           return false;
         }
       ));
   }
 
-  private redirectToAuth() {
-    this.organizationFacade.getAuthOptions(true)
-      .subscribe(options => {
-        if (options && options.length > 0) {
-          switch (options[0]) {
-            case AuthenticationMethod.TOKEN:
-              this.router.navigate([ROUTE_PATHS.TOKEN_AUTH.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
-              break;
-            case AuthenticationMethod.KEYCLOAK:
-            default:
-              this.router.navigate([ROUTE_PATHS.EXTERNAL_AUTH.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
-              break;
-          }
-        }
-      });
-  }
+  // private redirectToAuth() {
+  //   this.organizationFacade.getAuthOptions(true)
+  //     .subscribe(options => {
+  //       if (options && options.length > 0) {
+  //         switch (options[0]) {
+  //           case AuthenticationMethod.TOKEN:
+  //             this.router.navigate([ROUTE_PATHS.TOKEN_AUTH.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
+  //             break;
+  //           case AuthenticationMethod.KEYCLOAK:
+  //           default:
+  //             this.router.navigate([ROUTE_PATHS.EXTERNAL_AUTH.valueOf()]).catch(_ => console.warn('Could not navigate to route'));
+  //             break;
+  //         }
+  //       }
+  //     });
+  // }
 }

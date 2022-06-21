@@ -17,4 +17,6 @@ interface OpenBallotRepository : CrudRepository<OpenBallotEntity, Long> {
     fun findAllByVoteAddressAndSignedDecisionSigner(voteAddress: String, signer: String): Optional<List<OpenBallotEntity>>
 
     fun findByVoteAddressAndSignedNullifierNullifier (voteAddress: String, nullifier: String) : Optional<OpenBallotEntity>
+
+    fun existsByVoteAddressAndSignedNullifierNullifier (voteAddress: String, nullifier: String) : Boolean
 }

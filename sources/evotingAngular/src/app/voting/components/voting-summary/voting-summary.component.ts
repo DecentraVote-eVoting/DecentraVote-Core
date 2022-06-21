@@ -6,7 +6,7 @@ import {Component, Input} from '@angular/core';
 import {UserResult, VoteDetailModel, VoteResult} from '@voting/models/vote.model';
 import {VoteStage} from '@voting/models/vote-stage.enum';
 import {User} from '@user/models/user.model';
-import {UserSortPipe} from "@core/pipes/user-sort.pipe";
+import {UserSortPipe} from '@core/pipes/user-sort.pipe';
 
 @Component({
   selector: 'app-voting-summary',
@@ -48,17 +48,17 @@ export class VotingSummaryComponent {
     this.excludedUsersSplit = this.getSplitLists(users);
   }
   @Input()
-  set nonExcludedUsers(users: User[]) {
+  set tooLateMembers(users: User[]) {
     if (!users) { return; }
     users = this.userSortPipe.transform(users, 0);
-    this.nonExcludedUsersSplit = this.getSplitLists(users);
+    this.tooLateMembersSplit = this.getSplitLists(users);
   }
 
   nColumnsMembers = 3;
   nColumnsResults = 5;
 
   usersByOptionSplit: { [key: string]: User[][] } = {};
-  nonExcludedUsersSplit: User[][] = [];
+  tooLateMembersSplit: User[][] = [];
   excludedUsersSplit: User[][] = [];
   _results: UserResult[] | VoteResult[];
 
@@ -89,9 +89,9 @@ export class VotingSummaryComponent {
     return {
       address: userResult.ethAddress,
       resolvedClaim: {
-        field0: userResult.field0,
-        field1: userResult.field1,
-        field2: userResult.field2
+        uid: userResult.uid,
+        name1: userResult.name1,
+        name2: userResult.name2
       },
       claimHash: null,
       role: null

@@ -1,0 +1,112 @@
+<app-big-spinner *ngIf="!templateReady$"></app-big-spinner>
+
+<div *ngIf="templateReady$" class="ev-summary-button-wrapper">
+  <button class="btn ev-button ev-height-fit-content"
+          onclick="window.print()">
+    <span class="material-icons">print</span>
+    <span class="ev-button__label">{{'Voting.Summary.Print' | translate}}</span>
+  </button>
+</div>
+
+<div [class.ev-summary-page-wrapper]="templateReady$" *ngIf="templateReady$">
+
+  <img [src]="(assetFiles.LOGO | ResolveAsset) | async"
+       style="width: 25%;"
+       alt="DecentraVote Logo"/>
+
+  <ng-container *ngIf="templateReady$">
+    <div class="ev-title-underline mx-auto mt-5 mb-3">
+      <div class="ml-4">
+        <h3 class="ev-summary-font-size">{{'Certificate.Meeting' | translate}}: {{meetingDetailModel.title}}</h3>
+        <div class="ev-card__body ev-flex-row ev-summary-font-size-x-small ml-3 mb-2">
+          {{'Meeting.Date' | translate}}
+          {{meetingDetailModel.startDate | date:'dd.MM.yyyy'}}
+          {{'Meeting.To' | translate}}
+          {{meetingDetailModel.endDate | date:'dd.MM.yyyy'}}
+        </div>
+        <div class="ev-summary-font-size-x-small ml-3 mb-2">{{'Certificate.Description' | translate}}
+          : {{meetingDetailModel.description}}</div>
+        <div class="ev-summary-font-size-x-small ml-3 mb-2">{{'Certificate.Address.Meeting' | translate}}
+          : {{meetingDetailModel.address}}</div>
+
+        <h3 class="ev-summary-font-size-small">{{'Certificate.Vote' | translate}}: {{voteDetailModel.title}}</h3>
+        <div class="ev-summary-font-size-x-small ml-3 mb-2">{{'Certificate.Description' | translate}}
+          : {{voteDetailModel.description}}</div>
+        <div class="ev-summary-font-size-x-small ml-3 mb-2">{{'Certificate.Address.Vote' | translate}}
+          : {{voteDetailModel.address}}</div>
+
+        <p class="ev-summary-font-size-small mt-3">{{'Certificate.Info' | translate}}</p>
+      </div>
+
+    </div>
+  </ng-container>
+  <ng-container *ngIf="certificatesReady$; else NoCertificates">
+    <ng-container *ngFor="let cert of certificates; index as i">
+      <!-- page break for print view, display 3 on the first page, 4 on every other page -->
+      <div *ngIf="i == 3 || ((i-3) % 4 == 0)" style="page-break-before:always"></div>
+
+      <div class="ev-title-underline mx-auto mb-3">
+        <div class="ml-4">
+          <h1 class="">{{'Certificate.Title.1' | translate}} {{(certificates.length === 1) ? ('Certificate.Title.one-line' | translate) : ((i + 1 )+ ".")}} {{'Certificate.Title.2' | translate}}</h1>
+          <div class="ev-card-grid">
+            <div class="col-4">
+              <qrcode [qrdata]="cert.certificate.message"
+                      [width]="300"
+                      [margin]="0"
+                      [errorCorrectionLevel]="'M'">
+              </qrcode>
+            </div>
+            <div class="col-5">
+              <label class="ev-text-field__label">{{'Certificate.Vote' | translate}}</label>
+              <div style="padding: 8px 16px;">
+                <div class="ev-summary-font-size-small">{{'Certificate.Vote-Decision' | translate}}
+                  : {{cert.resolvedVoteOption}}</div>
+              </div>
+              <label class="ev-text-field__label">Ballotbox</label>
+              <div style="padding: 8px 16px;">
+                <ng-container *ngIf="ownerResolved$; else NoResolvedOwner">
+                  <div class="ev-summary-font-size-small mb-2">
+                    {{'Certificate.Ballotbox-Owner' | translate}}
+                    : {{owner[i].resolvedClaim.uid}} {{owner[i].resolvedClaim.name1}} {{owner[i].resolvedClaim.name2}}</div>
+                </ng-container>
+                <ng-template #NoResolvedOwner>
+                  <div class="ev-summary-font-size-small mb-2">{{'Certificate.Ballotbox-Owner' | translate}}
+                    : {{cert.ballotBox.owner}}</div>
+                </ng-template>
+                <div class="ev-summary-font-size-small mb-2">Url: {{cert.ballotBox.url}}</div>
+                <div class="ev-summary-font-size-small mb-2">{{'Certificate.Address.Ballotbox' | translate}}
+                  : {{cert.ballotBox.address}}</div>
+              </div>
+            </div>
+            <div class="col-3 text-center">
+              <div *ngIf="cert.isValid; else NotValidIcon" style="color: green">
+                <mat-icon class="material-icons-outlined" style="font-size: 75px; padding-right: 75px;">verified_user
+                </mat-icon>
+                <br>{{'Certificate.Signature.Valid' | translate}}
+              </div>
+              <ng-template #NotValidIcon>
+                <div style="color: red">
+                  <mat-icon class="material-icons-outlined" style="font-size: 75px; padding-right: 75px;">gpp_bad
+                  </mat-icon>
+                  <br>{{'Certificate.Signature.Invalid' | translate}}
+                </div>
+              </ng-template>
+            </div>
+
+            <div class="col-12">
+              <div class="ev-summary-font-size-small mb-2">
+                {{'Certificate.Signature.Name' | translate}}
+                <div class="ev-summary-font-size-x-small mb-2">{{cert.certificate.signature}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-template #NoCertificates>
+    <div class="text-center">
+      {{'Certificate.Not-Found' | translate}}
+    </div>
+  </ng-template>
+</div>

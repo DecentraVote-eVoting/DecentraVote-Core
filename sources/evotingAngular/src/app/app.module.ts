@@ -11,7 +11,6 @@ import {reducers} from './app.store';
 import {StoreDevtoolsModule} from '@ngrx/store-devtools';
 import {AppRoutingModule} from './app-routing.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
 import {ActivatedRouteSnapshot} from '@angular/router';
@@ -46,7 +45,6 @@ export function StorageLoaderFactory(storageService: StorageService) {
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
-    NgxChartsModule,
     BrowserAnimationsModule,
     BrowserModule,
     MatButtonModule,

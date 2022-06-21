@@ -2,11 +2,11 @@
  DecentraVote
  Copyright (C) 2018-2022 iteratec
  */
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {AbstractModalComponent} from '@core/components/abstract-modal/abstract-modal.component';
 import {NgbActiveModal} from '@ng-bootstrap/ng-bootstrap';
 import {PlatformLocation} from '@angular/common';
-import {ImportUserFields, ImportUserRaw} from '@import-user/models/import-user.model';
+import {ImportUserRaw} from '@import-user/models/import-user.model';
 import {Subject} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {ImportUserService} from '@import-user/services/import-user.service';
@@ -15,7 +15,7 @@ import {ImportUserService} from '@import-user/services/import-user.service';
   selector: 'app-import-users-modal',
   templateUrl: './import-users-modal.component.html'
 })
-export class ImportUsersModalComponent extends AbstractModalComponent implements OnInit {
+export class ImportUsersModalComponent extends AbstractModalComponent {
 
   @Output() uploadEvent = new EventEmitter<EventTarget>();
   @Output() importClickEvent = new EventEmitter<ImportUserRaw[]>();
@@ -37,18 +37,15 @@ export class ImportUsersModalComponent extends AbstractModalComponent implements
     super(modalRef, platform);
 
     const template: ImportUserRaw[] = [];
-    template.push({field0: 'john.doe@provider.com', field1: 'John', field2: 'Doe', role: 1});
-    template.push({field0: 'jane.doe@provider.com', field1: 'Jane', field2: 'Doe', role: 2});
+    template.push({uid: 'john.doe@provider.com', name1: 'John', name2: 'Doe', role: 1});
+    template.push({uid: 'jane.doe@provider.com', name1: 'Jane', name2: 'Doe', role: 2});
     this.jsonTextAreaControl.setValue(JSON.stringify(template, null, 2));
     this.jsonTextAreaControl.disable();
 
-    template.push({field0: 'max.mustermann@provider.com', field1: 'Max', field2: 'Mustermann', role: 1});
+    template.push({uid: 'max.mustermann@provider.com', name1: 'Max', name2: 'Mustermann', role: 1});
     const csvData = importUserService.toCSV(template);
     this.csvTextAreaControl.setValue(csvData);
     this.csvTextAreaControl.disable();
-  }
-
-  ngOnInit() {
   }
 
   onImportClick(outgoingImportUsers: ImportUserRaw[]) {

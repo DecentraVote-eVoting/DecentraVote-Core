@@ -2,14 +2,7 @@
  DecentraVote
  Copyright (C) 2018-2022 iteratec
  */
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output
-} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {StorageVotingOption} from '@core/models/storage.model';
 import {VoteDetailTab, VoteResult} from '@voting/models/vote.model';
 import {ResolvedClaim} from '@user/models/user.model';
@@ -55,7 +48,7 @@ export class VoteVerificationComponent implements OnInit {
   }
 
   formatInvalidOptionsByUser(invalidUserWithOption: InvalidUserWithOption) {
-    const key = invalidUserWithOption.userClaim.field0;
+    const key = invalidUserWithOption.userClaim.uid;
     if (this.invalidOptionsByUser[key] === undefined) {
       this.invalidOptionsByUser[key] = {
         userClaim: invalidUserWithOption.userClaim,

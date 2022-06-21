@@ -6,11 +6,13 @@ import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angul
 import {map, takeUntil} from 'rxjs/operators';
 import {VoteFacade} from '@voting/services/vote.facade';
 import {ExportVoteResult, UserResult, VoteDetailModel} from '@voting/models/vote.model';
-import {Subject} from 'rxjs';
+import {combineLatest, Subject} from 'rxjs';
 import {MatAccordion} from '@angular/material/expansion';
 import {DomSanitizer} from '@angular/platform-browser';
 import {VoteStage} from '@voting/models/vote-stage.enum';
 import {FileUtil} from '@core/utils/file.util';
+import {TransformUtil} from '@core/utils/transform.util';
+import {VoteSelectorsService} from '@voting/services/vote-selectors.service';
 
 @Component({
   selector: 'app-voting-detail-result-list-smart',
@@ -39,16 +41,28 @@ export class VotingDetailResultListSmartComponent implements OnInit, OnDestroy {
   resultsByOption: { [key: string]: { results: UserResult[], expanded: boolean} };
 
   constructor(private voteFacade: VoteFacade,
-              private sanitizer: DomSanitizer) {
+              private sanitizer: DomSanitizer,
+              private selectors: VoteSelectorsService,
+  ) {
   }
 
   ngOnInit(): void {
-    this.voteFacade.getResultsByVoteDecisionAddress(this.vote)
-      .pipe(
+    combineLatest([
+        this.voteFacade.getResultsByVoteDecisionAddress(this.vote.address),
+        this.selectors.getAttachmentHash(this.vote.address),
+      ]
+    ).pipe(
         takeUntil(this.unsubscribe$),
-        map(exportVoteResult => {
-          this.membersVoteResult = exportVoteResult;
-          return exportVoteResult.userResults;
+        map(([userResults, attachmentHash]: [UserResult[], string]) => {
+          this.membersVoteResult = <ExportVoteResult>{
+            title: this.vote.title,
+            description: this.vote.description,
+            attachmentFileName: this.vote.filename,
+            attachmentHash: this.vote.filename ? attachmentHash : '',
+            options: TransformUtil.transformStorageVotingOptionArrayToStringArray(this.vote.voteOptions),
+            userResults
+          };
+          return userResults;
         }),
         map((results: UserResult[]) => {
           const resultsByUser = {};

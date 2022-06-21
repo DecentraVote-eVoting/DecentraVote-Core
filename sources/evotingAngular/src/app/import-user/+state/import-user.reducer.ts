@@ -38,7 +38,7 @@ const importUserReducer = createReducer(
     })),
   on(importUserActions.RemoveImportedUserSuccessAction,
     (state, {id}) => {
-      return importUserAdapter.removeOne(id, state)
+      return importUserAdapter.removeOne(id, state);
     }),
 );
 

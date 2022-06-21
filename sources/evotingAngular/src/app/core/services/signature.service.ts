@@ -6,7 +6,7 @@ import {Injectable} from '@angular/core';
 import {HttpHeaders} from '@angular/common/http';
 import {EthersService} from '@core/services/ethers.service';
 import {concatMap, map, switchMap} from 'rxjs/operators';
-import {Observable, of, zip} from 'rxjs';
+import {from, Observable, of, zip} from 'rxjs';
 import {NonceManager} from '@ethersproject/experimental';
 import {SignatureModel} from '@core/models/signature.model';
 import {Ballot, OpenBallotNullifier} from '@core/models/ballot-box.model';
@@ -28,7 +28,7 @@ export class SignatureService {
 
     return this.ethersService.getProviderIfReady().pipe(
       switchMap((provider) => {
-        return Observable.fromPromise(provider.getBlockNumber());
+        return from<Promise<number>>(provider.getBlockNumber());
       }),
       concatMap((num: number) => {
         return this.ethersService.getSignerIfReady().pipe(
@@ -60,7 +60,7 @@ export class SignatureService {
     return signer$.pipe(
       switchMap((signer) => {
         return zip(...ballotStrings.map(ballotString =>
-          Observable.fromPromise(signer.signMessage(ballotString)).pipe(
+          from<Promise<string>>(signer.signMessage(ballotString)).pipe(
             map((signedBallot: string) => {
               return <SignatureModel>{
                 signature: signedBallot,
@@ -79,7 +79,7 @@ export class SignatureService {
     return this.ethersService.getSignerIfReady().pipe(
       switchMap((signer) => {
         return zip(...nullifierStrings.map(nullifierString =>
-          Observable.fromPromise(signer.signMessage(nullifierString)).pipe(
+          from<Promise<string>>(signer.signMessage(nullifierString)).pipe(
             map((signedBallot: string) => {
               return <SignatureModel>{
                 signature: signedBallot,

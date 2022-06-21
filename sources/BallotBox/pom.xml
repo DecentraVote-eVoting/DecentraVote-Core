@@ -5,19 +5,14 @@
     <parent>
         <groupId>de.iteratec.evoting</groupId>
         <artifactId>decentraVote</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
     </parent>
 
     <groupId>com.iteratec.evoting</groupId>
     <artifactId>ballotbox</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <name>BallotBox</name>
     <description>Anonymous BallotBox</description>
-
-    <properties>
-        <java.version>11</java.version>
-        <kotlin.version>1.4.32</kotlin.version>
-    </properties>
 
     <repositories>
         <repository>
@@ -38,27 +33,21 @@
             </properties>
         </profile>
         <profile>
-            <id>dev</id>
+            <id>sender</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
-                <spring.profiles.active>dev</spring.profiles.active>
+                <spring.profiles.active>sender</spring.profiles.active>
             </properties>
         </profile>
         <profile>
-            <id>demo</id>
+            <id>receiver</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
-                <spring.profiles.active>demo</spring.profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>demo-nurdemteam</id>
-            <properties>
-                <spring.profiles.active>demo-nurdemteam</spring.profiles.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>prod-nurdemteam</id>
-            <properties>
-                <spring.profiles.active>prod-nurdemteam</spring.profiles.active>
+                <spring.profiles.active>receiver</spring.profiles.active>
             </properties>
         </profile>
     </profiles>
@@ -68,12 +57,12 @@
         <dependency>
             <groupId>com.iteratec.evoting</groupId>
             <artifactId>solidity</artifactId>
-            <version>0.1.0</version>
+            <version>1.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.iteratec.evoting</groupId>
             <artifactId>shared-resources</artifactId>
-            <version>0.1.0</version>
+            <version>1.1.0</version>
         </dependency>
 
         <!-- Spring Boot -->
@@ -109,18 +98,24 @@
             <artifactId>postgresql</artifactId>
             <version>42.2.19</version>
         </dependency>
+
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>5.4.30.Final</version>
-            <optional>true</optional>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>8.5.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>6.5.7</version>
         </dependency>
 
         <!-- Web3j -->
         <dependency>
             <groupId>org.web3j</groupId>
             <artifactId>core</artifactId>
-            <version>4.8.1</version>
+            <version>4.9.1</version>
         </dependency>
 
         <!-- okhttp -->
@@ -178,17 +173,16 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- cache -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
             <version>2.9.0</version>
         </dependency>
-
 
     </dependencies>
 
@@ -254,7 +248,7 @@
                                 <artifactItem>
                                     <groupId>com.iteratec.evoting</groupId>
                                     <artifactId>shared-resources</artifactId>
-                                    <version>0.1.0</version>
+                                    <version>1.1.0</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.basedir}/src/main/resources/blockchain</outputDirectory>
@@ -264,7 +258,7 @@
                                 <artifactItem>
                                     <groupId>com.iteratec.evoting</groupId>
                                     <artifactId>shared-resources</artifactId>
-                                    <version>0.1.0</version>
+                                    <version>1.1.0</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.basedir}/src/test/resources/blockchain</outputDirectory>

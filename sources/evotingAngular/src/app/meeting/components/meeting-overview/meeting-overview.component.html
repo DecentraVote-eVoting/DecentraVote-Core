@@ -18,44 +18,55 @@ Copyright (C) 2018-2022 iteratec
       <span *ngIf="user !== undefined"
             class="ev-typography--light text-right mb-2">
         <span *ngIf="getOrganizationAddress()">Organisation: {{getOrganizationAddress()}} | </span>
-        {{'Meeting.Identifier' | translate}}: {{user.resolvedClaim.field2}}
+        {{'Meeting.Identifier' | translate}}: {{user.resolvedClaim.name2}}
         <app-role-badges [userRole]="user.role"></app-role-badges>
       </span>
       <div class="d-flex justify-content-end ev-flex-align-items-center mt-3 mt-md-0">
-        <div class="btn-group dropdown ev-dropdown ev-height-fit-content">
-
-                    <button type="button"
-                            class="btn ev-button--dropdown_main dropdown-toggle"
-                            #menuTrigger = 'matMenuTrigger'
-                            [matMenuTriggerFor]="children"
-                            app-dropdown
-                            [menu]="children"
-                            [hoverTrigger]="menuTrigger"
-                            data-e2e="accountDropdownButton">
-                      <span class="material-icons d-md-none">person</span>
-                      <span class="d-none d-md-block">
-                        {{'Account.Button-Account' | translate}}
-                      </span>
-                    </button>
-                    <mat-menu #children="matMenu" hasBackdrop="false" xPosition="before">
-                      <button class="ev-button--dropdown"
-                              data-e2e="showMnemonicDropdownEntry"
-                              (click)="showMnemonic()">
-                        {{'Account.Button-Show-Mnemonic' | translate}}
-                      </button>
-                      <button class="ev-button--dropdown"
-                              data-e2e="logoutDropdownEntry"
-                              (click)="logout()">
-                        {{'Account.Button-Logout' | translate}}
-                      </button>
-                    </mat-menu>
+        <div class="btn-group dropdown ev-dropdown">
+          <button type="button"
+                  class="btn ev-button dropdown-toggle"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                  data-e2e="accountDropdownButton">
+            <span class="material-icons d-md-none">person</span>
+            <span class="d-none d-md-block">
+              {{'Account.Button-Account' | translate}}
+            </span>
+          </button>
+          <div class="dropdown-menu ev-dropdown-menu" aria-labelledby="accountDropdownMenuButton">
+            <ng-container>
+              <div class="ev-dropdown__btn-container">
+                <button class="dropdown-item"
+                        data-e2e="showMnemonicDropdownEntry"
+                        (click)="showMnemonic()">
+                  {{'Account.Button-Show-Mnemonic' | translate}}
+                </button>
+              </div>
+              <div class="ev-dropdown__btn-container">
+                <button class="dropdown-item"
+                        data-e2e="showHelpDropdownEntry"
+                        (click)="showHelp()">
+                  {{'Help.Button' | translate}}
+                </button>
+              </div>
+              <div class="ev-dropdown__btn-container">
+                <button class="dropdown-item"
+                        data-e2e="logoutDropdownEntry"
+                        (click)="logout()">
+                  {{'Account.Button-Logout' | translate}}
+                </button>
+              </div>
+            </ng-container>
+          </div>
         </div>
         <button class="btn ev-button ev-height-fit-content ml-3"
                 *ngIf="showUsersButton()"
                 [routerLink]="'/' + routePaths.MEMBER_OVERVIEW"
                 data-e2e="manageMembersBtn">
           <span class="material-icons">people</span>
-          <span class="ev-button__label">{{showMemberManage() ? ('User.Button-Manage' | translate) : ('User.Button-Users' | translate)}}</span>
+          <span
+            class="ev-button__label">{{showMemberManage() ? ('User.Button-Manage' | translate) : ('User.Button-Users' | translate)}}</span>
         </button>
         <button class="btn ev-button ev-height-fit-content ml-3"
                 (click)="openCreateMeetingModal()"
@@ -90,7 +101,7 @@ Copyright (C) 2018-2022 iteratec
   <ng-container *ngIf="isMeetingsEmpty() && !isMeetingsLoading">
     <div class="row mt-5">
       <div class="col-12 mt-5 text-center lead"
-            data-e2e="noMeetingsText">
+           data-e2e="noMeetingsText">
         {{'Meeting.Info-No-Items' | translate}}
       </div>
     </div>

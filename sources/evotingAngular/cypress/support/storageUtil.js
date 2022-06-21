@@ -4,13 +4,14 @@
  */
 import {ethers} from "ethers";
 
+
 export function getMultiDataParams(users) {
   let allUsers = [...users.admins, ...users.members, ...users.guests];
   let userMapping = allUsers.map(user => {
     return {
-      'field0': user.field0,
-      'field1': user.field1,
-      'field2': user.field2,
+      'uid': user.uid,
+      'name1': user.name1,
+      'name2': user.name2,
       'salt': Math.random(),
       user
     }

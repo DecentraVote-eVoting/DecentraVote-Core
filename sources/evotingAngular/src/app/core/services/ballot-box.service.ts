@@ -14,6 +14,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {SignatureService} from '@core/services/signature.service';
 import {zip} from 'rxjs';
 import {BallotBoxServer} from '@core/models/storage.model';
+import {SignatureModel, VoteCertificate} from '@core/models/signature.model';
 
 @Injectable({
   providedIn: 'root'
@@ -49,14 +50,16 @@ export class BallotBoxService {
     );
   }
 
-  castVote(voteAddress, vote: BallotDTO, anonymous: boolean): Observable<any> {
+  castVote(voteAddress, vote: BallotDTO, anonymous: boolean): Observable<VoteCertificate> {
     return this.getRandomBallotBox().pipe(
-      switchMap((ballotBox) => {
+      switchMap((ballotBox: BallotBoxServer) => {
         const path = (anonymous) ? 'anonymous/' : 'open/';
-        return this.http.post(
-          ballotBox.url + '/api/ballotbox/' + path + voteAddress,
-          vote
-        );
+        return this.http.post<SignatureModel>(ballotBox.url + '/api/ballotbox/' + path + voteAddress, vote).pipe(
+            map((certificate: SignatureModel) => {
+              delete certificate['signingAddress'];
+              return {certificate, ballotBox};
+            })
+          );
       })
     );
   }
@@ -75,7 +78,7 @@ export class BallotBoxService {
           }
         ).pipe(
           map((response) => (response) ? response : []),
-          shareReplay({ bufferSize: 1, refCount: true }),
+          shareReplay({bufferSize: 1, refCount: true}),
         );
       })
     );
@@ -95,7 +98,7 @@ export class BallotBoxService {
           }
         ).pipe(
           map((response: number) => (response) ? response : 0),
-          shareReplay({ bufferSize: 1, refCount: true }),
+          shareReplay({bufferSize: 1, refCount: true}),
         );
       })
     );

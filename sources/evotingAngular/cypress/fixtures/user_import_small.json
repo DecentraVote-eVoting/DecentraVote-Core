@@ -1,32 +1,32 @@
 [
   {
-    "field0": "fank.hgugo@provider.com",
-    "field1": "Frank",
-    "field2": "Hugo",
+    "uid": "fank.hgugo@provider.com",
+    "name1": "Frank",
+    "name2": "Hugo",
     "role":  1
   },
   {
-    "field0": "hecino.peter@provider.com",
-    "field1": "Heino",
-    "field2": "Peter",
+    "uid": "hecino.peter@provider.com",
+    "name1": "Heino",
+    "name2": "Peter",
     "role": 2
   },
   {
-    "field0": "karl.fritz@provider.com",
-    "field1": "Karl",
-    "field2": "Fritz",
+    "uid": "karl.fritz@provider.com",
+    "name1": "Karl",
+    "name2": "Fritz",
     "role": 2
   },
   {
-    "field0": "new.member@provider.com",
-    "field1": "new",
-    "field2": "member",
+    "uid": "new.member@provider.com",
+    "name1": "new",
+    "name2": "member",
     "role": 2
   },
   {
-    "field0": "peter.lustig@provider.com",
-    "field1": "Peter",
-    "field2": "Lustig",
+    "uid": "peter.lustig@provider.com",
+    "name1": "Peter",
+    "name2": "Lustig",
     "role": 6
   }
 ]

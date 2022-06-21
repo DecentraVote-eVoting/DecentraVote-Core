@@ -16,7 +16,7 @@ enum class Role(val value: String) {
     }
 
     companion object {
-        const val authorityString: String = "ROLE_member, ROLE_guest"
+        const val authorityString: String = "ROLE_director, ROLE_member, ROLE_guest"
 
         private val map = values().associateBy(Role::value)
         fun fromString(value: String) = map[value]

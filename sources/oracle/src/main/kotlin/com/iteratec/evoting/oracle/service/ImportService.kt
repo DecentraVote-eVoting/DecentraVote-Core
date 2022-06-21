@@ -6,10 +6,9 @@ package com.iteratec.evoting.oracle.service
 
 import com.iteratec.evoting.oracle.dtos.ImportUserDto
 import com.iteratec.evoting.oracle.dtos.ImportUserWithAccessCodeDto
+import com.iteratec.evoting.oracle.dtos.ReplaceImportUserDto
 import com.iteratec.evoting.oracle.entities.ImportUser
 import com.iteratec.evoting.oracle.exceptions.DuplicateUser
-import com.iteratec.evoting.oracle.extensions.unwrap
-import com.iteratec.evoting.oracle.repository.ImportUserRepository
 import org.apache.commons.codec.binary.Base32
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -23,37 +22,36 @@ import javax.transaction.Transactional
 
 @Profile("token")
 @Service
-class ImportService(val importUserRepository: ImportUserRepository,
-                    val databaseService: DatabaseService) {
-    val logger: Logger = LoggerFactory.getLogger(ImportService::class.java)
+class ImportService(val databaseService: DatabaseService) {
 
+    val logger: Logger = LoggerFactory.getLogger(ImportService::class.java)
     val secureRandom: SecureRandom = SecureRandom()
 
     @Transactional
     fun generateAccessCodes(data: List<ImportUser>): List<ImportUser> {
 
-        // Check if List of ImportUser has duplicate field0
-        val set: Set<String?> = data.map { importUser: ImportUser -> importUser.field0?.toLowerCase() }.toSet()
+        // Check if List of ImportUser has duplicate uid
+        val set: Set<String?> = data.map { importUser: ImportUser -> importUser.uid?.lowercase() }.toSet()
         if (set.size != data.size) {
-            throw Exception("Field0 must be unique")
+            throw Exception("Uid must be unique")
         }
 
         return data
                 .map { requestImportUser: ImportUser ->
-                    val optional = importUserRepository.getByField0(requestImportUser.field0?.toLowerCase() as String)
-                    if (optional.isEmpty) {
+                    try {
+                        val importUser = databaseService.getImportUserByUid(requestImportUser.uid?.lowercase()!!)
+                        importUser.name1 = requestImportUser.name1
+                        importUser.name2 = requestImportUser.name2
+                        importUser.uid = requestImportUser.uid?.lowercase()
+                        importUser.role = requestImportUser.role
+                        importUser
+                    } catch(exception: NoSuchElementException) {
                         requestImportUser
-                    } else {
-                        optional.get().field1 = requestImportUser.field1
-                        optional.get().field2 = requestImportUser.field2
-                        optional.get().field0 = requestImportUser.field0?.toLowerCase()
-                        optional.get().role = requestImportUser.role
-                        optional.get()
                     }
                 }.map { newImportUser: ImportUser ->
 
-                    if (newImportUser.field0.isNullOrEmpty()) {
-                        throw Exception("Field0 is null")
+                    if (newImportUser.uid.isNullOrEmpty()) {
+                        throw Exception("Uid is null")
                     }
 
                     if (newImportUser.accessCode == null || newImportUser.used || Timestamp.from(Instant.now()).after(newImportUser.validUntil)) {
@@ -62,144 +60,134 @@ class ImportService(val importUserRepository: ImportUserRepository,
                     }
                     newImportUser.validUntil = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS))
 
-                    newImportUser.field0 = newImportUser.field0?.toLowerCase()
-                    importUserRepository.save(newImportUser)
+                    newImportUser.uid = newImportUser.uid?.lowercase()
+                    databaseService.saveImportUser(newImportUser)
                 }
     }
 
     @Transactional
     fun getAllImportedMembersWithAccessKeys(): List<ImportUserWithAccessCodeDto> {
-        val importUsers = importUserRepository.findAll().toList()
+        val importUsers = databaseService.getAllImportUsers()
         return importUsers.filter { i -> !i.used }
                 .map { importUser -> ImportUserWithAccessCodeDto.ModelMapper.mapFromImportUser(importUser) }
     }
 
     @Transactional
     fun getAllImportedMembers(): List<ImportUserDto> {
-        val importUsers = importUserRepository.findAll().toList()
+        val importUsers = databaseService.getAllImportUsers()
         return importUsers.filter { i -> !i.used }
                 .map { importUser -> ImportUserDto.ModelMapper.mapFromImportUser(importUser) }
     }
 
     @Synchronized
     fun genAccessCode(): String {
-        val randombytes = ByteArray(10)
-        secureRandom.nextBytes(randombytes)
-        return Base32().encodeAsString(randombytes).replace("=", "")
+        val randomBytes = ByteArray(10)
+        secureRandom.nextBytes(randomBytes)
+        return Base32().encodeAsString(randomBytes).replace("=", "")
     }
 
     fun getUserFromId(id: String): ImportUser? {
-        return importUserRepository.findById(id.toLong()).unwrap()
+        return databaseService.getImportUserById(id)
     }
 
     fun getUserFromAccessCode(accessCode: String): ImportUser {
-        val user = this.importUserRepository.getByAccessCode(accessCode).unwrap()
-        user?.run {
+        val user = databaseService.getImportUserByAccessCode(accessCode)
+        user.run {
             if (this.used) {
-                throw IllegalArgumentException("Code was alredy used")
+                throw IllegalArgumentException("Code was already used")
             }
             if (Instant.now().isAfter(this.validUntil?.toInstant())) {
                 throw IllegalArgumentException("Code is not valid anymore")
             }
             return this
         }
-        throw IllegalArgumentException("Code does not exist")
     }
 
     @Transactional
     fun setUsed(id: String) {
-        val user = importUserRepository.findById(id.toLong()).unwrap()
-        user?.used = true
-        importUserRepository.save(user!!)
+        val user = databaseService.getImportUserById(id)
+        user.used = true
+        databaseService.saveImportUser(user)
     }
 
     @Transactional
     fun setNotUsed(id: String) {
-        val user = importUserRepository.findById(id.toLong()).unwrap()
-        user?.used = false
-        importUserRepository.save(user!!)
+        val user = databaseService.getImportUserById(id)
+        user.used = false
+        databaseService.saveImportUser(user)
     }
 
     @Transactional
-    fun removeUser(field0: String) {
-        val user = importUserRepository.getByField0(field0).get()
+    fun removeUser(uid: String) {
+        val user = databaseService.getImportUserByUid(uid)
         if (!user.used) {
-            importUserRepository.deleteById(user.id!!)
+            user.id?.let { databaseService.deleteImportUserById(it) }
         }
     }
 
     @Transactional
     fun removeAllUsers() {
-        importUserRepository.deleteAll()
+        databaseService.deleteAllImportUser()
     }
 
     @Transactional
-    fun replaceUser(address: String): String {
-        val uuid = this.databaseService.getUuidByEthAddr(address) ?: throw Exception("uuid not found")
+    fun replaceUser(dto: ReplaceImportUserDto): String {
+        val uuid = this.databaseService.getUuidByEthAddr(dto.address)
         val index = uuid.indexOf('-')
         val newUuid: String? = if (index == -1) null else uuid.substring(index + 1)
         setNotUsed(newUuid!!)
-        return setNewAccessCode(newUuid)
-
+        return setNewAccessCodeAndUpdateFields(newUuid, dto)
     }
 
     @Transactional
-    fun setNewAccessCode(id: String): String {
-        val user = importUserRepository.findById(id.toLong()).unwrap() ?: throw Exception("user not found")
+    fun setNewAccessCodeAndUpdateFields(id: String, dto: ReplaceImportUserDto): String {
+        val user = databaseService.getImportUserById(id)
         user.accessCode = genAccessCode()
-        importUserRepository.save(user)
+        user.uid = dto.uid
+        user.name1 = dto.name1
+        user.name2 = dto.name2
+        databaseService.saveImportUser(user)
         return user.accessCode!!
     }
 
     @Transactional
-    fun extendAccessCodeValidity(field0: String) {
-        val user = importUserRepository.getByField0(field0)
-        if (user.isPresent) {
-            user.get().validUntil = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS))
-            importUserRepository.save(user.get())
-        }
+    fun extendAccessCodeValidity(uid: String) {
+        val user = databaseService.getImportUserByUid(uid)
+        user.validUntil = Timestamp.from(Instant.now().plus(30, ChronoUnit.DAYS))
+        databaseService.saveImportUser(user)
     }
 
     @Transactional
-    fun replaceAccessCodeOfUser(field0: String) {
-        val user = importUserRepository.getByField0(field0)
-        if (user.isPresent) {
-            val newAccessCode = genAccessCode()
-            user.get().accessCode = newAccessCode
-            importUserRepository.save(user.get())
-        }
+    fun replaceAccessCodeOfUser(uid: String) {
+        val user = databaseService.getImportUserByUid(uid)
+        val newAccessCode = genAccessCode()
+        user.accessCode = newAccessCode
+        databaseService.saveImportUser(user)
     }
 
     @Transactional
-    fun setInvalidUntil(field0: String) {
-        val user = importUserRepository.getByField0(field0)
-        if(user.isPresent) {
-            user.get().validUntil = Timestamp.from(Instant.now().minus(1, ChronoUnit.DAYS))
-            importUserRepository.save(user.get())
-        }
+    fun setInvalidUntil(uid: String) {
+        val user = databaseService.getImportUserByUid(uid)
+        user.validUntil = Timestamp.from(Instant.now().minus(1, ChronoUnit.DAYS))
+        databaseService.saveImportUser(user)
     }
 
     @Transactional
     fun editImportUser(editedImportUser: ImportUser) {
-        val oldImportUser = importUserRepository.getByField0(editedImportUser.field0?.toLowerCase() as String)
+        if (editedImportUser.uid == null) throw Exception("Uid of EditedUser is null!")
 
-        if (oldImportUser.isEmpty) throw Exception("User does not exist!") // GUARD
-        if (editedImportUser.field0 == null) throw Exception("Field0 of EditedUser is null!") // GUARD
+        val importUser = databaseService.getImportUserByUid(editedImportUser.uid?.lowercase() as String)
+        importUser.name1 = editedImportUser.name1
+        importUser.name2 = editedImportUser.name2
+        importUser.uid = editedImportUser.uid
+        importUser.role = editedImportUser.role
 
-        oldImportUser.get().field1 = editedImportUser.field1
-        oldImportUser.get().field2 = editedImportUser.field2
-        oldImportUser.get().field0 = editedImportUser.field0
-        oldImportUser.get().role = editedImportUser.role
-
-        val newImportUser = oldImportUser.get()
-
-        importUserRepository.save(newImportUser)
+        databaseService.saveImportUser(importUser)
     }
 
     fun checkIfDuplicate(importUsers: List<ImportUser>) {
-        if (importUsers.size != importUsers.distinctBy { it.field0 }.count()) throw DuplicateUser()
-        val field0s = importUsers.map { it.field0 }.filterNotNull()
-        val dbUsers = importUserRepository.getNumberOfDuplicateField0s(field0s)
-        if(dbUsers > 0) throw DuplicateUser()
+        if (importUsers.size != importUsers.distinctBy { it.uid }.count()) throw DuplicateUser()
+        val uids = importUsers.mapNotNull { it.uid }
+        if(databaseService.getNumberOfDuplicateUids(uids) > 0) throw DuplicateUser()
     }
 }

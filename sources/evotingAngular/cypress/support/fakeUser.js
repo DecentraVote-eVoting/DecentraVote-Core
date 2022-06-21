@@ -3,6 +3,7 @@
  Copyright (C) 2018-2022 iteratec
  */
 import {ethers} from "ethers";
+
 var faker = require('faker');
 
 export function getFakeUsers(numberOfAdmins, numberOfMembers, numberOfGuests) {
@@ -32,9 +33,9 @@ export function getFakeUsers(numberOfAdmins, numberOfMembers, numberOfGuests) {
 function createUser(role) {
   let user = {}
   user.mnemonic = ethers.Wallet.createRandom().mnemonic.phrase;
-  user.field0 = faker.internet.email();
-  user.field1 = faker.name.firstName();
-  user.field2 = faker.name.lastName();
+  user.uid = faker.internet.email();
+  user.name1 = faker.name.firstName();
+  user.name2 = faker.name.lastName();
   user.address = ethers.Wallet.fromMnemonic(user.mnemonic).address
   user.role = role
   return user;

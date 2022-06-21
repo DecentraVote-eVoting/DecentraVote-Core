@@ -7,17 +7,17 @@ Copyright (C) 2018-2022 iteratec
   <div class="w-100 row" *ngIf="userGroupArray.length > 0">
     <div class="col">
       <label class="ev-text-field__label">
-        {{'User.Import.Field0' | translate}}
+        {{'User.Import.Uid' | translate}}
       </label>
     </div>
     <div class="col">
       <label class="ev-text-field__label">
-        {{'User.Import.Field1' | translate}}
+        {{'User.Import.Name1' | translate}}
       </label>
     </div>
     <div class="col">
       <label class="ev-text-field__label">
-        {{'User.Import.Field2' | translate}}
+        {{'User.Import.Name2' | translate}}
       </label>
     </div>
     <div class="col-2">
@@ -35,24 +35,24 @@ Copyright (C) 2018-2022 iteratec
       <div class="col px-1">
         <input class="ev-text-field__input mb-3"
                type="text"
-               placeholder="field0"
-               [id]="'userField0_' + i"
-               [formControl]="userGroup.get('field0') | cast"
+               placeholder="uid"
+               [id]="'userUid_' + i"
+               [formControl]="userGroup.get('uid') | cast"
                (input)="updateValidation()">
       </div>
 
       <div class="col px-1">
         <input class="ev-text-field__input mb-3"
                type="text"
-               placeholder="field1"
-               [formControl]="userGroup.get('field1') | cast">
+               placeholder="name1"
+               [formControl]="userGroup.get('name1') | cast">
       </div>
 
       <div class="col px-1">
         <input class="ev-text-field__input mb-3"
                type="text"
-               placeholder="field2"
-               [formControl]="userGroup.get('field2') | cast">
+               placeholder="name2"
+               [formControl]="userGroup.get('name2') | cast">
       </div>
 
       <div class="col-2 d-flex ev-flex-align-items-center px-1">
@@ -78,12 +78,12 @@ Copyright (C) 2018-2022 iteratec
     <div class="row" *ngIf="formRowIsInvalid(userGroup)">
       <div class="col px-1">
         <div class="mb-3 mt-n3">
-          <mat-error *ngIf="userGroup.get('field0').value === ''"
+          <mat-error *ngIf="userGroup.get('uid').value === ''"
                      class="col-3 ev-error-display">
             {{'Message.Error.Empty-Option' | translate}}
           </mat-error>
 
-          <mat-error *ngIf="userGroup.get('field0').hasError('duplicate') && userGroup.get('field0').value"
+          <mat-error *ngIf="userGroup.get('uid').hasError('duplicate') && userGroup.get('uid').value"
                      class="col-3 ev-error-display">
             {{'Message.Error.Duplicate' | translate}}
           </mat-error>

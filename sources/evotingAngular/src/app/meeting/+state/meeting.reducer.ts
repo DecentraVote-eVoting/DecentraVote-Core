@@ -73,7 +73,7 @@ const meetingReducer = createReducer(
   ),
   on(meetingActions.GetMeetingDetailSuccessAction,
     (state, {meeting}) => {
-      state = this.meetingAdapter.upsertOne(meeting, state);
+      state = meetingAdapter.upsertOne(meeting, state);
       return {
         ...state,
         addressesAreLoading: false,
@@ -203,14 +203,14 @@ const meetingReducer = createReducer(
     }),
   on(voteActions.DeleteVoteEvent,
     (state, {meetingAddress, voteAddress}) => {
-      let votes = state.entities[meetingAddress] ? state.entities[meetingAddress].votes : null;
+      const votes = state.entities[meetingAddress] ? state.entities[meetingAddress].votes : null;
       if (!votes) {
         return state;
       }
       return meetingAdapter.updateOne({
         id: meetingAddress,
         changes: {
-          votes: votes.filter(vote => vote != voteAddress)
+          votes: votes.filter(vote => vote !== voteAddress)
         }
       }, state);
     }),

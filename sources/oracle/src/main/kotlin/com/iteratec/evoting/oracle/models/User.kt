@@ -12,18 +12,21 @@ import org.springframework.security.core.userdetails.UserDetails
 import java.util.stream.Collectors
 
 data class User(val claims: Claims, val identityProvider: JwtUtils.IdentityProvider) : UserDetails {
-    val id: String
-    val field0: String
-    val field1: String
-    val field2: String
-    val groups: List<String>
-    private var authorities: List<SimpleGrantedAuthority?>? = null
-    override fun getAuthorities(): Collection<GrantedAuthority?> {
-        return authorities!!
+    val id: String = claims.subject
+    val uid: String = claims["uid"] as String
+    val name1: String = claims["name1"] as String
+    val name2: String = claims["name2"] as String
+    val groups: List<String> = claims["roles"] as List<String>
+    private var authorities: List<SimpleGrantedAuthority?>? = groups.stream()
+            .map { p: String? -> SimpleGrantedAuthority(p) }
+            .collect(Collectors.toList())
+
+    override fun getAuthorities(): Collection<GrantedAuthority?>? {
+        return authorities
     }
 
     override fun getUsername(): String {
-        return field0
+        return uid
     }
 
     override fun getPassword(): String {
@@ -44,16 +47,5 @@ data class User(val claims: Claims, val identityProvider: JwtUtils.IdentityProvi
 
     override fun isEnabled(): Boolean {
         return true
-    }
-
-    init {
-        id = claims.subject
-        field0 = claims["field0"] as String
-        field1 = claims["field1"] as String
-        field2 = claims["field2"] as String
-        groups = claims["roles"] as List<String>
-        authorities = groups.stream()
-                .map { p: String? -> SimpleGrantedAuthority(p) }
-                .collect(Collectors.toList())
     }
 }

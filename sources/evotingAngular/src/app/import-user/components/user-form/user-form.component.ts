@@ -107,7 +107,7 @@ export class UserFormComponent extends AbstractModalComponent implements OnInit,
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(() => {
         const i: number = this.userGroupArray.length - 1;
-        const element = document.getElementById(`userField0_${i}`);
+        const element = document.getElementById(`userUid_${i}`);
         if (element) { element.focus(); }
         this.cdr.detectChanges();
       });
@@ -139,9 +139,9 @@ export class UserFormComponent extends AbstractModalComponent implements OnInit,
     }
 
     return this.formBuilder.group({
-      field0: [user && user.field0 || '', [Validators.required, this.duplicateControlValidator()]],
-      field1: [user && user.field1 || ''],
-      field2: [user && user.field2 || ''],
+      uid: [user && user.uid || '', [Validators.required, this.duplicateControlValidator()]],
+      name1: [user && user.name1 || ''],
+      name2: [user && user.name2 || ''],
       role: [user && user.role || null, Validators.required]
     });
   }
@@ -153,12 +153,12 @@ export class UserFormComponent extends AbstractModalComponent implements OnInit,
       const parentGroup = control.parent as FormGroup;
       const parentArray = parentGroup.parent as FormArray;
 
-      const field0Values = parentArray.controls.map(userGroup =>
-        userGroup.get('field0').value);
+      const uidValues = parentArray.controls.map(userGroup =>
+        userGroup.get('uid').value);
 
-      const importFormDuplicate = field0Values.filter(x => x === control.value).length > 1
-      const userWithRoleDuplicate = this.users.filter(x => x.role.value != Role.NONE.value).some(r => control.value == r.resolvedClaim.field0)
-      const importedDuplicate = this.importUser.filter(x => x.role != 0).some(r => control.value == r.field0);
+      const importFormDuplicate = uidValues.filter(x => x === control.value).length > 1
+      const userWithRoleDuplicate = this.users.filter(x => x.role.value != Role.NONE.value).some(r => control.value == r.resolvedClaim.uid)
+      const importedDuplicate = this.importUser.filter(x => x.role != 0).some(r => control.value == r.uid);
 
       return (importFormDuplicate || userWithRoleDuplicate || importedDuplicate) ? {duplicate: 'duplicate'} : null;
     };
@@ -166,7 +166,7 @@ export class UserFormComponent extends AbstractModalComponent implements OnInit,
 
   updateValidation() {
     this.userGroupArray.controls.forEach(userGroup => {
-      userGroup.get('field0').updateValueAndValidity();
+      userGroup.get('uid').updateValueAndValidity();
       userGroup.get('role').updateValueAndValidity();
     });
     this.formIsValidEvent.emit(this.formIsValid());
@@ -186,9 +186,9 @@ export class UserFormComponent extends AbstractModalComponent implements OnInit,
     const outgoingImportUsers: ImportUserRaw[] = [];
     this.userGroupArray.controls.forEach(group => {
       outgoingImportUsers.push(<ImportUserRaw>{
-        field0: group.get('field0').value,
-        field1: group.get('field1').value,
-        field2: group.get('field2').value,
+        uid: group.get('uid').value,
+        name1: group.get('name1').value,
+        name2: group.get('name2').value,
         role: group.get('role').value,
       });
     });
@@ -201,8 +201,8 @@ export class UserFormComponent extends AbstractModalComponent implements OnInit,
   }
 
   formRowIsInvalid(userGroup: AbstractControl): boolean {
-    return (userGroup.get('field0').value === ''
-      || userGroup.get('field0').hasError('duplicate')
+    return (userGroup.get('uid').value === ''
+      || userGroup.get('uid').hasError('duplicate')
       || !userGroup.get('role').value);
   }
 

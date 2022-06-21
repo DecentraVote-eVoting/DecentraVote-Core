@@ -9,13 +9,14 @@ import {Permission} from '@core/models/permission.model';
 import {VoteCardModel} from '@voting/models/vote.model';
 import {VoteStage} from '@voting/models/vote-stage.enum';
 import {MeetingDetailModel, MeetingStage} from '@meeting/models/meeting.model';
-import {forkJoin, Subject, Subscription} from 'rxjs';
+import {forkJoin, Subject, Subscription, timer} from 'rxjs';
 import {User} from '@app/user/models/user.model';
 import {Observable} from 'rxjs/Observable';
 import {BallotBoxService} from '@core/services/ballot-box.service';
 import {first, takeUntil, tap} from 'rxjs/operators';
 import {VoteFacade} from '@voting/services/vote.facade';
 import {CreateVotingModalComponent} from '@voting/components/create-voting-modal/create-voting-modal.component';
+import {LocalStorageUtil} from "@core/utils/local-storage.util";
 
 @Component({
   selector: 'app-voting-card',
@@ -48,6 +49,7 @@ export class VotingCardComponent implements OnInit, OnDestroy {
   @Output() openVotingModal = new EventEmitter();
   @Output() openParticipantsModal = new EventEmitter();
   @Output() openDeleteModal = new EventEmitter();
+  @Output() openVoteCertificate = new EventEmitter();
 
   voteStage = VoteStage;
   meetingStage = MeetingStage;
@@ -80,7 +82,7 @@ export class VotingCardComponent implements OnInit, OnDestroy {
   }
 
   subscribeToVotes() {
-    this.endAutoBallotRefresh$ = Observable.timer(0, 10000).pipe(
+    this.endAutoBallotRefresh$ = timer(0, 10000).pipe(
       takeUntil(this.isVoteFinished$)
     ).subscribe(_ => {
       this.ballotBoxService.getAllCastedVotes(this.vote.address, this.vote.isAnonymous).pipe(
@@ -201,6 +203,11 @@ export class VotingCardComponent implements OnInit, OnDestroy {
 
   showIsProcessingVotesBuffer() {
     return this.vote.stage === VoteStage.CLOSED && this.isProcessingVotes;
+  }
+
+  showCertificate() {
+    return this.permissionService.check(Permission.VOTING_CERTIFICATE, this.meeting, this.vote)
+      && (LocalStorageUtil.localItemExist(this.vote.address) || this.vote.numberOfOwnVotesCast > 0);
   }
 
   ngOnDestroy() {
